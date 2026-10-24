@@ -1,13 +1,18 @@
 name: Check Daraz Card Offers
+
 on:
   schedule:
-    - cron: '17 */6 * * *'
+    # Runs at 00:05 PKT (19:05 UTC) when daily bank vouchers replenish, plus every 4 hours
+    - cron: '5 19,23,3,7,11,15 * * *'
   workflow_dispatch:
+
 permissions:
   contents: write
+
 concurrency:
   group: daraz-offers
   cancel-in-progress: false
+
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -19,10 +24,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Scan public sources and send new-offer alerts
+      - name: Scan Daraz.pk bank, UnionPay & wallet offers and send ntfy alerts
         run: npm run check
         env:
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'darazcardsalesRB17247365Dtqtqtqty' }}
           NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
       - name: Save offer history
         run: |

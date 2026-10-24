@@ -1,0 +1,171 @@
+{
+  "ntfy_topic": "darazcardsalesRB17247365Dtqtqtqty",
+  "partner_pages": [
+    {
+      "bank": "UnionPay Partner Venue (data-page-id=80128576)",
+      "url": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
+    },
+    {
+      "bank": "Easypaisa & Daraz Wallet Campaign Page",
+      "url": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/12-12/payment-promotions?hybrid=1"
+    },
+    {
+      "bank": "Easypaisa / EasyPay Partner Page",
+      "url": "https://www.daraz.pk/wow/i/pk/payment-partners/easypay"
+    },
+    {
+      "bank": "JazzCash Partner Page",
+      "url": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
+    },
+    {
+      "bank": "dMart Multi-Bank Vouchers",
+      "url": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/d-mart/payment-promotions?hybrid=1"
+    },
+    {
+      "bank": "HBL Bank Regular",
+      "url": "https://www.daraz.pk/wow/i/pk/payment-partners/hbl-bank?hybrid=1"
+    },
+    {
+      "bank": "HBL 11.11 Mega Campaign",
+      "url": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/11-11-MC/hbl-bank-page?hybrid=1"
+    },
+    {
+      "bank": "Bank Alfalah",
+      "url": "https://www.daraz.pk/alfalah-bank/"
+    },
+    {
+      "bank": "Standard Chartered Bank",
+      "url": "https://www.daraz.pk/standard-chartered-bank/"
+    },
+    {
+      "bank": "Askari Bank Saturday",
+      "url": "https://www.daraz.pk/wow/i/pk/help/10-10-askari-saturday"
+    },
+    {
+      "bank": "All 17 Partner Banks Credit/Debit Directory",
+      "url": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1"
+    }
+  ],
+  "scheduled_offers": [
+    {
+      "id": "jazzcash-wallet",
+      "bank": "JazzCash (Mobile Account & Visa/Mastercard Debit)",
+      "discount_percent": 10,
+      "max_cap_pkr": 1000,
+      "min_spend_pkr": 1500,
+      "active_days_sun0": [0, 1, 2, 3, 4, 5, 6],
+      "mechanism": "Collectible JazzCash Voucher / MPIN Checkout",
+      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
+    },
+    {
+      "id": "easypaisa-wallet",
+      "bank": "Easypaisa / EasyPay (Mobile Account & Visa Debit)",
+      "discount_percent": 10,
+      "max_cap_pkr": 1000,
+      "min_spend_pkr": 1500,
+      "active_days_sun0": [0, 1, 2, 3, 4, 5, 6],
+      "mechanism": "Easypaisa Wallet Cashback (Max 5 tx/day)",
+      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/easypay"
+    },
+    {
+      "id": "daraz-wallet",
+      "bank": "Daraz Wallet",
+      "discount_percent": 10,
+      "max_cap_pkr": 1500,
+      "min_spend_pkr": 2000,
+      "active_days_sun0": [0, 1, 2, 3, 4, 5, 6],
+      "mechanism": "Daraz Wallet Instant Discount (Cap PKR 1,500)",
+      "source_url": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/12-12/payment-promotions?hybrid=1"
+    },
+    {
+      "id": "unionpay-deals-steals-12",
+      "bank": "UnionPay International (All Partner Banks: BAHL, MCB Islamic, ABL, AKBL, FBL, BOP, JS, Soneri)",
+      "discount_percent": 12,
+      "max_cap_pkr": 1100,
+      "min_spend_pkr": 500,
+      "active_days_sun0": [0, 1, 2],
+      "mechanism": "Collectible UnionPay Voucher (12% OFF All Users / 20% OFF New Users)",
+      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
+    },
+    {
+      "id": "bahl-unionpay",
+      "bank": "Bank AL Habib (UnionPay & Visa Cards)",
+      "discount_percent": 12,
+      "max_cap_pkr": 1100,
+      "min_spend_pkr": 500,
+      "active_days_sun0": [0, 1, 2],
+      "mechanism": "Collectible UnionPay Voucher (Sun, Mon & Tue)",
+      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
+    },
+    {
+      "id": "hbl-wed",
+      "bank": "HBL (Habib Bank Limited)",
+      "discount_percent": 10,
+      "max_cap_pkr": 500,
+      "min_spend_pkr": 2000,
+      "active_days_sun0": [3],
+      "mechanism": "Collectible Bank Voucher (Visa/Mastercard Credit & Debit, 4 tx/day)",
+      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/hbl-bank?hybrid=1"
+    },
+    {
+      "id": "mcb-sun-mon-tue",
+      "bank": "MCB & MCB Islamic",
+      "discount_percent": 12,
+      "max_cap_pkr": 1100,
+      "min_spend_pkr": 500,
+      "active_days_sun0": [0, 1, 2],
+      "mechanism": "Collectible Bank Voucher (UnionPay/Visa/Mastercard)",
+      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
+    },
+    {
+      "id": "ubl-mon",
+      "bank": "UBL (United Bank Limited)",
+      "discount_percent": 10,
+      "max_cap_pkr": 1000,
+      "min_spend_pkr": 2500,
+      "active_days_sun0": [1],
+      "mechanism": "Collectible Bank Voucher (Visa/Mastercard/WIZ Prepaid)",
+      "source_url": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1"
+    },
+    {
+      "id": "bafl-tue-thu",
+      "bank": "Bank Alfalah",
+      "discount_percent": 10,
+      "max_cap_pkr": 1000,
+      "min_spend_pkr": 2500,
+      "active_days_sun0": [2, 4],
+      "mechanism": "Collectible Voucher + Code BAFLdMart on dMart",
+      "source_url": "https://www.daraz.pk/alfalah-bank/"
+    },
+    {
+      "id": "meezan-thu",
+      "bank": "Meezan Bank",
+      "discount_percent": 10,
+      "max_cap_pkr": 1000,
+      "min_spend_pkr": 2500,
+      "active_days_sun0": [4],
+      "mechanism": "Collectible Bank Voucher (Mastercard Titanium & Visa Debit)",
+      "source_url": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1"
+    },
+    {
+      "id": "scb-fri",
+      "bank": "Standard Chartered Bank",
+      "discount_percent": 10,
+      "max_cap_pkr": 1000,
+      "min_spend_pkr": 3000,
+      "active_days_sun0": [5],
+      "mechanism": "Collectible Bank Voucher (SCB Credit/Debit & Saadiq)",
+      "source_url": "https://www.daraz.pk/standard-chartered-bank/"
+    },
+    {
+      "id": "askari-sat",
+      "bank": "Askari Bank",
+      "discount_percent": 10,
+      "max_cap_pkr": 1000,
+      "min_spend_pkr": 2000,
+      "active_days_sun0": [6],
+      "mechanism": "Collectible Voucher + Code AskaridMart on dMart",
+      "source_url": "https://www.daraz.pk/wow/i/pk/help/10-10-askari-saturday"
+    }
+  ]
+}
