@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-25T18:21:15.885Z",
-  "pktDay": "Sunday",
+  "checkedAt": "2026-10-25T19:00:38.868Z",
+  "pktDay": "Monday",
   "activeCount": 19,
   "upcomingCount": 9,
   "offers": [
@@ -15,12 +15,12 @@
       "voucherCode": null,
       "scheduleLabel": "Every Sunday, Monday & Tuesday",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "20% OFF up to PKR 1,000 (Min Spend PKR 500) for first-time UnionPay cardholders on Daraz.pk.",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "askari-dmart-code",
@@ -33,12 +33,12 @@
       "voucherCode": "AskaridMart",
       "scheduleLabel": "Daily on dMart (Code: AskaridMart)",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Verified from Daraz Live Terms: 15% OFF up to PKR 1,000 on dMart using checkout voucher code \"AskaridMart\" (Max 2 tx/day).",
       "sourceUrl": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/d-mart/payment-promotions?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "unionpay-deals-steals-12",
@@ -51,12 +51,12 @@
       "voucherCode": null,
       "scheduleLabel": "Every Sunday, Monday & Tuesday",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "12% OFF up to PKR 1,100 (Min Spend PKR 500) on all UnionPay Debit/Credit cards (BAHL, MCB Islamic, ABL, AKBL, FBL, BOP, JS, Soneri, UBL).",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "bahl-unionpay-visa",
@@ -69,12 +69,12 @@
       "voucherCode": null,
       "scheduleLabel": "Sunday, Monday & Tuesday",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "12% OFF up to PKR 1,100 on Bank AL Habib UnionPay & Visa Debit Cards (Helpline: 111-014-014).",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "mcb-sun-mon-tue-12",
@@ -87,12 +87,12 @@
       "voucherCode": null,
       "scheduleLabel": "Every Sunday, Monday & Tuesday",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "12% OFF up to PKR 1,100 on MCB Visa/Mastercard Credit & Debit Cards and MCB Islamic UnionPay Debit Card.",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "faysal-dmart-code",
@@ -105,12 +105,12 @@
       "voucherCode": "FBLdMart",
       "scheduleLabel": "Daily on dMart (Code: FBLdMart)",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Verified from Daraz Live Terms: 12% OFF up to PKR 800 on dMart using checkout voucher code \"FBLdMart\" (Max 8 tx/day).",
       "sourceUrl": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/d-mart/payment-promotions?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "jazzcash-wallet-card-promo",
@@ -123,12 +123,12 @@
       "voucherCode": null,
       "scheduleLabel": "Daily / Campaign Slots",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "10% OFF up to PKR 1,000 (Min Spend PKR 1,500) on JazzCash Mobile Wallet (MPIN) & JazzCash Visa/Mastercard Debit Cards.",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "easypaisa-wallet-cashback",
@@ -141,12 +141,12 @@
       "voucherCode": null,
       "scheduleLabel": "Daily / Campaign Slots (Max 5 tx/account)",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Verified from Daraz Live Terms: 10% OFF up to PKR 1,000 on Easypaisa / EasyPay Mobile Account. Maximum 5 transactions per EasyPay Account.",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/easypay",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "daraz-wallet-instant-rebate",
@@ -159,12 +159,12 @@
       "voucherCode": null,
       "scheduleLabel": "Daily Site-Wide (Cap PKR 1,500/day)",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Verified from Daraz Live Terms: Maximum discount a customer can avail from Daraz Wallet in a day is Rs. 1,500.",
       "sourceUrl": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/12-12/payment-promotions?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "sadapay-nayapay-fintech-cards",
@@ -177,12 +177,12 @@
       "voucherCode": null,
       "scheduleLabel": "Mega Sale & Payday Visa/MC Windows",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "10% OFF up to PKR 750 on SadaPay Mastercard and NayaPay Visa virtual/physical cards via general Visa/Mastercard collectible vouchers.",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "alfalah-dmart-code",
@@ -195,30 +195,30 @@
       "voucherCode": "BAFLdMart",
       "scheduleLabel": "Daily on dMart (Code: BAFLdMart)",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Verified from Daraz Live Terms: 10% OFF up to PKR 1,500 on dMart orders using code \"BAFLdMart\" (Max 2 tx/day).",
       "sourceUrl": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/d-mart/payment-promotions?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
-      "id": "allied-weekend-10",
-      "title": "Allied Bank 10% OFF Weekend Visa & UnionPay Promo",
-      "provider": "Allied Bank Limited (ABL)",
+      "id": "ubl-monday-10",
+      "title": "UBL 10% OFF Monday Card & WIZ Prepaid Promo",
+      "provider": "UBL (United Bank Limited)",
       "category": "Site-Wide",
       "discountPercent": 10,
-      "maxCapPkr": 800,
-      "minSpendPkr": 2000,
+      "maxCapPkr": 1000,
+      "minSpendPkr": 2500,
       "voucherCode": null,
-      "scheduleLabel": "Every Saturday & Sunday",
+      "scheduleLabel": "Every Monday",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
-      "excerpt": "10% OFF up to PKR 800 on Allied Bank Visa & UnionPay Debit/Credit Cards.",
+      "excerpt": "10% OFF up to PKR 1,000 on UBL Visa/Mastercard Credit & Debit Cards and UBL WIZ Prepaid Card.",
       "sourceUrl": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "bop-fri-upi-10",
@@ -231,12 +231,12 @@
       "voucherCode": null,
       "scheduleLabel": "Fridays (MC) & Sun/Mon/Tue (UPI)",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "10% OFF up to PKR 1,000 on Bank of Punjab Mastercard & UnionPay Debit/Credit Cards.",
       "sourceUrl": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "habibmetro-soneri-islamic-silk",
@@ -249,12 +249,12 @@
       "voucherCode": null,
       "scheduleLabel": "Rotating Partner Bank Days",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "10% OFF up to PKR 1,000 across HabibMetro (0800-422-42), Soneri (111-766-374), BankIslami (111-247-111), Dubai Islamic (111-786-342), and Silkbank.",
       "sourceUrl": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "live-cd1bc957c58509cacb67",
@@ -267,12 +267,12 @@
       "voucherCode": null,
       "scheduleLabel": "Verified Live on Daraz.pk",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Live scraped from Easypaisa & Daraz Wallet Campaign Terms · Caps: PKR 1500",
       "sourceUrl": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/12-12/payment-promotions?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "live-f2ff51a42ed4a7962a8b",
@@ -285,12 +285,12 @@
       "voucherCode": "AskaridMart",
       "scheduleLabel": "Verified Live on Daraz.pk",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Live scraped from Daraz dMart Bank Payment Promotions · Voucher Codes: AskaridMart, FBLdMart, BAFLdMart · Limits: 3 transactions per customer per day, 8 transactions per customer per day, 1 transactions per customer per day",
       "sourceUrl": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/d-mart/payment-promotions?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "live-4d3c74216e41d14f7393",
@@ -303,12 +303,12 @@
       "voucherCode": null,
       "scheduleLabel": "Verified Live on Daraz.pk",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Live scraped from HBL Partner Page (Site-Wide) · Discounts: 10% OFF · Caps: PKR 500 · Limits: 4 transactions per card per day",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/hbl-bank?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "live-bea83a955552e6a95cbe",
@@ -321,12 +321,12 @@
       "voucherCode": null,
       "scheduleLabel": "Verified Live on Daraz.pk",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Live scraped from HBL 11.11 Mega Campaign Page · Discounts: 10% OFF, 25% OFF · Caps: PKR 1500",
       "sourceUrl": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/11-11-MC/hbl-bank-page?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "live-521fe509b25ee2a72848",
@@ -339,12 +339,12 @@
       "voucherCode": null,
       "scheduleLabel": "Verified Live on Daraz.pk",
       "status": "CURRENT",
-      "startDate": "2026-10-25",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "Live scraped from Bank Alfalah Partner Page · Limits: 2 transactions per card per day",
       "sourceUrl": "https://www.daraz.pk/alfalah-bank/",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "hbl-mega-25",
@@ -357,12 +357,12 @@
       "voucherCode": null,
       "scheduleLabel": "Mega Sale Peak Windows (5 PM - 7 PM PKT)",
       "status": "UPCOMING",
-      "startDate": "2026-10-28",
+      "startDate": "2026-10-27",
       "endDate": null,
       "excerpt": "Verified from Daraz 11.11 HBL Page: 25% OFF up to PKR 5,000 during peak campaign hours and 10% OFF up to PKR 1,500 all day.",
       "sourceUrl": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/11-11-MC/hbl-bank-page?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "unionpay-campaign-11",
@@ -380,7 +380,7 @@
       "excerpt": "11% OFF up to PKR 3,500 (Min Spend PKR 10,000) across all UnionPay cards during Daraz Mega Campaigns.",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "hbl-wednesday-10",
@@ -393,12 +393,12 @@
       "voucherCode": null,
       "scheduleLabel": "Every Wednesday (Max 4 tx/day)",
       "status": "UPCOMING",
-      "startDate": "2026-10-28",
+      "startDate": "2026-10-27",
       "endDate": null,
       "excerpt": "Verified from Daraz Live Terms: 10% OFF on HBL Visa & Mastercard Credit/Debit cards every Wednesday (Max 4 transactions/day).",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/hbl-bank?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "alfalah-tue-thu-10",
@@ -411,12 +411,12 @@
       "voucherCode": null,
       "scheduleLabel": "Every Tuesday & Thursday",
       "status": "UPCOMING",
-      "startDate": "2026-10-27",
+      "startDate": "2026-10-26",
       "endDate": null,
       "excerpt": "10% OFF up to PKR 1,000 on Bank Alfalah Visa, Mastercard & UnionPay Credit/Debit cards (Excludes PayPak).",
       "sourceUrl": "https://www.daraz.pk/alfalah-bank/",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "askari-saturday-10",
@@ -429,12 +429,12 @@
       "voucherCode": null,
       "scheduleLabel": "Every Saturday",
       "status": "UPCOMING",
-      "startDate": "2026-10-31",
+      "startDate": "2026-10-30",
       "endDate": null,
       "excerpt": "10% OFF up to PKR 1,000 on Askari Bank Mastercard Credit & UnionPay Debit Cards every Saturday.",
       "sourceUrl": "https://www.daraz.pk/wow/i/pk/help/10-10-askari-saturday",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "scb-friday-10",
@@ -447,12 +447,12 @@
       "voucherCode": null,
       "scheduleLabel": "Every Friday",
       "status": "UPCOMING",
-      "startDate": "2026-10-30",
+      "startDate": "2026-10-29",
       "endDate": null,
       "excerpt": "Verified from Daraz Live Terms: 10% OFF up to PKR 1,000 on Standard Chartered Credit, Debit & Saadiq cards.",
       "sourceUrl": "https://www.daraz.pk/standard-chartered-bank/",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "meezan-thursday-10",
@@ -465,30 +465,30 @@
       "voucherCode": null,
       "scheduleLabel": "Every Thursday",
       "status": "UPCOMING",
-      "startDate": "2026-10-29",
+      "startDate": "2026-10-28",
       "endDate": null,
       "excerpt": "10% OFF up to PKR 1,000 on Meezan Bank Titanium Mastercard & Visa Debit Cards every Thursday.",
       "sourceUrl": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
-      "id": "ubl-monday-10",
-      "title": "UBL 10% OFF Monday Card & WIZ Prepaid Promo",
-      "provider": "UBL (United Bank Limited)",
+      "id": "allied-weekend-10",
+      "title": "Allied Bank 10% OFF Weekend Visa & UnionPay Promo",
+      "provider": "Allied Bank Limited (ABL)",
       "category": "Site-Wide",
       "discountPercent": 10,
-      "maxCapPkr": 1000,
-      "minSpendPkr": 2500,
+      "maxCapPkr": 800,
+      "minSpendPkr": 2000,
       "voucherCode": null,
-      "scheduleLabel": "Every Monday",
+      "scheduleLabel": "Every Saturday & Sunday",
       "status": "UPCOMING",
-      "startDate": "2026-10-26",
+      "startDate": "2026-10-30",
       "endDate": null,
-      "excerpt": "10% OFF up to PKR 1,000 on UBL Visa/Mastercard Credit & Debit Cards and UBL WIZ Prepaid Card.",
+      "excerpt": "10% OFF up to PKR 800 on Allied Bank Visa & UnionPay Debit/Credit Cards.",
       "sourceUrl": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     },
     {
       "id": "js-bank-wed-sat-10",
@@ -501,12 +501,12 @@
       "voucherCode": null,
       "scheduleLabel": "Wednesday & Saturday",
       "status": "UPCOMING",
-      "startDate": "2026-10-28",
+      "startDate": "2026-10-27",
       "endDate": null,
       "excerpt": "10% OFF up to PKR 1,000 on JS Bank Visa Silver/Gold/Platinum Credit, Visa Debit & UnionPay cards.",
       "sourceUrl": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1",
       "firstSeenAt": "2026-10-24T21:22:03.165Z",
-      "lastSeenAt": "2026-10-25T18:21:15.885Z"
+      "lastSeenAt": "2026-10-25T19:00:38.868Z"
     }
   ],
   "notified": [
@@ -537,6 +537,8 @@
     "scb-friday-10:UPCOMING:10:",
     "meezan-thursday-10:UPCOMING:10:",
     "ubl-monday-10:UPCOMING:10:",
-    "js-bank-wed-sat-10:UPCOMING:10:"
+    "js-bank-wed-sat-10:UPCOMING:10:",
+    "ubl-monday-10:CURRENT:10:",
+    "allied-weekend-10:UPCOMING:10:"
   ]
 }
