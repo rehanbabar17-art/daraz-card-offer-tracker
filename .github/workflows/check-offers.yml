@@ -2,7 +2,6 @@ name: Check Daraz Card Offers
 
 on:
   schedule:
-    # Runs at 00:05 PKT (19:05 UTC) when daily bank vouchers replenish, plus every 4 hours
     - cron: '5 19,23,3,7,11,15 * * *'
   workflow_dispatch:
 
@@ -24,7 +23,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Scan Daraz.pk bank, UnionPay & wallet offers and send ntfy alerts
+      - name: Scan live Daraz.pk GCP payment channels and send ntfy alerts
         run: npm run check
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'darazcardsalesRB17247365Dtqtqtqty' }}
@@ -34,5 +33,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/state.json
-          git diff --cached --quiet || git commit -m 'Update Daraz offer history'
+          git diff --cached --quiet || git commit -m 'Update Daraz live GCP offer history'
           git push

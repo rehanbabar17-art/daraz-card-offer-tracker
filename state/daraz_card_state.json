@@ -1,0 +1,439 @@
+{
+  "updated_at": "2026-10-26T07:21:11.788Z",
+  "note": "Live Daraz GCP Payment Promotions Only - All stale static ICMS pages removed",
+  "live_offers_count": 12,
+  "offers": [
+    {
+      "id": "zindigi-live-gcp-25",
+      "bankName": "JS Zindigi (Digital Wallet & Debit Card)",
+      "bankShort": "ZINDIGI",
+      "issuerType": "Digital Wallet",
+      "title": "JS Zindigi Up to 25% OFF Collectible Voucher",
+      "discountPercent": 25,
+      "maxCapPkr": 1000,
+      "minSpendPkr": 500,
+      "cardTypes": [
+        "Prepaid / Wallet",
+        "Debit Card"
+      ],
+      "networks": [
+        "Wallet / Account",
+        "Visa",
+        "Mastercard"
+      ],
+      "category": "Digital Wallet & App",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "scheduleLabel": "Active on Digital Payments Hub",
+      "maxTxPerDay": 1,
+      "helpline": "0800-011-22",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/zindigi",
+      "termsSummary": [
+        "Live GCP Terms (/payment-promotions/termsandconditions): Up to 25% Off with max cap of Rs. 1,000/-.",
+        "Maximum of 1 voucher per customer.",
+        "Must collect voucher on Daraz Digital Payments page before checkout."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "jazzcash-live-gcp-10",
+      "bankName": "JazzCash (Mobile Wallet & Debit Card)",
+      "bankShort": "JAZZCASH",
+      "issuerType": "Digital Wallet",
+      "title": "JazzCash Up to 10% OFF Weekly Collectible Voucher",
+      "discountPercent": 10,
+      "maxCapPkr": 1000,
+      "minSpendPkr": 500,
+      "cardTypes": [
+        "Prepaid / Wallet",
+        "Debit Card"
+      ],
+      "networks": [
+        "Wallet / Account",
+        "Visa",
+        "Mastercard"
+      ],
+      "category": "Digital Wallet & App",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "scheduleLabel": "Active (Max 2 Vouchers / Week)",
+      "maxTxPerDay": 2,
+      "helpline": "4444 / 111-124-444",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "termsSummary": [
+        "Live GCP Terms (/payment-promotions/termsandconditions): Up to 10% Off with Max Cap Rs. 1,000/-.",
+        "Maximum of two (2) vouchers per customer per week.",
+        "Must collect the JazzCash voucher on Daraz before paying at checkout."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "hbl-wednesday-live-gcp",
+      "bankName": "Habib Bank Limited (HBL)",
+      "bankShort": "HBL",
+      "issuerType": "Commercial Bank",
+      "title": "HBL Wednesday 10% OFF Debit & Credit Card Voucher",
+      "discountPercent": 10,
+      "maxCapPkr": 900,
+      "minSpendPkr": 500,
+      "cardTypes": [
+        "Credit Card",
+        "Debit Card"
+      ],
+      "networks": [
+        "Visa",
+        "Mastercard"
+      ],
+      "category": "Live GCP Bank Voucher",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        3
+      ],
+      "scheduleLabel": "Every Wednesday (Live on /hblwednesday)",
+      "maxTxPerDay": 2,
+      "helpline": "111-111-425",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday",
+      "termsSummary": [
+        "Live GCP Voucher (/payment-promotions/hblwednesday): \"HBL Debit/Credit Card — 10% Off, Min. Spend Rs.0, Capped at Rs.900\".",
+        "Live GCP Terms (/payment-promotions/termsandconditions): Up to 10% Off with Max Cap Rs. 900/-, maximum of 2 vouchers per customer.",
+        "Collect voucher on the HBL Wednesday page prior to checkout."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "askari-saturday-live-gcp",
+      "bankName": "Askari Bank (AKBL)",
+      "bankShort": "AKBL",
+      "issuerType": "Commercial Bank",
+      "title": "Askari Bank Saturday 10% OFF Card & EMI Voucher",
+      "discountPercent": 10,
+      "maxCapPkr": 1000,
+      "minSpendPkr": 500,
+      "cardTypes": [
+        "Credit Card",
+        "Debit Card"
+      ],
+      "networks": [
+        "Mastercard",
+        "UnionPay"
+      ],
+      "category": "Live GCP Bank Voucher",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        6
+      ],
+      "scheduleLabel": "Every Saturday (Live on /askarisaturday)",
+      "maxTxPerDay": 3,
+      "helpline": "111-000-787",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday",
+      "termsSummary": [
+        "Live GCP Voucher (/payment-promotions/askarisaturday): \"Askari Bank Card — 10% Off, Min. Spend Rs.0, Capped at Rs.1000\" & \"Askari Bank EMI — 10% Off, Capped at Rs.1000\".",
+        "Live GCP Terms (/payment-promotions/termsandconditions): Up to 10% Off with max cap of Rs. 1,000/-, maximum of 3 vouchers per customer.",
+        "Collectible directly on the Askari Saturday GCP channel page."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "scb-sunday-live-gcp",
+      "bankName": "Standard Chartered Bank (SCB)",
+      "bankShort": "SCB",
+      "issuerType": "Commercial Bank",
+      "title": "SCB Sunday All-Deals 10% OFF Card Voucher",
+      "discountPercent": 10,
+      "maxCapPkr": 1000,
+      "minSpendPkr": 500,
+      "cardTypes": [
+        "Credit Card",
+        "Debit Card"
+      ],
+      "networks": [
+        "Visa",
+        "Mastercard"
+      ],
+      "category": "Live GCP Bank Voucher",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        0
+      ],
+      "scheduleLabel": "Every Sunday (Live on /scb-sunday-all-deals)",
+      "maxTxPerDay": 2,
+      "helpline": "111-002-002",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals",
+      "termsSummary": [
+        "Live GCP Channel (/payment-promotions/scb-sunday-all-deals): Dedicated SCB Sunday categories across Electronics, Fashion & Beauty, Lifestyle, and Groceries.",
+        "Live GCP Terms (/payment-promotions/termsandconditions): Up to 10% Off with Max cap of Rs. 1,000/-, maximum of 2 vouchers per customer.",
+        "Must collect SCB voucher before checkout."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "meezan-live-gcp-10",
+      "bankName": "Meezan Bank (MEBL)",
+      "bankShort": "MEBL",
+      "issuerType": "Islamic Bank",
+      "title": "Meezan Bank Up to 10% OFF High-Cap Card Voucher",
+      "discountPercent": 10,
+      "maxCapPkr": 10000,
+      "minSpendPkr": 1000,
+      "cardTypes": [
+        "Debit Card"
+      ],
+      "networks": [
+        "Mastercard",
+        "Visa"
+      ],
+      "category": "Live GCP Bank Voucher",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        4,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6
+      ],
+      "scheduleLabel": "Active on Meezan Deals Page (Max 2/day)",
+      "maxTxPerDay": 2,
+      "helpline": "111-331-331",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/meezan-bank-all-deals-page",
+      "termsSummary": [
+        "Live GCP Terms (/payment-promotions/termsandconditions): Up to 10% Off with Max Cap Rs. 10,000/-.",
+        "Maximum of two (2) vouchers per customer per day.",
+        "Linked directly from the Daraz Digital Payments hub (/meezan-bank-all-deals-page)."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "ubl-live-gcp-10",
+      "bankName": "United Bank Limited (UBL)",
+      "bankShort": "UBL",
+      "issuerType": "Commercial Bank",
+      "title": "UBL Up to 10% OFF Collectible Card Voucher",
+      "discountPercent": 10,
+      "maxCapPkr": 1000,
+      "minSpendPkr": 500,
+      "cardTypes": [
+        "Credit Card",
+        "Debit Card"
+      ],
+      "networks": [
+        "Visa",
+        "Mastercard",
+        "UnionPay"
+      ],
+      "category": "Live GCP Bank Voucher",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        1,
+        0,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "scheduleLabel": "Active on Digital Payments Hub (Max 1/day)",
+      "maxTxPerDay": 1,
+      "helpline": "111-825-111",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "termsSummary": [
+        "Live GCP Terms (/payment-promotions/termsandconditions): Up to 10% Off with Max Cap Rs. 1,000/-.",
+        "Maximum of One (1) voucher per customer per day.",
+        "Collectible voucher must be claimed prior to checkout."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "upi-live-gcp-8",
+      "bankName": "UnionPay International (All Pakistani UPI Cards)",
+      "bankShort": "UPI",
+      "issuerType": "Card Network",
+      "title": "UnionPay (UPI) Up to 8% OFF Site-Wide Voucher",
+      "discountPercent": 8,
+      "maxCapPkr": 1000,
+      "minSpendPkr": 500,
+      "cardTypes": [
+        "Debit Card",
+        "Credit Card"
+      ],
+      "networks": [
+        "UnionPay"
+      ],
+      "category": "Card Network (UPI / Visa)",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "scheduleLabel": "Active on Digital Payments Hub (Max 1/customer)",
+      "maxTxPerDay": 1,
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "termsSummary": [
+        "Live GCP Terms (/payment-promotions/termsandconditions): \"UPI: 1. Upto 8% Off with max cap of Rs 1,000/-\".",
+        "Maximum of One (1) voucher per customer.",
+        "Applicable on e-commerce enabled UnionPay cards across Pakistani partner banks."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "mcb-islamic-unionpay-2026",
+      "bankName": "MCB Islamic Bank (UnionPay Debit)",
+      "bankShort": "MCB",
+      "issuerType": "Islamic Bank",
+      "title": "MCB Islamic UnionPay 12% OFF (Sun–Tue) / 20% New User",
+      "discountPercent": 12,
+      "maxCapPkr": 1500,
+      "minSpendPkr": 1000,
+      "cardTypes": [
+        "Debit Card"
+      ],
+      "networks": [
+        "UnionPay"
+      ],
+      "category": "Card Network (UPI / Visa)",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        0,
+        1,
+        2
+      ],
+      "scheduleLabel": "Every Sunday, Monday & Tuesday (Valid thru Dec 2026)",
+      "maxTxPerDay": 1,
+      "helpline": "111-000-622",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments",
+      "termsSummary": [
+        "Verified Active Bank Alliance (Valid through Dec 31, 2026): 12% OFF for existing users every Sunday, Monday & Tuesday.",
+        "20% OFF (Max Cap PKR 1,500, Min Spend PKR 1,000) on first transaction for new UnionPay users."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "mcb-visa-weekend-2026",
+      "bankName": "MCB Bank (Visa Signature / Platinum / Gold)",
+      "bankShort": "MCB",
+      "issuerType": "Commercial Bank",
+      "title": "MCB Visa Weekend 15% / 10% / 8% OFF Voucher",
+      "discountPercent": 15,
+      "maxCapPkr": 1500,
+      "minSpendPkr": 3000,
+      "cardTypes": [
+        "Debit Card",
+        "Credit Card"
+      ],
+      "networks": [
+        "Visa"
+      ],
+      "category": "Live GCP Bank Voucher",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        5,
+        6,
+        0
+      ],
+      "scheduleLabel": "Every Friday, Saturday & Sunday (Min Spend Rs. 3,000)",
+      "maxTxPerDay": 1,
+      "helpline": "111-000-622",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments",
+      "termsSummary": [
+        "Verified Active Bank Alliance: Valid every Friday, Saturday & Sunday (Min Order Value PKR 3,000).",
+        "Visa Signature Debit: 15% OFF (Cap PKR 1,500) · Visa Platinum Credit/Debit: 10% OFF (Cap PKR 1,000) · Gold/Classic: 8% OFF (Cap PKR 800)."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "visa-network-live-gcp-10",
+      "bankName": "Visa Network (All Pakistani Visa Cards)",
+      "bankShort": "VISA",
+      "issuerType": "Card Network",
+      "title": "Visa Card Up to 10% OFF Collectible Voucher",
+      "discountPercent": 10,
+      "maxCapPkr": 900,
+      "minSpendPkr": 500,
+      "cardTypes": [
+        "Credit Card",
+        "Debit Card"
+      ],
+      "networks": [
+        "Visa"
+      ],
+      "category": "Card Network (UPI / Visa)",
+      "mechanism": "Collectible Voucher",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "scheduleLabel": "Active on Digital Payments Hub (Max 2/customer)",
+      "maxTxPerDay": 2,
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "termsSummary": [
+        "Live GCP Terms (/payment-promotions/termsandconditions): \"Visa: 1. Upto 10% Off with Max cap of Rs 900/-\".",
+        "Maximum of two (2) vouchers per customer.",
+        "Must collect voucher on Daraz Digital Payments hub before checkout."
+      ],
+      "verifiedFromLiveHtml": true
+    },
+    {
+      "id": "bank-emi-installments-live-gcp",
+      "bankName": "0% Markup EMI Plans (SCB, UBL, Alfalah, MCB, Askari, Faysal)",
+      "bankShort": "EMI",
+      "issuerType": "Commercial Bank",
+      "title": "0% Markup Monthly Installments + Up to 10% OFF EMI Voucher",
+      "discountPercent": 10,
+      "maxCapPkr": 1000,
+      "minSpendPkr": 10000,
+      "cardTypes": [
+        "Credit Card"
+      ],
+      "networks": [
+        "Visa",
+        "Mastercard"
+      ],
+      "category": "0% EMI / Installment Plan",
+      "mechanism": "Auto Checkout / EMI",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "scheduleLabel": "Daily on Eligible Orders >= PKR 10,000",
+      "maxTxPerDay": 1,
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments",
+      "termsSummary": [
+        "Live on Digital Payments Hub (/scb-emi, /ubl-emi, /bank-alfalah-emi, /mcb-emi, /askari-bank-emi, /faysal-bank-emi).",
+        "0% markup up to 12 months on credit cards + Askari Bank EMI 10% Off (Capped at Rs. 1,000) collectible voucher."
+      ],
+      "verifiedFromLiveHtml": true
+    }
+  ]
+}
