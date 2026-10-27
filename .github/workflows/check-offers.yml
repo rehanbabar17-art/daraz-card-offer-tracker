@@ -1,37 +1,45 @@
-name: Check Daraz Card Offers
+name: Check Daraz Card Offers (Strict Live DOM Voucher Verification)
 
 on:
   schedule:
-    - cron: '5 19,23,3,7,11,15 * * *'
+    - cron: '15 */6 * * *'
   workflow_dispatch:
+    inputs:
+      force_notify:
+        description: 'Send ntfy push notification even if state is unchanged'
+        required: false
+        default: 'true'
 
 permissions:
   contents: write
 
-concurrency:
-  group: daraz-offers
-  cancel-in-progress: false
-
 jobs:
-  scan:
+  track-live-gcp-offers:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - name: Scan live Daraz.pk GCP payment channels and send ntfy alerts
-        run: npm run check
+          node-version: '20'
+
+      - name: Install dependencies & Chromium
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Run Strict DOM Voucher Tracker
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'darazcardsalesRB17247365Dtqtqtqty' }}
-          NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
-      - name: Save offer history
+          FORCE_NOTIFY: ${{ github.event.inputs.force_notify || 'false' }}
+        run: npx tsx src/tracker.ts
+
+      - name: Commit updated live offer state
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/state.json
-          git diff --cached --quiet || git commit -m 'Update Daraz live GCP offer history'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/state.json state/daraz_card_state.json || true
+          git diff --staged --quiet || git commit -m "chore: update verified live Daraz DOM voucher state [skip ci]"
           git push
