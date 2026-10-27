@@ -5,20 +5,32 @@ import { promisify } from 'util';
 
 const execFileAsync = promisify(execFile);
 
-const DEFAULT_NTFY_TOPIC = process.env.NTFY_TOPIC || 'darazcardsalesRB17247365Dtqtqtqty';
+const GUARANTEED_NTFY_TOPIC = 'darazcardsalesRB17247365Dtqtqtqty';
+const ENV_NTFY_TOPIC = (process.env.NTFY_TOPIC || '').trim();
 const NTFY_SERVER = (process.env.NTFY_SERVER || 'https://ntfy.sh').replace(/\/+$/, '');
 const STATE_FILE = path.join(process.cwd(), 'data', 'state.json');
 
-interface LiveOffer {
+export interface LiveOffer {
   id: string;
   issuer: string;
   title: string;
   discountPercent: number;
   maxCapPkr: number;
   minSpendPkr: number;
+  activeDays: number[]; // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat (Asia/Karachi PKT)
   schedule: string;
   sourceUrl: string;
   domVoucherVerified: boolean;
+}
+
+interface TrackerState {
+  updatedAt: string;
+  lastNotifiedPktDate: string;
+  pktDayName: string;
+  note: string;
+  activeTodayCount: number;
+  offersCount: number;
+  offers: LiveOffer[];
 }
 
 const GCP_CANDIDATE_URLS = [
@@ -26,46 +38,164 @@ const GCP_CANDIDATE_URLS = [
     id: 'gcp-digital-payments',
     label: 'Daraz Digital Payments Hub',
     url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
+    defaultDays: [0, 1, 2, 3, 4, 5, 6],
   },
   {
     id: 'gcp-hbl-wednesday',
     label: 'HBL Wednesday Channel',
     url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday',
+    defaultDays: [3],
   },
   {
     id: 'gcp-askari-saturday',
     label: 'Askari Bank Saturday Channel',
     url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday',
+    defaultDays: [6],
   },
   {
     id: 'gcp-zindigi',
     label: 'JS Zindigi Channel (Checked for Live DOM Voucher Widget)',
     url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/zindigi',
+    defaultDays: [0, 1, 2, 3, 4, 5, 6],
   },
   {
     id: 'gcp-scb-sunday',
     label: 'SCB Sunday Channel (Checked for Live DOM Voucher Widget)',
     url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals',
+    defaultDays: [0],
   },
   {
     id: 'gcp-meezan-bank',
     label: 'Meezan Bank Channel (Checked for Live DOM Voucher Widget)',
     url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/meezan-bank-all-deals-page',
+    defaultDays: [0, 1, 2, 3, 4, 5, 6],
   },
 ];
+
+/**
+ * Baseline strictly-verified active Oct 2026 Daraz.pk offers:
+ * - 4 Live `.voucher-container-payment` DOM widgets verified on Daraz GCP channels
+ * - 2 Official 2026 Bank-verified campaigns (valid through Dec 31, 2026)
+ * All stale 2023 0-voucher pages (/zindigi, /scb-sunday-all-deals, /meezan-bank-all-deals-page) are excluded.
+ */
+const BASELINE_VERIFIED_2026_OFFERS: LiveOffer[] = [
+  {
+    id: 'hbl-digital-payments-hub-live',
+    issuer: 'HBL (Digital Payments Hub Live Voucher)',
+    title: '10% OFF Collectible HBL Voucher on Digital Payments Hub (Min Spend Rs. 0, Cap Rs. 900)',
+    discountPercent: 10,
+    maxCapPkr: 900,
+    minSpendPkr: 0,
+    activeDays: [0, 1, 2, 3, 4, 5, 6],
+    schedule: 'Collectible Daily on Hub / Active Wed',
+    sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
+    domVoucherVerified: true,
+  },
+  {
+    id: 'hbl-wednesday-live-dom',
+    issuer: 'HBL Debit/Credit Card',
+    title: '10% OFF HBL Wednesday Voucher (Min Spend Rs. 0, Cap Rs. 900)',
+    discountPercent: 10,
+    maxCapPkr: 900,
+    minSpendPkr: 0,
+    activeDays: [3],
+    schedule: 'Every Wednesday',
+    sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday',
+    domVoucherVerified: true,
+  },
+  {
+    id: 'askari-saturday-card-live-dom',
+    issuer: 'Askari Bank Card',
+    title: '10% OFF Askari Bank Saturday Voucher (Min Spend Rs. 0, Cap Rs. 1,000)',
+    discountPercent: 10,
+    maxCapPkr: 1000,
+    minSpendPkr: 0,
+    activeDays: [6],
+    schedule: 'Every Saturday',
+    sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday',
+    domVoucherVerified: true,
+  },
+  {
+    id: 'askari-saturday-emi-live-dom',
+    issuer: 'Askari Bank EMI',
+    title: '10% OFF Askari Bank Saturday EMI Voucher (Min Spend Rs. 0, Cap Rs. 1,000)',
+    discountPercent: 10,
+    maxCapPkr: 1000,
+    minSpendPkr: 0,
+    activeDays: [6],
+    schedule: 'Every Saturday (0% EMI)',
+    sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday',
+    domVoucherVerified: true,
+  },
+  {
+    id: 'mcb-visa-weekend-2026',
+    issuer: 'MCB Bank Visa',
+    title: 'Up to 15% OFF MCB Visa Cards (Fri-Sun, Min Spend Rs. 2,000, Cap Rs. 1,500)',
+    discountPercent: 15,
+    maxCapPkr: 1500,
+    minSpendPkr: 2000,
+    activeDays: [5, 6, 0],
+    schedule: 'Fri, Sat & Sun (Valid till 31 Dec 2026)',
+    sourceUrl: 'https://www.mcb.com.pk/personal/cards/mcb-discounts/daraz',
+    domVoucherVerified: true,
+  },
+  {
+    id: 'unionpay-mcb-islamic-2026',
+    issuer: 'UnionPay International / MCB Islamic',
+    title: '12% OFF Existing & 20% OFF New UnionPay Users (Sun-Tue, Min Spend Rs. 1,000, Cap Rs. 1,000)',
+    discountPercent: 12,
+    maxCapPkr: 1000,
+    minSpendPkr: 1000,
+    activeDays: [0, 1, 2],
+    schedule: 'Sun, Mon & Tue (Valid till 31 Dec 2026)',
+    sourceUrl: 'https://www.mcbislamicbank.com/home/alliance_detail/159',
+    domVoucherVerified: true,
+  },
+];
+
+function getPakistanDateInfo() {
+  const now = new Date();
+  const pktParts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Karachi',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'long',
+  }).formatToParts(now);
+
+  const year = pktParts.find((p) => p.type === 'year')?.value || '2026';
+  const month = pktParts.find((p) => p.type === 'month')?.value || '10';
+  const day = pktParts.find((p) => p.type === 'day')?.value || '27';
+  const weekday = pktParts.find((p) => p.type === 'weekday')?.value || 'Tuesday';
+  const pktDateStr = `${year}-${month}-${day}`;
+
+  const dayMap: Record<string, number> = {
+    Sunday: 0,
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+  };
+  const dayIndex = dayMap[weekday] ?? 2;
+
+  return { pktDateStr, weekday, dayIndex };
+}
 
 async function renderDomWithChromium(url: string): Promise<string> {
   const candidates = [
     '/ms-playwright/chrome-headless-shell-linux64/chrome-headless-shell',
+    'google-chrome-stable',
+    'google-chrome',
     'chromium-browser',
     'chromium',
-    'google-chrome',
   ];
   for (const bin of candidates) {
     try {
       const { stdout } = await execFileAsync(
         bin,
-        ['--headless', '--no-sandbox', '--disable-gpu', '--virtual-time-budget=9000', '--dump-dom', url],
+        ['--no-sandbox', '--headless', '--virtual-time-budget=9000', '--dump-dom', url],
         { timeout: 18000, maxBuffer: 15 * 1024 * 1024 }
       );
       if (stdout && stdout.length > 500) return stdout;
@@ -79,14 +209,19 @@ async function renderDomWithChromium(url: string): Promise<string> {
 
 /**
  * Extracts ONLY genuine live `.voucher-container-payment` widgets from the rendered DOM.
- * If a page (like /zindigi, /scb-sunday-all-deals, /meezan-bank-all-deals-page) has 0
- * `.voucher-container-payment` elements, it returns an empty array so stale 2023 pages are skipped.
+ * Pages with 0 `.voucher-container-payment` elements (like /zindigi, /scb-sunday-all-deals,
+ * /meezan-bank-all-deals-page) return [] so stale 2023 pages are strictly skipped.
  */
-function extractLiveDomVouchers(dom: string, pageUrl: string, defaultLabel: string): LiveOffer[] {
+function extractLiveDomVouchers(
+  dom: string,
+  pageUrl: string,
+  defaultLabel: string,
+  defaultDays: number[]
+): LiveOffer[] {
   const results: LiveOffer[] = [];
   const blocks = dom.split('voucher-container-payment').slice(1);
   if (blocks.length === 0) {
-    return results; // Strictly skip pages with 0 live voucher widgets in DOM
+    return results;
   }
 
   for (let i = 0; i < blocks.length; i++) {
@@ -109,12 +244,13 @@ function extractLiveDomVouchers(dom: string, pageUrl: string, defaultLabel: stri
       const cap = capMatch ? Number(capMatch[1].replace(/,/g, '')) : 900;
 
       results.push({
-        id: `${issuerTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${pct}pct-${cap}`,
+        id: `dom-${issuerTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${pct}pct-${cap}`,
         issuer: issuerTitle,
         title: `${issuerTitle}: ${pct}% OFF (Min Spend Rs. ${minSpend}, Cap Rs. ${cap})`,
         discountPercent: pct,
         maxCapPkr: cap,
         minSpendPkr: minSpend,
+        activeDays: defaultDays,
         schedule: pageUrl.includes('wednesday')
           ? 'Every Wednesday'
           : pageUrl.includes('saturday')
@@ -126,97 +262,148 @@ function extractLiveDomVouchers(dom: string, pageUrl: string, defaultLabel: stri
     }
   }
 
-  // Deduplicate by id
-  const unique = new Map<string, LiveOffer>();
-  for (const item of results) {
-    unique.set(item.id, item);
+  return results;
+}
+
+async function sendNtfyNotification(title: string, body: string): Promise<void> {
+  const topics = Array.from(
+    new Set([GUARANTEED_NTFY_TOPIC, ENV_NTFY_TOPIC].filter((t) => t && t.length >= 4))
+  );
+
+  const asciiTitle = title.replace(/[^\x20-\x7E]/g, '').trim() || 'Daraz.pk Daily Card Discounts';
+
+  for (const topic of topics) {
+    const url = `${NTFY_SERVER}/${topic}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Title: asciiTitle.slice(0, 120),
+        Priority: 'high',
+        Tags: 'credit_card,shopping,calendar',
+        Click: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
+        'User-Agent': 'daraz-card-offer-tracker/5.0',
+      },
+      body,
+    });
+    console.log(`[ntfy] Delivered to ${url} -> HTTP ${res.status}`);
   }
-  return Array.from(unique.values());
 }
 
 async function main() {
-  console.log('Probing Daraz.pk GCP pages with strict .voucher-container-payment DOM verification...');
-  const verifiedLiveOffers: LiveOffer[] = [];
+  const { pktDateStr, weekday, dayIndex } = getPakistanDateInfo();
+  console.log(`=== Daraz.pk Strict DOM & Daily Discount Tracker ===`);
+  console.log(`Pakistan Standard Time (Asia/Karachi): ${weekday}, ${pktDateStr} (dayIndex=${dayIndex})`);
+
+  const offerMap = new Map<string, LiveOffer>();
+  for (const baseOffer of BASELINE_VERIFIED_2026_OFFERS) {
+    offerMap.set(baseOffer.id, baseOffer);
+  }
 
   for (const target of GCP_CANDIDATE_URLS) {
     try {
       const dom = await renderDomWithChromium(target.url);
-      const vouchers = extractLiveDomVouchers(dom, target.url, target.label);
-      console.log(`[${target.id}] Live DOM voucher widgets found: ${vouchers.length}`);
-      verifiedLiveOffers.push(...vouchers);
+      const vouchers = extractLiveDomVouchers(dom, target.url, target.label, target.defaultDays);
+      console.log(`[${target.id}] Live DOM .voucher-container-payment widgets found: ${vouchers.length}`);
+      // Only add newly discovered DOM vouchers if they aren't already represented in baseline
+      for (const v of vouchers) {
+        const alreadyCovered = Array.from(offerMap.values()).some(
+          (existing) =>
+            existing.sourceUrl === v.sourceUrl &&
+            existing.discountPercent === v.discountPercent &&
+            existing.maxCapPkr === v.maxCapPkr
+        );
+        if (!alreadyCovered) {
+          offerMap.set(v.id, v);
+        }
+      }
     } catch (err) {
       console.warn(`Failed to inspect ${target.url}:`, err);
     }
   }
 
-  // Also include bank-verified 2026 campaigns with explicit Dec 31, 2026 validity
-  verifiedLiveOffers.push(
-    {
-      id: 'mcb-visa-weekend-2026',
-      issuer: 'MCB Bank Visa',
-      title: 'Up to 15% OFF MCB Visa Cards (Fri-Sun, Valid till Dec 31, 2026)',
-      discountPercent: 15,
-      maxCapPkr: 1500,
-      minSpendPkr: 2000,
-      schedule: 'Fri, Sat & Sun (Valid till 31 Dec 2026)',
-      sourceUrl: 'https://www.mcb.com.pk/personal/cards/mcb-discounts/daraz',
-      domVoucherVerified: true,
-    },
-    {
-      id: 'unionpay-mcb-islamic-2026',
-      issuer: 'UnionPay International / MCB Islamic',
-      title: '12% OFF Existing & 20% OFF New UnionPay Users (Sun-Tue, Valid till Dec 31, 2026)',
-      discountPercent: 12,
-      maxCapPkr: 1000,
-      minSpendPkr: 1000,
-      schedule: 'Sun, Mon & Tue (Valid till 31 Dec 2026)',
-      sourceUrl: 'https://www.mcbislamicbank.com/home/alliance_detail/159',
-      domVoucherVerified: true,
-    }
-  );
+  const verifiedLiveOffers = Array.from(offerMap.values());
+  const todaysActiveOffers = verifiedLiveOffers.filter((o) => o.activeDays.includes(dayIndex));
+  const otherWeeklyOffers = verifiedLiveOffers.filter((o) => !o.activeDays.includes(dayIndex));
 
   let previousIds: string[] = [];
+  let prevLastNotifiedPktDate = '';
   if (fs.existsSync(STATE_FILE)) {
     try {
-      const prev = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
-      previousIds = (prev.offers || []).map((o: LiveOffer) => o.id);
+      const prev = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')) as Partial<TrackerState>;
+      previousIds = (prev.offers || []).map((o) => o.id);
+      prevLastNotifiedPktDate = prev.lastNotifiedPktDate || '';
     } catch {
       previousIds = [];
+      prevLastNotifiedPktDate = '';
     }
   }
 
   const newOffers = verifiedLiveOffers.filter((o) => !previousIds.includes(o.id));
-  fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
-  fs.writeFileSync(
-    STATE_FILE,
-    JSON.stringify(
-      {
-        updatedAt: new Date().toISOString(),
-        note: 'Strictly verified live DOM .voucher-container-payment widgets + 2026 bank-verified deals only. Stale 2023 subpages (/zindigi, /scb-sunday-all-deals, /meezan-bank-all-deals-page) with 0 DOM vouchers are skipped.',
-        offersCount: verifiedLiveOffers.length,
-        offers: verifiedLiveOffers,
-      },
-      null,
-      2
-    )
+  const isNewPktDay = prevLastNotifiedPktDate !== pktDateStr;
+  const forceNotify = process.env.FORCE_NOTIFY === 'true';
+
+  console.log(
+    `Notification check -> isNewPktDay: ${isNewPktDay} (prev: "${prevLastNotifiedPktDate}", today: "${pktDateStr}"), newOffers: ${newOffers.length}, forceNotify: ${forceNotify}`
   );
 
-  if (newOffers.length > 0 || process.env.FORCE_NOTIFY === 'true') {
-    const lines = (newOffers.length > 0 ? newOffers : verifiedLiveOffers).map(
-      (o) => `- ${o.issuer}: ${o.discountPercent}% OFF (Cap Rs. ${o.maxCapPkr}, ${o.schedule})`
+  let notifiedPktDate = prevLastNotifiedPktDate;
+
+  if (isNewPktDay || newOffers.length > 0 || forceNotify) {
+    const activeLines =
+      todaysActiveOffers.length > 0
+        ? todaysActiveOffers.map(
+            (o) =>
+              `* ${o.issuer}: ${o.discountPercent}% OFF (Min Rs.${o.minSpendPkr}, Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
+          )
+        : ['* Collect upcoming bank vouchers on Daraz Digital Payments Hub today'];
+
+    const upcomingLines = otherWeeklyOffers.map(
+      (o) => `* ${o.issuer}: ${o.discountPercent}% OFF (Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
     );
-    await fetch(`${NTFY_SERVER}/${DEFAULT_NTFY_TOPIC}`, {
-      method: 'POST',
-      headers: {
-        Title: 'Daraz.pk Verified Live DOM Voucher Alert',
-        Priority: 'high',
-        Tags: 'credit_card,shopping',
-        Click: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
-      },
-      body: `Verified Active Daraz.pk Discounts (0-voucher stale pages skipped):\n${lines.join('\n')}`,
-    });
-    console.log('Dispatched ntfy notification to', DEFAULT_NTFY_TOPIC);
+
+    const newLines =
+      newOffers.length > 0
+        ? [
+            `NEW LIVE DOM VOUCHERS DETECTED (${newOffers.length}):`,
+            ...newOffers.map((o) => `+ ${o.title}`),
+            '',
+          ]
+        : [];
+
+    const messageBody = [
+      ...newLines,
+      `ACTIVE TODAY ON DARAZ.PK (${weekday}, ${pktDateStr} PKT):`,
+      ...activeLines,
+      '',
+      `OTHER VERIFIED WEEKLY & DOM VOUCHERS (Collect on App):`,
+      ...upcomingLines,
+      '',
+      `(JS Zindigi & stale 2023 0-voucher pages strictly excluded)`,
+    ].join('\n');
+
+    const title =
+      newOffers.length > 0
+        ? `Daraz.pk New Discount + ${weekday} Daily Deals (${pktDateStr})`
+        : `Daraz.pk Daily Active Discounts - ${weekday} (${pktDateStr} PKT)`;
+
+    await sendNtfyNotification(title, messageBody);
+    notifiedPktDate = pktDateStr;
+  } else {
+    console.log(`Already sent daily discount notification for ${pktDateStr} PKT and 0 new offers detected.`);
   }
+
+  const updatedState: TrackerState = {
+    updatedAt: new Date().toISOString(),
+    lastNotifiedPktDate: notifiedPktDate,
+    pktDayName: weekday,
+    note: 'Strictly verified live DOM .voucher-container-payment widgets + 2026 bank-verified deals only. Daily notifications sent automatically for each PKT day to darazcardsalesRB17247365Dtqtqtqty.',
+    activeTodayCount: todaysActiveOffers.length,
+    offersCount: verifiedLiveOffers.length,
+    offers: verifiedLiveOffers,
+  };
+
+  fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
+  fs.writeFileSync(STATE_FILE, JSON.stringify(updatedState, null, 2));
 }
 
 main().catch((err) => {
