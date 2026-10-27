@@ -1,14 +1,15 @@
-name: Check Daraz Card Offers (Strict Live DOM & Daily PKT Discounts)
+name: Check Daraz Card Offers (Start-of-Day PKT + Intraday New Offers Only)
 
 on:
   schedule:
-    - cron: '5 4,14 * * *'
+    # 19:05 UTC = 12:05 AM PKT (Start of the day in Pakistan), plus every 6 hours to catch new intraday offers
+    - cron: '5 19,1,7,13 * * *'
   workflow_dispatch:
     inputs:
       force_notify:
-        description: 'Send ntfy push notification for daily active offers even if state is unchanged'
+        description: 'Force send notification even if today was already notified and no new offers appeared'
         required: false
-        default: 'true'
+        default: 'false'
 
 permissions:
   contents: write
@@ -40,7 +41,7 @@ jobs:
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'darazcardsalesRB17247365Dtqtqtqty' }}
           NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
-          FORCE_NOTIFY: ${{ github.event.inputs.force_notify || 'true' }}
+          FORCE_NOTIFY: ${{ github.event.inputs.force_notify || 'false' }}
         run: npx tsx src/tracker.ts
 
       - name: Commit updated live offer state

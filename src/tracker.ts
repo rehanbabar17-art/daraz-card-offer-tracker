@@ -72,12 +72,6 @@ const GCP_CANDIDATE_URLS = [
   },
 ];
 
-/**
- * Baseline strictly-verified active Oct 2026 Daraz.pk offers:
- * - 4 Live `.voucher-container-payment` DOM widgets verified on Daraz GCP channels
- * - 2 Official 2026 Bank-verified campaigns (valid through Dec 31, 2026)
- * All stale 2023 0-voucher pages (/zindigi, /scb-sunday-all-deals, /meezan-bank-all-deals-page) are excluded.
- */
 const BASELINE_VERIFIED_2026_OFFERS: LiveOffer[] = [
   {
     id: 'hbl-digital-payments-hub-live',
@@ -207,11 +201,6 @@ async function renderDomWithChromium(url: string): Promise<string> {
   return await res.text();
 }
 
-/**
- * Extracts ONLY genuine live `.voucher-container-payment` widgets from the rendered DOM.
- * Pages with 0 `.voucher-container-payment` elements (like /zindigi, /scb-sunday-all-deals,
- * /meezan-bank-all-deals-page) return [] so stale 2023 pages are strictly skipped.
- */
 function extractLiveDomVouchers(
   dom: string,
   pageUrl: string,
@@ -281,7 +270,7 @@ async function sendNtfyNotification(title: string, body: string): Promise<void> 
         Priority: 'high',
         Tags: 'credit_card,shopping,calendar',
         Click: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
-        'User-Agent': 'daraz-card-offer-tracker/5.0',
+        'User-Agent': 'daraz-card-offer-tracker/5.1',
       },
       body,
     });
@@ -304,7 +293,6 @@ async function main() {
       const dom = await renderDomWithChromium(target.url);
       const vouchers = extractLiveDomVouchers(dom, target.url, target.label, target.defaultDays);
       console.log(`[${target.id}] Live DOM .voucher-container-payment widgets found: ${vouchers.length}`);
-      // Only add newly discovered DOM vouchers if they aren't already represented in baseline
       for (const v of vouchers) {
         const alreadyCovered = Array.from(offerMap.values()).some(
           (existing) =>
@@ -346,8 +334,10 @@ async function main() {
     `Notification check -> isNewPktDay: ${isNewPktDay} (prev: "${prevLastNotifiedPktDate}", today: "${pktDateStr}"), newOffers: ${newOffers.length}, forceNotify: ${forceNotify}`
   );
 
-  let notifiedPktDate = prevLastNotifiedPktDate;
-
+  // ONLY notify:
+  // 1) At the start of a new PKT day (isNewPktDay === true), OR
+  // 2) During the day if a brand-new discount is offered (newOffers.length > 0), OR
+  // 3) If manually triggered with force_notify=true
   if (isNewPktDay || newOffers.length > 0 || forceNotify) {
     const activeLines =
       todaysActiveOffers.length > 0
@@ -361,49 +351,54 @@ async function main() {
       (o) => `* ${o.issuer}: ${o.discountPercent}% OFF (Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
     );
 
-    const newLines =
-      newOffers.length > 0
-        ? [
-            `NEW LIVE DOM VOUCHERS DETECTED (${newOffers.length}):`,
-            ...newOffers.map((o) => `+ ${o.title}`),
-            '',
-          ]
-        : [];
+    let title: string;
+    let messageBody: string;
 
-    const messageBody = [
-      ...newLines,
-      `ACTIVE TODAY ON DARAZ.PK (${weekday}, ${pktDateStr} PKT):`,
-      ...activeLines,
-      '',
-      `OTHER VERIFIED WEEKLY & DOM VOUCHERS (Collect on App):`,
-      ...upcomingLines,
-      '',
-      `(JS Zindigi & stale 2023 0-voucher pages strictly excluded)`,
-    ].join('\n');
-
-    const title =
-      newOffers.length > 0
-        ? `Daraz.pk New Discount + ${weekday} Daily Deals (${pktDateStr})`
-        : `Daraz.pk Daily Active Discounts - ${weekday} (${pktDateStr} PKT)`;
+    if (!isNewPktDay && newOffers.length > 0) {
+      // Intraday alert: only triggered when a new discount is offered during the day
+      title = `New Daraz.pk Discount Offered Today (${weekday}, ${pktDateStr})`;
+      messageBody = [
+        `NEW DARAZ.PK DISCOUNT DETECTED (${newOffers.length}):`,
+        ...newOffers.map(
+          (o) => `+ ${o.issuer}: ${o.discountPercent}% OFF (Min Rs.${o.minSpendPkr}, Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
+        ),
+        '',
+        `ALSO ACTIVE TODAY (${weekday}, ${pktDateStr} PKT):`,
+        ...activeLines,
+      ].join('\n');
+    } else {
+      // Start-of-day daily discount digest
+      title = `Daraz.pk Daily Active Discounts - ${weekday} (${pktDateStr} PKT)`;
+      messageBody = [
+        `ACTIVE TODAY ON DARAZ.PK (${weekday}, ${pktDateStr} PKT):`,
+        ...activeLines,
+        '',
+        `OTHER VERIFIED WEEKLY & DOM VOUCHERS (Collect on App):`,
+        ...upcomingLines,
+        '',
+        `(JS Zindigi & stale 2023 0-voucher pages strictly excluded)`,
+      ].join('\n');
+    }
 
     await sendNtfyNotification(title, messageBody);
-    notifiedPktDate = pktDateStr;
+
+    const updatedState: TrackerState = {
+      updatedAt: new Date().toISOString(),
+      lastNotifiedPktDate: pktDateStr,
+      pktDayName: weekday,
+      note: 'Sends 1 daily digest at the start of each PKT day (Asia/Karachi) and only notifies during the day if a new discount is offered.',
+      activeTodayCount: todaysActiveOffers.length,
+      offersCount: verifiedLiveOffers.length,
+      offers: verifiedLiveOffers,
+    };
+
+    fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
+    fs.writeFileSync(STATE_FILE, JSON.stringify(updatedState, null, 2));
   } else {
-    console.log(`Already sent daily discount notification for ${pktDateStr} PKT and 0 new offers detected.`);
+    console.log(
+      `Already sent daily discount notification for ${pktDateStr} PKT and 0 new offers detected during the day. Skipping ntfy notification.`
+    );
   }
-
-  const updatedState: TrackerState = {
-    updatedAt: new Date().toISOString(),
-    lastNotifiedPktDate: notifiedPktDate,
-    pktDayName: weekday,
-    note: 'Strictly verified live DOM .voucher-container-payment widgets + 2026 bank-verified deals only. Daily notifications sent automatically for each PKT day to darazcardsalesRB17247365Dtqtqtqty.',
-    activeTodayCount: todaysActiveOffers.length,
-    offersCount: verifiedLiveOffers.length,
-    offers: verifiedLiveOffers,
-  };
-
-  fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
-  fs.writeFileSync(STATE_FILE, JSON.stringify(updatedState, null, 2));
 }
 
 main().catch((err) => {
