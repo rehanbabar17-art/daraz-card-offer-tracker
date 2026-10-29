@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-10-28T19:01:27.722Z",
-  "lastNotifiedPktDate": "2026-10-29",
-  "pktDayName": "Thursday",
+  "updatedAt": "2026-10-29T19:01:22.029Z",
+  "lastNotifiedPktDate": "2026-10-30",
+  "pktDayName": "Friday",
   "note": "Sends 1 daily digest at the start of each PKT day (Asia/Karachi) and only notifies during the day if a new discount is offered.",
-  "activeTodayCount": 1,
+  "activeTodayCount": 2,
   "offersCount": 6,
   "offers": [
     {
