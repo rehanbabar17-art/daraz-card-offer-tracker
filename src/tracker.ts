@@ -33,13 +33,13 @@ interface TrackerState {
   offers: LiveOffer[];
 }
 
+/**
+ * Note: `/payment-promotions/digital-payments` is intentionally excluded from daily active offers
+ * because its untitled 10% HBL placeholder widget lacks `voucher-left-title` / `Capped at` text and
+ * its page banners have HTTP Last-Modified dates of Jan 17, 2023 & Oct 18, 2023. HBL only runs
+ * HBL Wednesday (`activeDays: [3]`), not a daily 10% discount.
+ */
 const GCP_CANDIDATE_URLS = [
-  {
-    id: 'gcp-digital-payments',
-    label: 'Daraz Digital Payments Hub',
-    url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
-    defaultDays: [0, 1, 2, 3, 4, 5, 6],
-  },
   {
     id: 'gcp-hbl-wednesday',
     label: 'HBL Wednesday Channel',
@@ -74,15 +74,15 @@ const GCP_CANDIDATE_URLS = [
 
 const BASELINE_VERIFIED_2026_OFFERS: LiveOffer[] = [
   {
-    id: 'hbl-digital-payments-hub-live',
-    issuer: 'HBL (Digital Payments Hub Live Voucher)',
-    title: '10% OFF Collectible HBL Voucher on Digital Payments Hub (Min Spend Rs. 0, Cap Rs. 900)',
-    discountPercent: 10,
-    maxCapPkr: 900,
-    minSpendPkr: 0,
+    id: 'jazzcash-wallet-25pct-live',
+    issuer: 'JazzCash Mobile Wallet',
+    title: '25% OFF JazzCash Mobile Wallet Voucher (Min Spend Rs. 1,000, Cap Rs. 500)',
+    discountPercent: 25,
+    maxCapPkr: 500,
+    minSpendPkr: 1000,
     activeDays: [0, 1, 2, 3, 4, 5, 6],
-    schedule: 'Collectible Daily on Hub / Active Wed',
-    sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
+    schedule: 'Active Daily on Daraz App (JazzCash Wallet)',
+    sourceUrl: 'https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash',
     domVoucherVerified: true,
   },
   {
@@ -93,7 +93,7 @@ const BASELINE_VERIFIED_2026_OFFERS: LiveOffer[] = [
     maxCapPkr: 900,
     minSpendPkr: 0,
     activeDays: [3],
-    schedule: 'Every Wednesday',
+    schedule: 'Every Wednesday Only',
     sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday',
     domVoucherVerified: true,
   },
@@ -117,14 +117,14 @@ const BASELINE_VERIFIED_2026_OFFERS: LiveOffer[] = [
     maxCapPkr: 1000,
     minSpendPkr: 0,
     activeDays: [6],
-    schedule: 'Every Saturday (0% EMI)',
+    schedule: 'Every Saturday',
     sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday',
     domVoucherVerified: true,
   },
   {
     id: 'mcb-visa-weekend-2026',
     issuer: 'MCB Bank Visa',
-    title: 'Up to 15% OFF MCB Visa Cards (Fri-Sun, Min Spend Rs. 2,000, Cap Rs. 1,500)',
+    title: 'Up to 15% OFF MCB Visa Cards (Fri-Sun, Valid till Dec 31, 2026)',
     discountPercent: 15,
     maxCapPkr: 1500,
     minSpendPkr: 2000,
@@ -136,7 +136,7 @@ const BASELINE_VERIFIED_2026_OFFERS: LiveOffer[] = [
   {
     id: 'unionpay-mcb-islamic-2026',
     issuer: 'UnionPay International / MCB Islamic',
-    title: '12% OFF Existing & 20% OFF New UnionPay Users (Sun-Tue, Min Spend Rs. 1,000, Cap Rs. 1,000)',
+    title: '12% OFF Existing & 20% OFF New UnionPay Users (Sun-Tue, Valid till Dec 31, 2026)',
     discountPercent: 12,
     maxCapPkr: 1000,
     minSpendPkr: 1000,
@@ -147,7 +147,7 @@ const BASELINE_VERIFIED_2026_OFFERS: LiveOffer[] = [
   },
 ];
 
-function getPakistanDateInfo() {
+function getPakistanDateInfo(): { pktDateStr: string; weekday: string; dayIndex: number } {
   const now = new Date();
   const pktParts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Karachi',
@@ -159,8 +159,8 @@ function getPakistanDateInfo() {
 
   const year = pktParts.find((p) => p.type === 'year')?.value || '2026';
   const month = pktParts.find((p) => p.type === 'month')?.value || '10';
-  const day = pktParts.find((p) => p.type === 'day')?.value || '27';
-  const weekday = pktParts.find((p) => p.type === 'weekday')?.value || 'Tuesday';
+  const day = pktParts.find((p) => p.type === 'day')?.value || '30';
+  const weekday = pktParts.find((p) => p.type === 'weekday')?.value || 'Friday';
   const pktDateStr = `${year}-${month}-${day}`;
 
   const dayMap: Record<string, number> = {
@@ -172,7 +172,7 @@ function getPakistanDateInfo() {
     Friday: 5,
     Saturday: 6,
   };
-  const dayIndex = dayMap[weekday] ?? 2;
+  const dayIndex = dayMap[weekday] ?? 5;
 
   return { pktDateStr, weekday, dayIndex };
 }
@@ -226,11 +226,12 @@ function extractLiveDomVouchers(
     const minSpendMatch = clean.match(/Min\.?\s*Spend\s*Rs\.?\s*([\d,]+)/i);
     const capMatch = clean.match(/Capped at\s*Rs\.?\s*([\d,]+)/i);
 
-    if (discountMatch) {
-      const issuerTitle = titleMatch ? titleMatch[1].trim() : defaultLabel;
+    // Strictly require an explicit voucher title and cap so untitled hub placeholders are skipped
+    if (discountMatch && titleMatch && capMatch) {
+      const issuerTitle = titleMatch[1].trim() || defaultLabel;
       const pct = Number(discountMatch[1]);
       const minSpend = minSpendMatch ? Number(minSpendMatch[1].replace(/,/g, '')) : 0;
-      const cap = capMatch ? Number(capMatch[1].replace(/,/g, '')) : 900;
+      const cap = Number(capMatch[1].replace(/,/g, ''));
 
       results.push({
         id: `dom-${issuerTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${pct}pct-${cap}`,
@@ -241,16 +242,15 @@ function extractLiveDomVouchers(
         minSpendPkr: minSpend,
         activeDays: defaultDays,
         schedule: pageUrl.includes('wednesday')
-          ? 'Every Wednesday'
+          ? 'Every Wednesday Only'
           : pageUrl.includes('saturday')
           ? 'Every Saturday'
-          : 'Live on Daraz GCP Hub',
+          : 'Live on Daraz GCP',
         sourceUrl: pageUrl,
         domVoucherVerified: true,
       });
     }
   }
-
   return results;
 }
 
@@ -258,7 +258,6 @@ async function sendNtfyNotification(title: string, body: string): Promise<void> 
   const topics = Array.from(
     new Set([GUARANTEED_NTFY_TOPIC, ENV_NTFY_TOPIC].filter((t) => t && t.length >= 4))
   );
-
   const asciiTitle = title.replace(/[^\x20-\x7E]/g, '').trim() || 'Daraz.pk Daily Card Discounts';
 
   for (const topic of topics) {
@@ -269,8 +268,8 @@ async function sendNtfyNotification(title: string, body: string): Promise<void> 
         Title: asciiTitle.slice(0, 120),
         Priority: 'high',
         Tags: 'credit_card,shopping,calendar',
-        Click: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
-        'User-Agent': 'daraz-card-offer-tracker/5.1',
+        Click: 'https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash',
+        'User-Agent': 'daraz-card-offer-tracker/5.2',
       },
       body,
     });
@@ -345,7 +344,7 @@ async function main() {
             (o) =>
               `* ${o.issuer}: ${o.discountPercent}% OFF (Min Rs.${o.minSpendPkr}, Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
           )
-        : ['* Collect upcoming bank vouchers on Daraz Digital Payments Hub today'];
+        : ['* Collect upcoming bank vouchers on Daraz App today'];
 
     const upcomingLines = otherWeeklyOffers.map(
       (o) => `* ${o.issuer}: ${o.discountPercent}% OFF (Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
@@ -355,7 +354,6 @@ async function main() {
     let messageBody: string;
 
     if (!isNewPktDay && newOffers.length > 0) {
-      // Intraday alert: only triggered when a new discount is offered during the day
       title = `New Daraz.pk Discount Offered Today (${weekday}, ${pktDateStr})`;
       messageBody = [
         `NEW DARAZ.PK DISCOUNT DETECTED (${newOffers.length}):`,
@@ -365,9 +363,10 @@ async function main() {
         '',
         `ALSO ACTIVE TODAY (${weekday}, ${pktDateStr} PKT):`,
         ...activeLines,
+        '',
+        `(Stale HBL Daily 10% Hub, JS Zindigi & 2023 0-voucher pages excluded)`,
       ].join('\n');
     } else {
-      // Start-of-day daily discount digest
       title = `Daraz.pk Daily Active Discounts - ${weekday} (${pktDateStr} PKT)`;
       messageBody = [
         `ACTIVE TODAY ON DARAZ.PK (${weekday}, ${pktDateStr} PKT):`,
@@ -376,7 +375,7 @@ async function main() {
         `OTHER VERIFIED WEEKLY & DOM VOUCHERS (Collect on App):`,
         ...upcomingLines,
         '',
-        `(JS Zindigi & stale 2023 0-voucher pages strictly excluded)`,
+        `(Stale HBL Daily 10% Hub, JS Zindigi & 2023 0-voucher pages excluded)`,
       ].join('\n');
     }
 
@@ -386,7 +385,7 @@ async function main() {
       updatedAt: new Date().toISOString(),
       lastNotifiedPktDate: pktDateStr,
       pktDayName: weekday,
-      note: 'Sends 1 daily digest at the start of each PKT day (Asia/Karachi) and only notifies during the day if a new discount is offered.',
+      note: 'Sends 1 daily digest at the start of each PKT day (Asia/Karachi) and only notifies during the day if a new discount is offered. Includes JazzCash 25% OFF; excludes stale daily HBL hub entry.',
       activeTodayCount: todaysActiveOffers.length,
       offersCount: verifiedLiveOffers.length,
       offers: verifiedLiveOffers,

@@ -49,12 +49,12 @@
   "scheduled_offers": [
     {
       "id": "jazzcash-wallet",
-      "bank": "JazzCash (Mobile Account & Visa/Mastercard Debit)",
-      "discount_percent": 10,
-      "max_cap_pkr": 1000,
-      "min_spend_pkr": 1500,
+      "bank": "JazzCash (Mobile Account & Digital Wallet)",
+      "discount_percent": 25,
+      "max_cap_pkr": 500,
+      "min_spend_pkr": 1000,
       "active_days_sun0": [0, 1, 2, 3, 4, 5, 6],
-      "mechanism": "Collectible JazzCash Voucher / MPIN Checkout",
+      "mechanism": "Collectible JazzCash 25% OFF Voucher / MPIN Checkout",
       "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
     },
     {
