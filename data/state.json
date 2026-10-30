@@ -1,18 +1,18 @@
 {
-  "updatedAt": "2026-10-30T19:01:43.991Z",
+  "updatedAt": "2026-10-30T21:01:35.696Z",
   "lastNotifiedPktDate": "2026-10-31",
   "pktDayName": "Saturday",
-  "note": "Sends 1 daily digest at the start of each PKT day (Asia/Karachi) and only notifies during the day if a new discount is offered.",
+  "note": "Sends 1 daily digest at the start of each PKT day (Asia/Karachi) and only notifies during the day if a new discount is offered. Includes JazzCash 25% OFF; excludes stale daily HBL hub entry.",
   "activeTodayCount": 4,
   "offersCount": 6,
   "offers": [
     {
-      "id": "hbl-digital-payments-hub-live",
-      "issuer": "HBL (Digital Payments Hub Live Voucher)",
-      "title": "10% OFF Collectible HBL Voucher on Digital Payments Hub (Min Spend Rs. 0, Cap Rs. 900)",
-      "discountPercent": 10,
-      "maxCapPkr": 900,
-      "minSpendPkr": 0,
+      "id": "jazzcash-wallet-25pct-live",
+      "issuer": "JazzCash Mobile Wallet",
+      "title": "25% OFF JazzCash Mobile Wallet Voucher (Min Spend Rs. 1,000, Cap Rs. 500)",
+      "discountPercent": 25,
+      "maxCapPkr": 500,
+      "minSpendPkr": 1000,
       "activeDays": [
         0,
         1,
@@ -22,8 +22,8 @@
         5,
         6
       ],
-      "schedule": "Collectible Daily on Hub / Active Wed",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments",
+      "schedule": "Active Daily on Daraz App (JazzCash Wallet)",
+      "sourceUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash",
       "domVoucherVerified": true
     },
     {
@@ -36,7 +36,7 @@
       "activeDays": [
         3
       ],
-      "schedule": "Every Wednesday",
+      "schedule": "Every Wednesday Only",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday",
       "domVoucherVerified": true
     },
@@ -64,14 +64,14 @@
       "activeDays": [
         6
       ],
-      "schedule": "Every Saturday (0% EMI)",
+      "schedule": "Every Saturday",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday",
       "domVoucherVerified": true
     },
     {
       "id": "mcb-visa-weekend-2026",
       "issuer": "MCB Bank Visa",
-      "title": "Up to 15% OFF MCB Visa Cards (Fri-Sun, Min Spend Rs. 2,000, Cap Rs. 1,500)",
+      "title": "Up to 15% OFF MCB Visa Cards (Fri-Sun, Valid till Dec 31, 2026)",
       "discountPercent": 15,
       "maxCapPkr": 1500,
       "minSpendPkr": 2000,
@@ -87,7 +87,7 @@
     {
       "id": "unionpay-mcb-islamic-2026",
       "issuer": "UnionPay International / MCB Islamic",
-      "title": "12% OFF Existing & 20% OFF New UnionPay Users (Sun-Tue, Min Spend Rs. 1,000, Cap Rs. 1,000)",
+      "title": "12% OFF Existing & 20% OFF New UnionPay Users (Sun-Tue, Valid till Dec 31, 2026)",
       "discountPercent": 12,
       "maxCapPkr": 1000,
       "minSpendPkr": 1000,
