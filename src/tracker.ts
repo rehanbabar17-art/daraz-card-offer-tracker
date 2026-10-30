@@ -214,7 +214,7 @@ function extractLiveDomVouchers(
   }
 
   for (let i = 0; i < blocks.length; i++) {
-    const chunk = blocks[i].slice(0, 3500);
+    const chunk = blocks[i].slice(0, 8000);
     const clean = chunk
       .replace(/<[^>]+>/g, ' | ')
       .replace(/&nbsp;/g, ' ')
