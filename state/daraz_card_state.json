@@ -1,6 +1,6 @@
 {
   "last_notified_pkt_date": "2026-10-31",
-  "last_checked_pkt": "2026-10-31T17:33:17.451650+05:00",
+  "last_checked_pkt": "2026-10-31T17:42:00.426427+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
@@ -26,6 +26,7 @@
         0
       ],
       "schedule": "Fri, Sat & Sun",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_sig_12_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_sig_12_2026"
     },
@@ -46,6 +47,7 @@
         0
       ],
       "schedule": "Fri, Sat & Sun",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_plat_10_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_plat_10_2026"
     },
@@ -66,6 +68,7 @@
         0
       ],
       "schedule": "Fri, Sat & Sun",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_gold_8_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_gold_8_2026"
     },
@@ -90,6 +93,7 @@
         6
       ],
       "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=voucher_max",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
     },
@@ -114,6 +118,7 @@
         6
       ],
       "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=voucher_max",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
     },
@@ -138,6 +143,7 @@
         6
       ],
       "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=voucher_max",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
     },
@@ -158,6 +164,7 @@
         0
       ],
       "schedule": "Fri, Sat & Sun",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=choice_any3",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=choice_any3"
     }
