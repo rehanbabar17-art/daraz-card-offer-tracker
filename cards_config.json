@@ -6,6 +6,23 @@
   "description": "Daraz Mobile App Voucher Center & Under-Product Vouchers (Directly linked to com.daraz.android)",
   "activeOffers": [
     {
+      "id": "daraz-app-jazzcash-25pct",
+      "voucherId": "mtop_daraz_jazzcash_wallet_25pct",
+      "section": "Bank Vouchers",
+      "issuer": "JazzCash Mobile Wallet",
+      "type": "Digital Wallet",
+      "badge": "25% OFF Wallet",
+      "discountPercent": 25,
+      "minSpendPkr": 1000,
+      "maxCapText": "Max Cap Rs. 500",
+      "validityWindow": "Active Daily",
+      "activeDays": [0, 1, 2, 3, 4, 5, 6],
+      "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
+      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fwww.daraz.pk%2Fwow%2Fi%2Fpk%2Fpayment-partners%2Fjazzcash",
+      "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
+    },
+    {
       "id": "daraz-app-mcb-visa-sig-12pct",
       "voucherId": "mtop_daraz_mcb_sig_12_2026",
       "section": "Bank Vouchers",
