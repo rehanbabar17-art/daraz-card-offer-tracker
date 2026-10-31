@@ -134,6 +134,25 @@
       "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals"
     },
     {
+      "id": "daraz-app-albaraka-bank-10pct",
+      "voucherId": "mtop_daraz_albaraka_mastercard_10",
+      "section": "Bank Vouchers",
+      "issuer": "Al Baraka Bank (Mastercard Debit)",
+      "type": "Bank Card",
+      "badge": "Upcoming · Monday",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "Mondays & Campaign Days",
+      "issuanceSchedule": "Drops Mondays at 00:00 PKT (Al Baraka Mastercard)",
+      "activeDays": [1],
+      "schedule": "Mondays Only (Upcoming)",
+      "status": "UPCOMING",
+      "upcomingNote": "Drops Monday at 00:00 PKT (In 2 days)",
+      "appDeepLink": "daraz://voucher/center?id=albaraka",
+      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments"
+    },
+    {
       "id": "daraz-app-hbl-wednesday-10pct",
       "voucherId": "mtop_daraz_hbl_wed_10",
       "section": "Bank Vouchers",
