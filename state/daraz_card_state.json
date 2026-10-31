@@ -1,13 +1,13 @@
 {
   "last_notified_pkt_date": "2026-10-31",
-  "last_checked_pkt": "2026-10-31T17:55:42.182519+05:00",
+  "last_checked_pkt": "2026-10-31T18:03:25.973725+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
     "api": "mtop.lazada.detail.getVouchers"
   },
-  "active_vouchers_count": 11,
+  "active_vouchers_count": 8,
   "vouchers": [
     {
       "id": "daraz-app-askari-saturday-10pct",
@@ -15,11 +15,12 @@
       "section": "Bank Vouchers",
       "issuer": "Askari Bank (Askari Saturday)",
       "type": "Bank Card",
-      "badge": "Askari Saturday",
+      "badge": "Active Today · Saturday",
       "discountPercent": 10,
       "minSpendPkr": 1000,
       "maxCapText": "Max Cap Rs. 1,000",
       "validityWindow": "Every Saturday",
+      "issuanceSchedule": "Drops every Saturday at 00:00 PKT",
       "activeDays": [
         6
       ],
@@ -34,11 +35,12 @@
       "section": "Bank Vouchers",
       "issuer": "JazzCash Mobile Wallet",
       "type": "Digital Wallet",
-      "badge": "25% OFF Wallet",
+      "badge": "Active Daily · 25% OFF",
       "discountPercent": 25,
       "minSpendPkr": 1000,
       "maxCapText": "Max Cap Rs. 500",
       "validityWindow": "Active Daily",
+      "issuanceSchedule": "Continuous daily allocation at 00:00 PKT",
       "activeDays": [
         0,
         1,
@@ -64,6 +66,7 @@
       "minSpendPkr": 3000,
       "maxCapText": "Max Cap Rs. 1,500",
       "validityWindow": "30/10/2026-01/11/2026",
+      "issuanceSchedule": "Replenishes daily at 00:00 PKT (Oct 30 – Nov 1)",
       "activeDays": [
         5,
         6,
@@ -85,6 +88,7 @@
       "minSpendPkr": 3000,
       "maxCapText": "Max Cap Rs. 1,000",
       "validityWindow": "30/10/2026-01/11/2026",
+      "issuanceSchedule": "Replenishes daily at 00:00 PKT (Oct 30 – Nov 1)",
       "activeDays": [
         5,
         6,
@@ -106,6 +110,7 @@
       "minSpendPkr": 3000,
       "maxCapText": "Max Cap Rs. 800",
       "validityWindow": "30/10/2026-01/11/2026",
+      "issuanceSchedule": "Replenishes daily at 00:00 PKT (Oct 30 – Nov 1)",
       "activeDays": [
         5,
         6,
@@ -115,51 +120,6 @@
       "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_gold_8_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_gold_8_2026"
-    },
-    {
-      "id": "daraz-app-js-bank-weekend-10pct",
-      "voucherId": "mtop_daraz_js_bank_weekend_10",
-      "section": "Bank Vouchers",
-      "issuer": "JS Bank (Weekend Deals)",
-      "type": "Bank Card",
-      "badge": "Weekend Deal",
-      "discountPercent": 10,
-      "minSpendPkr": 2500,
-      "maxCapText": "Max Cap Rs. 1,000",
-      "validityWindow": "Saturdays & Sundays",
-      "activeDays": [
-        6,
-        0
-      ],
-      "schedule": "Saturdays & Sundays (Active Today)",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fwww.daraz.pk%2Fwow%2Fi%2Fpk%2Fpayment-partners%2Fjs-bank",
-      "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/js-bank"
-    },
-    {
-      "id": "daraz-app-easypaisa-10pct",
-      "voucherId": "mtop_daraz_easypaisa_wallet_10",
-      "section": "Bank Vouchers",
-      "issuer": "Easypaisa Mobile Wallet",
-      "type": "Digital Wallet",
-      "badge": "10% OFF Wallet",
-      "discountPercent": 10,
-      "minSpendPkr": 1000,
-      "maxCapText": "Max Cap Rs. 300",
-      "validityWindow": "Active Daily",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "schedule": "Active Daily",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fpages.daraz.pk%2Fwow%2Fgcp%2Fdaraz%2Fchannel%2Fpk%2Fpayment-promotions%2Fdigital-payments",
-      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments"
     },
     {
       "id": "daraz-app-voucher-max-150",
@@ -172,6 +132,7 @@
       "minSpendPkr": 599,
       "maxCapText": "Upto Rs. 150 Off",
       "validityWindow": "01/10/2026-31/10/2026",
+      "issuanceSchedule": "Auto-applied or collect under product daily",
       "activeDays": [
         0,
         1,
@@ -197,31 +158,7 @@
       "minSpendPkr": 4000,
       "maxCapText": "Upto Rs. 400 Off",
       "validityWindow": "01/10/2026-31/10/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "schedule": "Active Daily",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://voucher/center?type=voucher_max",
-      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
-    },
-    {
-      "id": "daraz-app-voucher-max-tier3",
-      "voucherId": "mtop_daraz_voucher_max_800",
-      "section": "Voucher Max",
-      "issuer": "Daraz Voucher Max (Tier 3)",
-      "type": "Platform Voucher",
-      "badge": "Voucher Max",
-      "discountPercent": 5,
-      "minSpendPkr": 8000,
-      "maxCapText": "Upto Rs. 800 Off",
-      "validityWindow": "01/10/2026-31/10/2026",
+      "issuanceSchedule": "Auto-applied or collect under product daily",
       "activeDays": [
         0,
         1,
@@ -247,6 +184,7 @@
       "minSpendPkr": 699,
       "maxCapText": "Sitewide Choice Items",
       "validityWindow": "30/10/2026-01/11/2026",
+      "issuanceSchedule": "Active across weekend campaign (Oct 30 – Nov 1)",
       "activeDays": [
         5,
         6,
