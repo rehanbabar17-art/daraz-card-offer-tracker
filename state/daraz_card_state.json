@@ -1,14 +1,39 @@
 {
   "last_notified_pkt_date": "2026-10-31",
-  "last_checked_pkt": "2026-10-31T17:42:00.426427+05:00",
+  "last_checked_pkt": "2026-10-31T17:47:53.339291+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
     "api": "mtop.lazada.detail.getVouchers"
   },
-  "active_vouchers_count": 7,
+  "active_vouchers_count": 8,
   "vouchers": [
+    {
+      "id": "daraz-app-jazzcash-25pct",
+      "voucherId": "mtop_daraz_jazzcash_wallet_25pct",
+      "section": "Bank Vouchers",
+      "issuer": "JazzCash Mobile Wallet",
+      "type": "Digital Wallet",
+      "badge": "25% OFF Wallet",
+      "discountPercent": 25,
+      "minSpendPkr": 1000,
+      "maxCapText": "Max Cap Rs. 500",
+      "validityWindow": "Active Daily",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
+      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fwww.daraz.pk%2Fwow%2Fi%2Fpk%2Fpayment-partners%2Fjazzcash",
+      "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
+    },
     {
       "id": "daraz-app-mcb-visa-sig-12pct",
       "voucherId": "mtop_daraz_mcb_sig_12_2026",
