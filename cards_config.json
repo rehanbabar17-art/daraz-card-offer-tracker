@@ -18,6 +18,7 @@
       "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [5, 6, 0],
       "schedule": "Fri, Sat & Sun",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_sig_12_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_sig_12_2026"
     },
@@ -34,6 +35,7 @@
       "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [5, 6, 0],
       "schedule": "Fri, Sat & Sun",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_plat_10_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_plat_10_2026"
     },
@@ -50,8 +52,45 @@
       "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [5, 6, 0],
       "schedule": "Fri, Sat & Sun",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_gold_8_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_gold_8_2026"
+    },
+    {
+      "id": "daraz-app-unionpay-12pct",
+      "voucherId": "mtop_daraz_unionpay_12_sun",
+      "section": "Bank Vouchers",
+      "issuer": "UnionPay International (Debit & Credit)",
+      "type": "Card Network",
+      "badge": "Upcoming · Drops Sun",
+      "discountPercent": 12,
+      "minSpendPkr": 2500,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "01/11/2026-03/11/2026",
+      "activeDays": [0, 1, 2],
+      "schedule": "Sun, Mon & Tue (Upcoming)",
+      "status": "UPCOMING",
+      "upcomingNote": "Drops Sunday at 00:00 PKT (Tomorrow)",
+      "appDeepLink": "daraz://voucher/center?id=unionpay",
+      "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
+    },
+    {
+      "id": "daraz-app-scb-sunday-10pct",
+      "voucherId": "mtop_daraz_scb_sunday_10",
+      "section": "Bank Vouchers",
+      "issuer": "Standard Chartered Bank (SCB)",
+      "type": "Bank Card",
+      "badge": "Upcoming · Sunday Only",
+      "discountPercent": 10,
+      "minSpendPkr": 3000,
+      "maxCapText": "Max Cap Rs. 1,500",
+      "validityWindow": "01/11/2026",
+      "activeDays": [0],
+      "schedule": "Sundays Only (Upcoming)",
+      "status": "UPCOMING",
+      "upcomingNote": "Drops Sunday at 00:00 PKT (Tomorrow)",
+      "appDeepLink": "daraz://voucher/center?id=scb_sunday",
+      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals"
     },
     {
       "id": "daraz-app-voucher-max-150",
@@ -66,6 +105,7 @@
       "validityWindow": "01/10/2026-31/10/2026",
       "activeDays": [0, 1, 2, 3, 4, 5, 6],
       "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=voucher_max",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
     },
@@ -82,6 +122,7 @@
       "validityWindow": "01/10/2026-31/10/2026",
       "activeDays": [0, 1, 2, 3, 4, 5, 6],
       "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=voucher_max",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
     },
@@ -98,6 +139,7 @@
       "validityWindow": "01/10/2026-31/10/2026",
       "activeDays": [0, 1, 2, 3, 4, 5, 6],
       "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=voucher_max",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
     },
@@ -114,6 +156,7 @@
       "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [5, 6, 0],
       "schedule": "Fri, Sat & Sun",
+      "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=choice_any3",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=choice_any3"
     }
