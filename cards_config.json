@@ -1,171 +1,156 @@
 {
-  "ntfy_topic": "darazcardsalesRB17247365Dtqtqtqty",
-  "partner_pages": [
+  "updatedAt": "2026-10-30",
+  "ntfyTopic": "darazcardsalesRB17247365Dtqtqtqty",
+  "activeOffers": [
     {
-      "bank": "UnionPay Partner Venue (data-page-id=80128576)",
-      "url": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
+      "id": "jazzcash-wallet-25pct-live",
+      "issuer": "JazzCash Wallet",
+      "type": "Digital Wallet",
+      "discountPercent": 25,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 500,
+      "activeDays": [0, 1, 2, 3, 4, 5, 6],
+      "schedule": "Active Daily"
     },
     {
-      "bank": "Easypaisa & Daraz Wallet Campaign Page",
-      "url": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/12-12/payment-promotions?hybrid=1"
+      "id": "jazzcash-weekly-10pct-pdp",
+      "issuer": "JazzCash Wallet & Card",
+      "type": "Digital Wallet",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 1000,
+      "activeDays": [0, 1, 2, 3, 4, 5, 6],
+      "schedule": "Active Daily (Max 2/week)"
     },
     {
-      "bank": "Easypaisa / EasyPay Partner Page",
-      "url": "https://www.daraz.pk/wow/i/pk/payment-partners/easypay"
+      "id": "easypaisa-wallet-pdp",
+      "issuer": "Easypaisa Wallet",
+      "type": "Digital Wallet",
+      "discountPercent": 20,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 500,
+      "activeDays": [0, 1, 2, 3, 4, 5, 6],
+      "schedule": "Active Daily"
     },
     {
-      "bank": "JazzCash Partner Page",
-      "url": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
+      "id": "visa-monday-pdp",
+      "issuer": "Visa Monday (All Banks)",
+      "type": "Card Network",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 900,
+      "activeDays": [1],
+      "schedule": "Every Monday"
     },
     {
-      "bank": "dMart Multi-Bank Vouchers",
-      "url": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/d-mart/payment-promotions?hybrid=1"
+      "id": "unionpay-mcb-islamic-2026",
+      "issuer": "UnionPay / MCB Islamic",
+      "type": "Card Network",
+      "discountPercent": 12,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 1000,
+      "activeDays": [0, 1, 2],
+      "schedule": "Sun, Mon & Tue"
     },
     {
-      "bank": "HBL Bank Regular",
-      "url": "https://www.daraz.pk/wow/i/pk/payment-partners/hbl-bank?hybrid=1"
+      "id": "ubl-tuesday-pdp",
+      "issuer": "UBL (United Bank Limited)",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 1000,
+      "activeDays": [2],
+      "schedule": "Every Tuesday"
     },
     {
-      "bank": "HBL 11.11 Mega Campaign",
-      "url": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/11-11-MC/hbl-bank-page?hybrid=1"
+      "id": "hbl-wednesday-live-dom",
+      "issuer": "HBL (Habib Bank Limited)",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapPkr": 900,
+      "activeDays": [3],
+      "schedule": "Every Wednesday"
     },
     {
-      "bank": "Bank Alfalah",
-      "url": "https://www.daraz.pk/alfalah-bank/"
+      "id": "meezan-thursday-pdp",
+      "issuer": "Meezan Bank",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 1000,
+      "activeDays": [4],
+      "schedule": "Every Thursday"
     },
     {
-      "bank": "Standard Chartered Bank",
-      "url": "https://www.daraz.pk/standard-chartered-bank/"
+      "id": "alfalah-friday-pdp",
+      "issuer": "Bank Alfalah (BAFL)",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 1000,
+      "activeDays": [5],
+      "schedule": "Every Friday & dMart"
     },
     {
-      "bank": "Askari Bank Saturday",
-      "url": "https://www.daraz.pk/wow/i/pk/help/10-10-askari-saturday"
+      "id": "faysal-bank-pdp",
+      "issuer": "Faysal Bank (FBL)",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 1500,
+      "maxCapPkr": 1000,
+      "activeDays": [4, 5],
+      "schedule": "Thu & Fri / dMart"
     },
     {
-      "bank": "All 17 Partner Banks Credit/Debit Directory",
-      "url": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1"
-    }
-  ],
-  "scheduled_offers": [
-    {
-      "id": "jazzcash-wallet",
-      "bank": "JazzCash (Mobile Account & Digital Wallet)",
-      "discount_percent": 25,
-      "max_cap_pkr": 500,
-      "min_spend_pkr": 1000,
-      "active_days_sun0": [0, 1, 2, 3, 4, 5, 6],
-      "mechanism": "Collectible JazzCash 25% OFF Voucher / MPIN Checkout",
-      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
+      "id": "mcb-visa-weekend-2026",
+      "issuer": "MCB Bank",
+      "type": "Bank",
+      "discountPercent": 15,
+      "minSpendPkr": 2000,
+      "maxCapPkr": 1500,
+      "activeDays": [5, 6, 0],
+      "schedule": "Fri, Sat & Sun"
     },
     {
-      "id": "easypaisa-wallet",
-      "bank": "Easypaisa / EasyPay (Mobile Account & Visa Debit)",
-      "discount_percent": 10,
-      "max_cap_pkr": 1000,
-      "min_spend_pkr": 1500,
-      "active_days_sun0": [0, 1, 2, 3, 4, 5, 6],
-      "mechanism": "Easypaisa Wallet Cashback (Max 5 tx/day)",
-      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/easypay"
+      "id": "askari-saturday-card-live-dom",
+      "issuer": "Askari Bank Card",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapPkr": 1000,
+      "activeDays": [6],
+      "schedule": "Every Saturday"
     },
     {
-      "id": "daraz-wallet",
-      "bank": "Daraz Wallet",
-      "discount_percent": 10,
-      "max_cap_pkr": 1500,
-      "min_spend_pkr": 2000,
-      "active_days_sun0": [0, 1, 2, 3, 4, 5, 6],
-      "mechanism": "Daraz Wallet Instant Discount (Cap PKR 1,500)",
-      "source_url": "https://pages.daraz.pk/wow/camp/daraz/megascenario/pk/12-12/payment-promotions?hybrid=1"
+      "id": "askari-saturday-emi-live-dom",
+      "issuer": "Askari Bank EMI",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapPkr": 1000,
+      "activeDays": [6],
+      "schedule": "Every Saturday"
     },
     {
-      "id": "unionpay-deals-steals-12",
-      "bank": "UnionPay International (All Partner Banks: BAHL, MCB Islamic, ABL, AKBL, FBL, BOP, JS, Soneri)",
-      "discount_percent": 12,
-      "max_cap_pkr": 1100,
-      "min_spend_pkr": 500,
-      "active_days_sun0": [0, 1, 2],
-      "mechanism": "Collectible UnionPay Voucher (12% OFF All Users / 20% OFF New Users)",
-      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
+      "id": "scb-sunday-pdp",
+      "issuer": "Standard Chartered (SCB)",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 1000,
+      "activeDays": [0],
+      "schedule": "Every Sunday"
     },
     {
-      "id": "bahl-unionpay",
-      "bank": "Bank AL Habib (UnionPay & Visa Cards)",
-      "discount_percent": 12,
-      "max_cap_pkr": 1100,
-      "min_spend_pkr": 500,
-      "active_days_sun0": [0, 1, 2],
-      "mechanism": "Collectible UnionPay Voucher (Sun, Mon & Tue)",
-      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
-    },
-    {
-      "id": "hbl-wed",
-      "bank": "HBL (Habib Bank Limited)",
-      "discount_percent": 10,
-      "max_cap_pkr": 500,
-      "min_spend_pkr": 2000,
-      "active_days_sun0": [3],
-      "mechanism": "Collectible Bank Voucher (Visa/Mastercard Credit & Debit, 4 tx/day)",
-      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/hbl-bank?hybrid=1"
-    },
-    {
-      "id": "mcb-sun-mon-tue",
-      "bank": "MCB & MCB Islamic",
-      "discount_percent": 12,
-      "max_cap_pkr": 1100,
-      "min_spend_pkr": 500,
-      "active_days_sun0": [0, 1, 2],
-      "mechanism": "Collectible Bank Voucher (UnionPay/Visa/Mastercard)",
-      "source_url": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
-    },
-    {
-      "id": "ubl-mon",
-      "bank": "UBL (United Bank Limited)",
-      "discount_percent": 10,
-      "max_cap_pkr": 1000,
-      "min_spend_pkr": 2500,
-      "active_days_sun0": [1],
-      "mechanism": "Collectible Bank Voucher (Visa/Mastercard/WIZ Prepaid)",
-      "source_url": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1"
-    },
-    {
-      "id": "bafl-tue-thu",
-      "bank": "Bank Alfalah",
-      "discount_percent": 10,
-      "max_cap_pkr": 1000,
-      "min_spend_pkr": 2500,
-      "active_days_sun0": [2, 4],
-      "mechanism": "Collectible Voucher + Code BAFLdMart on dMart",
-      "source_url": "https://www.daraz.pk/alfalah-bank/"
-    },
-    {
-      "id": "meezan-thu",
-      "bank": "Meezan Bank",
-      "discount_percent": 10,
-      "max_cap_pkr": 1000,
-      "min_spend_pkr": 2500,
-      "active_days_sun0": [4],
-      "mechanism": "Collectible Bank Voucher (Mastercard Titanium & Visa Debit)",
-      "source_url": "https://pages.daraz.pk/wow/i/pk/payment-partners/credit-cards?hybrid=1"
-    },
-    {
-      "id": "scb-fri",
-      "bank": "Standard Chartered Bank",
-      "discount_percent": 10,
-      "max_cap_pkr": 1000,
-      "min_spend_pkr": 3000,
-      "active_days_sun0": [5],
-      "mechanism": "Collectible Bank Voucher (SCB Credit/Debit & Saadiq)",
-      "source_url": "https://www.daraz.pk/standard-chartered-bank/"
-    },
-    {
-      "id": "askari-sat",
-      "bank": "Askari Bank",
-      "discount_percent": 10,
-      "max_cap_pkr": 1000,
-      "min_spend_pkr": 2000,
-      "active_days_sun0": [6],
-      "mechanism": "Collectible Voucher + Code AskaridMart on dMart",
-      "source_url": "https://www.daraz.pk/wow/i/pk/help/10-10-askari-saturday"
+      "id": "allied-bank-weekend-pdp",
+      "issuer": "Allied Bank (ABL)",
+      "type": "Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 1000,
+      "activeDays": [6, 0],
+      "schedule": "Sat & Sun"
     }
   ]
 }
