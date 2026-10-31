@@ -98,16 +98,24 @@ def send_ntfy(alerts, default_topic=DEFAULT_NTFY_TOPIC):
     token = os.getenv("NTFY_TOKEN", "").strip()
     delivered = 0
 
-    for alert in alerts:
-        lines = alert.strip().splitlines()
-        raw_title = lines[0] if lines else "Daraz Mobile App Vouchers Alert"
+    for item in alerts:
+        if isinstance(item, dict):
+            raw_title = item.get("title", "Daraz Mobile App Vouchers Alert")
+            body = item.get("body", "")
+            tags = item.get("tags", "credit_card,shopping")
+        else:
+            lines = item.strip().splitlines()
+            raw_title = lines[0] if lines else "Daraz Mobile App Vouchers Alert"
+            body = "\n".join(lines[1:]) if len(lines) > 1 else item
+            tags = "credit_card,shopping"
+
         clean_title = raw_title.encode("ascii", "ignore").decode("ascii").strip()
-        body = "\n".join(lines[1:]) if len(lines) > 1 else alert
 
         headers = {
             "Title": clean_title[:120],
             "Priority": "high",
-            "Tags": "credit_card,shopping,package",
+            "Tags": tags,
+            "Markdown": "yes",
             "Click": "https://www.daraz.pk/voucher-center/",
             "User-Agent": "daraz-card-offer-tracker/com.daraz.android",
         }
@@ -153,44 +161,70 @@ def main():
 
     alerts = []
     if is_new_pkt_day or args.force_notify:
+        # 1. SEPARATE ALERT: TODAY'S ACTIVE DISCOUNTS
         bank_lines = [
-            f"- {o['issuer']}: {o['discountPercent']}% OFF ({o.get('maxCapText', '')}, Min Rs. {o.get('minSpendPkr', '')}) [{o.get('validityWindow', '')}]"
+            f"• **{o['issuer']}**: **{o['discountPercent']}% OFF**\n  ↳ {o.get('maxCapText', 'No Cap')} · Min Spend Rs. {o.get('minSpendPkr', 0):,} ({o.get('schedule', '')})"
             for o in active_today if o.get("section") == "Bank Vouchers"
         ]
         max_lines = [
-            f"- {o['issuer']}: {o['discountPercent']}% OFF ({o.get('maxCapText', '')}, Min Rs. {o.get('minSpendPkr', '')})"
+            f"• **{o['issuer']}**: **{o['discountPercent']}% OFF**\n  ↳ {o.get('maxCapText', '')} · Min Spend Rs. {o.get('minSpendPkr', 0):,}"
             for o in active_today if o.get("section") == "Voucher Max"
         ]
         choice_lines = [
-            f"- {o['issuer']}: {o['discountPercent']}% OFF (Min Rs. {o.get('minSpendPkr', '')})"
+            f"• **{o['issuer']}**: **{o['discountPercent']}% OFF**\n  ↳ {o.get('maxCapText', '')} · Min Spend Rs. {o.get('minSpendPkr', 0):,}"
             for o in active_today if o.get("section") == "Choice Voucher"
         ]
-        upcoming_lines = [
-            f"- {o['issuer']}: {o['discountPercent']}% OFF ({o.get('maxCapText', '')}, Min Rs. {o.get('minSpendPkr', '')}) [{o.get('schedule', '')}]"
-            for o in upcoming
+
+        today_msg = [
+            f"### 🟢 TODAY'S ACTIVE DISCOUNTS IN DARAZ APP",
+            f"**{weekday_str.upper()} · {pkt_date_str} PKT**",
+            "",
+            "🏦 **Active Bank & Wallet Offers:**",
+            *(bank_lines if bank_lines else ["• None today"]),
+            "",
+            "🏷️ **Platform Vouchers (Under Products):**",
+            *(max_lines if max_lines else []),
+            *(choice_lines if choice_lines else []),
+            "",
+            "📲 *Collect under products or in Daraz Voucher Center*",
+            "👉 https://www.daraz.pk/voucher-center/",
         ]
 
-        msg_body = [
-            f"DARAZ MOBILE APP VOUCHERS ACTIVE TODAY ({weekday_str}, {pkt_date_str} PKT):",
+        alerts.append({
+            "title": f"🟢 Daraz Active Discounts - {weekday_str} ({pkt_date_str})",
+            "body": "\n".join(today_msg),
+            "tags": "white_check_mark,credit_card,shopping",
+        })
+
+        # 2. SEPARATE ALERT: UPCOMING DISCOUNTS SCHEDULE
+        upcoming_grouped = {}
+        for o in upcoming:
+            sched = o.get("schedule", "Other Days")
+            upcoming_grouped.setdefault(sched, []).append(o)
+
+        upcoming_lines = []
+        for sched, offers in upcoming_grouped.items():
+            upcoming_lines.append(f"📅 **{sched}:**")
+            for o in offers:
+                upcoming_lines.append(
+                    f"• **{o['issuer']}**: **{o['discountPercent']}% OFF**\n  ↳ {o.get('maxCapText', '')} · Min Spend Rs. {o.get('minSpendPkr', 0):,}"
+                )
+            upcoming_lines.append("")
+
+        upcoming_msg = [
+            f"### ⏳ UPCOMING DARAZ DISCOUNTS SCHEDULE",
+            f"*Verified Partner Card Issuance Calendar (PKT)*",
             "",
-            "🏦 BANK VOUCHERS (ACTIVE TODAY):",
-            *(bank_lines if bank_lines else ["None today"]),
-            "",
-            "⏳ UPCOMING BANK VOUCHERS (IN APP):",
-            *(upcoming_lines if upcoming_lines else ["None upcoming"]),
-            "",
-            "🏷️ VOUCHER MAX:",
-            *(max_lines if max_lines else ["None today"]),
-            "",
-            "🛍️ CHOICE VOUCHER:",
-            *(choice_lines if choice_lines else ["None today"]),
-            "",
-            "📱 Linked directly from Daraz Mobile App (com.daraz.android)",
-            "Open Voucher Center: https://www.daraz.pk/voucher-center/",
+            *upcoming_lines,
+            "ℹ️ *Vouchers replenish at 00:00 PKT on designated days.*",
+            "👉 https://www.daraz.pk/voucher-center/",
         ]
 
-        title = f"Daraz Mobile App Vouchers - {weekday_str} ({pkt_date_str} PKT)"
-        alerts.append(f"{title}\n" + "\n".join(msg_body))
+        alerts.append({
+            "title": f"⏳ Daraz Upcoming Schedule - Next Card Days",
+            "body": "\n".join(upcoming_msg).strip(),
+            "tags": "calendar,hourglass_flowing_sand",
+        })
 
     # Save state
     new_state = {
