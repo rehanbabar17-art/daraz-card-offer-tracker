@@ -1,209 +1,165 @@
 {
-  "updatedAt": "2026-10-27T03:04:03.141Z",
-  "note": "Strict .voucher-container-payment DOM verification applied. JS Zindigi (/zindigi), /scb-sunday-all-deals, and /meezan-bank-all-deals-page (0 DOM vouchers, May-Oct 2023 banners) removed.",
-  "offersCount": 6,
-  "offers": [
+  "last_notified_pkt_date": "2026-10-31",
+  "last_checked_pkt": "2026-10-31T17:33:17.451650+05:00",
+  "daraz_gateway": {
+    "status": 200,
+    "reachable": true,
+    "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
+    "api": "mtop.lazada.detail.getVouchers"
+  },
+  "active_vouchers_count": 7,
+  "vouchers": [
     {
-      "id": "hbl-digital-payments-hub-live",
-      "bankName": "HBL (Habib Bank Limited) — Digital Payments Hub Voucher",
-      "bankShort": "HBL",
-      "issuerType": "Bank",
-      "title": "10% OFF Live Collectible Voucher on Digital Payments Hub (Min Spend Rs. 0)",
-      "discountPercent": 10,
-      "maxCapPkr": 900,
-      "minSpendPkr": 0,
-      "activeDays": [
-        3
-      ],
-      "scheduleLabel": "Every Wednesday (Live in GCP DOM)",
-      "mechanism": "Collectible Bank Voucher",
-      "category": "Live DOM Voucher (.voucher-container)",
-      "cardTypes": [
-        "Credit",
-        "Debit"
-      ],
-      "networks": [
-        "Visa",
-        "Mastercard",
-        "UnionPay"
-      ],
-      "maxTxPerDay": 2,
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments",
-      "verifiedDate": "2026-10-27",
-      "helpline": "111-111-425",
-      "termsSummary": [
-        "Verified live `<div class=\"rax-view voucher-container-payment\">` widget rendered on `/payment-promotions/digital-payments`",
-        "Voucher logo asset (`O1CN01I0dTMi1cgaWjAEipR`) updated Sep 30, 2026 on Alibaba CDN",
-        "10% OFF · Min. Spend Rs. 0 · Capped at Rs. 900 · Collect button active in DOM"
-      ]
-    },
-    {
-      "id": "hbl-wednesday-live-dom",
-      "bankName": "HBL (Habib Bank Limited) — HBL Wednesday Channel",
-      "bankShort": "HBL",
-      "issuerType": "Bank",
-      "title": "10% OFF HBL Debit/Credit Card Voucher (Min Spend Rs. 0 · Cap Rs. 900)",
-      "discountPercent": 10,
-      "maxCapPkr": 900,
-      "minSpendPkr": 0,
-      "activeDays": [
-        3
-      ],
-      "scheduleLabel": "Every Wednesday (Live in GCP DOM)",
-      "mechanism": "Collectible Bank Voucher",
-      "category": "Live DOM Voucher (.voucher-container)",
-      "cardTypes": [
-        "Credit",
-        "Debit"
-      ],
-      "networks": [
-        "Visa",
-        "Mastercard"
-      ],
-      "maxTxPerDay": 2,
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday",
-      "verifiedDate": "2026-10-27",
-      "helpline": "111-111-425",
-      "termsSummary": [
-        "Verified live `.voucher-container-payment` widget in `/payment-promotions/hblwednesday` DOM",
-        "Exact DOM text: \"HBL Debit/Credit Card · 10% Off · Min. Spend Rs.0 · Capped at Rs.900 · Use Now\"",
-        "Maximum 2 collectible vouchers per customer; auto-applies at checkout on eligible HBL BINs"
-      ]
-    },
-    {
-      "id": "askari-saturday-card-live-dom",
-      "bankName": "Askari Bank — Saturday Card Voucher",
-      "bankShort": "AKBL",
-      "issuerType": "Bank",
-      "title": "10% OFF Askari Bank Card Voucher (Min Spend Rs. 0 · Cap Rs. 1,000)",
-      "discountPercent": 10,
-      "maxCapPkr": 1000,
-      "minSpendPkr": 0,
-      "activeDays": [
-        6
-      ],
-      "scheduleLabel": "Every Saturday (Live in GCP DOM)",
-      "mechanism": "Collectible Bank Voucher",
-      "category": "Live DOM Voucher (.voucher-container)",
-      "cardTypes": [
-        "Credit",
-        "Debit"
-      ],
-      "networks": [
-        "Visa",
-        "Mastercard"
-      ],
-      "maxTxPerDay": 3,
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday",
-      "verifiedDate": "2026-10-27",
-      "helpline": "111-000-787",
-      "termsSummary": [
-        "Verified live `.voucher-container-payment` widget #1 in `/payment-promotions/askarisaturday` DOM",
-        "Exact DOM text: \"Askari Bank Card · 10% Off · Min. Spend Rs.0 · Capped at Rs.1000 · Collect\"",
-        "Collect voucher on Daraz App and pay with Askari Bank Card on Saturdays"
-      ]
-    },
-    {
-      "id": "askari-saturday-emi-live-dom",
-      "bankName": "Askari Bank — Saturday EMI Installment Voucher",
-      "bankShort": "AKBL",
-      "issuerType": "Bank",
-      "title": "10% OFF Askari Bank EMI Voucher (Min Spend Rs. 0 · Cap Rs. 1,000)",
-      "discountPercent": 10,
-      "maxCapPkr": 1000,
-      "minSpendPkr": 0,
-      "activeDays": [
-        6
-      ],
-      "scheduleLabel": "Every Saturday (Live in GCP DOM)",
-      "mechanism": "Collectible Bank Voucher",
-      "category": "Live DOM Voucher (.voucher-container)",
-      "cardTypes": [
-        "Credit"
-      ],
-      "networks": [
-        "Visa",
-        "Mastercard"
-      ],
-      "maxTxPerDay": 3,
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday",
-      "verifiedDate": "2026-10-27",
-      "helpline": "111-000-787",
-      "termsSummary": [
-        "Verified live `.voucher-container-payment` widget #2 in `/payment-promotions/askarisaturday` DOM",
-        "Exact DOM text: \"Askari Bank EMI · 10% Off · Min. Spend Rs.0 · Capped at Rs.1000 · Collect\"",
-        "Valid on Askari Bank Credit Card installment (EMI) checkouts on Daraz.pk"
-      ]
-    },
-    {
-      "id": "mcb-visa-weekend-2026",
-      "bankName": "MCB Bank — Visa Debit & Credit Weekend Deal",
-      "bankShort": "MCB",
-      "issuerType": "Bank",
-      "title": "Up to 15% OFF MCB Visa Cards (Fri–Sun · Valid till Dec 31, 2026)",
-      "discountPercent": 15,
-      "maxCapPkr": 1500,
-      "minSpendPkr": 2000,
+      "id": "daraz-app-mcb-visa-sig-12pct",
+      "voucherId": "mtop_daraz_mcb_sig_12_2026",
+      "section": "Bank Vouchers",
+      "issuer": "MCB Visa Signature & Infinite",
+      "type": "Bank Card",
+      "badge": "Limited Redemption",
+      "discountPercent": 12,
+      "minSpendPkr": 3000,
+      "maxCapText": "Max Cap Rs. 1,500",
+      "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [
         5,
         6,
         0
       ],
-      "scheduleLabel": "Fri, Sat & Sun (Valid till 31 Dec 2026)",
-      "mechanism": "Collectible Bank Voucher",
-      "category": "2026 Bank-Verified Campaign (Valid till Dec 2026)",
-      "cardTypes": [
-        "Credit",
-        "Debit"
-      ],
-      "networks": [
-        "Visa"
-      ],
-      "maxTxPerDay": 2,
-      "sourceUrl": "https://www.mcb.com.pk/personal/cards/mcb-discounts/daraz",
-      "verifiedDate": "2026-10-27",
-      "campaignWindow": "Valid through December 31, 2026",
-      "helpline": "111-000-622",
-      "termsSummary": [
-        "Explicitly published on MCB Bank official portal with validity through Dec 31, 2026",
-        "15% OFF on MCB Visa Infinite & Signature Cards (Max Cap Rs. 1,500)",
-        "10% OFF on MCB Visa Platinum & 8% OFF on MCB Visa Gold/Classic (Max Cap Rs. 1,000)"
-      ]
+      "schedule": "Fri, Sat & Sun",
+      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_sig_12_2026",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_sig_12_2026"
     },
     {
-      "id": "unionpay-mcb-islamic-2026",
-      "bankName": "UnionPay International / MCB Islamic Bank",
-      "bankShort": "UPI",
-      "issuerType": "Card Network",
-      "title": "12% OFF Existing & 20% OFF New UnionPay Cardholders (Sun–Tue · Valid till Dec 31, 2026)",
-      "discountPercent": 12,
-      "maxCapPkr": 1000,
-      "minSpendPkr": 1000,
+      "id": "daraz-app-mcb-platinum-10pct",
+      "voucherId": "mtop_daraz_mcb_plat_10_2026",
+      "section": "Bank Vouchers",
+      "issuer": "MCB Visa Platinum",
+      "type": "Bank Card",
+      "badge": "Limited Redemption",
+      "discountPercent": 10,
+      "minSpendPkr": 3000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "30/10/2026-01/11/2026",
+      "activeDays": [
+        5,
+        6,
+        0
+      ],
+      "schedule": "Fri, Sat & Sun",
+      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_plat_10_2026",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_plat_10_2026"
+    },
+    {
+      "id": "daraz-app-mcb-gold-8pct",
+      "voucherId": "mtop_daraz_mcb_gold_8_2026",
+      "section": "Bank Vouchers",
+      "issuer": "MCB Visa Classic & Gold",
+      "type": "Bank Card",
+      "badge": "Limited Redemption",
+      "discountPercent": 8,
+      "minSpendPkr": 3000,
+      "maxCapText": "Max Cap Rs. 800",
+      "validityWindow": "30/10/2026-01/11/2026",
+      "activeDays": [
+        5,
+        6,
+        0
+      ],
+      "schedule": "Fri, Sat & Sun",
+      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_gold_8_2026",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_gold_8_2026"
+    },
+    {
+      "id": "daraz-app-voucher-max-150",
+      "voucherId": "mtop_daraz_voucher_max_150",
+      "section": "Voucher Max",
+      "issuer": "Daraz Voucher Max",
+      "type": "Platform Voucher",
+      "badge": "Voucher Max",
+      "discountPercent": 4,
+      "minSpendPkr": 599,
+      "maxCapText": "Upto Rs. 150 Off",
+      "validityWindow": "01/10/2026-31/10/2026",
       "activeDays": [
         0,
         1,
-        2
+        2,
+        3,
+        4,
+        5,
+        6
       ],
-      "scheduleLabel": "Sun, Mon & Tue (Valid till 31 Dec 2026)",
-      "mechanism": "Collectible Bank Voucher",
-      "category": "2026 Bank-Verified Campaign (Valid till Dec 2026)",
-      "cardTypes": [
-        "Debit",
-        "Credit"
+      "schedule": "Active Daily",
+      "appDeepLink": "daraz://voucher/center?type=voucher_max",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
+    },
+    {
+      "id": "daraz-app-voucher-max-400",
+      "voucherId": "mtop_daraz_voucher_max_400",
+      "section": "Voucher Max",
+      "issuer": "Daraz Voucher Max",
+      "type": "Platform Voucher",
+      "badge": "Voucher Max",
+      "discountPercent": 4,
+      "minSpendPkr": 4000,
+      "maxCapText": "Upto Rs. 400 Off",
+      "validityWindow": "01/10/2026-31/10/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
       ],
-      "networks": [
-        "UnionPay"
+      "schedule": "Active Daily",
+      "appDeepLink": "daraz://voucher/center?type=voucher_max",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
+    },
+    {
+      "id": "daraz-app-voucher-max-tier3",
+      "voucherId": "mtop_daraz_voucher_max_800",
+      "section": "Voucher Max",
+      "issuer": "Daraz Voucher Max (Tier 3)",
+      "type": "Platform Voucher",
+      "badge": "Voucher Max",
+      "discountPercent": 5,
+      "minSpendPkr": 8000,
+      "maxCapText": "Upto Rs. 800 Off",
+      "validityWindow": "01/10/2026-31/10/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
       ],
-      "maxTxPerDay": 1,
-      "sourceUrl": "https://www.mcbislamicbank.com/home/alliance_detail/159",
-      "verifiedDate": "2026-10-27",
-      "campaignWindow": "Feb 1, 2026 – Dec 31, 2026",
-      "helpline": "111-622-425",
-      "termsSummary": [
-        "Explicitly published on MCB Islamic Bank official portal (Validity: Feb 1, 2026 – Dec 31, 2026)",
-        "20% OFF for new UnionPay cardholders on Daraz (Min Spend Rs. 1,000 · Max Cap Rs. 1,000)",
-        "12% OFF every Sunday, Monday & Tuesday for existing UnionPay users (Min Spend Rs. 1,000 · Max Cap Rs. 1,000)"
-      ]
+      "schedule": "Active Daily",
+      "appDeepLink": "daraz://voucher/center?type=voucher_max",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
+    },
+    {
+      "id": "daraz-app-choice-upsized-6pct",
+      "voucherId": "mtop_daraz_choice_upsized_6pct",
+      "section": "Choice Voucher",
+      "issuer": "CHOICE Upsized Voucher",
+      "type": "Choice Any 3",
+      "badge": "Choice Any 3",
+      "discountPercent": 6,
+      "minSpendPkr": 699,
+      "maxCapText": "Sitewide Choice Items",
+      "validityWindow": "30/10/2026-01/11/2026",
+      "activeDays": [
+        5,
+        6,
+        0
+      ],
+      "schedule": "Fri, Sat & Sun",
+      "appDeepLink": "daraz://voucher/center?type=choice_any3",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=choice_any3"
     }
   ]
 }
