@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-10-30T21:01:35.696Z",
-  "lastNotifiedPktDate": "2026-10-31",
-  "pktDayName": "Saturday",
+  "updatedAt": "2026-10-31T19:01:13.993Z",
+  "lastNotifiedPktDate": "2026-11-01",
+  "pktDayName": "Sunday",
   "note": "Sends 1 daily digest at the start of each PKT day (Asia/Karachi) and only notifies during the day if a new discount is offered. Includes JazzCash 25% OFF; excludes stale daily HBL hub entry.",
-  "activeTodayCount": 4,
+  "activeTodayCount": 3,
   "offersCount": 6,
   "offers": [
     {
