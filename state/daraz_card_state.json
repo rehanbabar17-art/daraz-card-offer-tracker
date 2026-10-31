@@ -1,34 +1,13 @@
 {
-  "last_notified_pkt_date": "2026-10-31",
-  "last_checked_pkt": "2026-10-31T18:09:15.077146+05:00",
+  "last_notified_pkt_date": "2026-11-01",
+  "last_checked_pkt": "2026-11-01T00:13:29.063591+05:00",
   "daraz_gateway": {
-    "status": 200,
-    "reachable": true,
-    "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
-    "api": "mtop.lazada.detail.getVouchers"
+    "status": 0,
+    "reachable": false,
+    "error": "HTTP Error 419: "
   },
-  "active_vouchers_count": 8,
+  "active_vouchers_count": 9,
   "vouchers": [
-    {
-      "id": "daraz-app-askari-saturday-10pct",
-      "voucherId": "mtop_daraz_askari_sat_10",
-      "section": "Bank Vouchers",
-      "issuer": "Askari Bank (Askari Saturday)",
-      "type": "Bank Card",
-      "badge": "Active Today · Saturday",
-      "discountPercent": 10,
-      "minSpendPkr": 1000,
-      "maxCapText": "Max Cap Rs. 1,000",
-      "validityWindow": "Every Saturday",
-      "issuanceSchedule": "Drops every Saturday at 00:00 PKT",
-      "activeDays": [
-        6
-      ],
-      "schedule": "Saturdays Only (Active Today)",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fpages.daraz.pk%2Fwow%2Fgcp%2Fdaraz%2Fchannel%2Fpk%2Fpayment-promotions%2Faskarisaturday",
-      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday"
-    },
     {
       "id": "daraz-app-jazzcash-25pct",
       "voucherId": "mtop_daraz_jazzcash_wallet_25pct",
@@ -120,6 +99,50 @@
       "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_gold_8_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_gold_8_2026"
+    },
+    {
+      "id": "daraz-app-unionpay-12pct",
+      "voucherId": "mtop_daraz_unionpay_12_sun",
+      "section": "Bank Vouchers",
+      "issuer": "UnionPay International (Debit & Credit)",
+      "type": "Card Network",
+      "badge": "Upcoming · Drops Sun",
+      "discountPercent": 12,
+      "minSpendPkr": 2500,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "01/11/2026-03/11/2026 (Sun, Mon, Tue)",
+      "issuanceSchedule": "Drops every Sunday at 00:00 PKT (Drops Tomorrow)",
+      "activeDays": [
+        0,
+        1,
+        2
+      ],
+      "schedule": "Sun, Mon & Tue (Upcoming)",
+      "status": "UPCOMING",
+      "upcomingNote": "Drops Sunday at 00:00 PKT (Tomorrow)",
+      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fwww.daraz.pk%2Fwow%2Fi%2Fpk%2Fpayment-partners%2Funion-pay",
+      "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
+    },
+    {
+      "id": "daraz-app-scb-sunday-10pct",
+      "voucherId": "mtop_daraz_scb_sunday_10",
+      "section": "Bank Vouchers",
+      "issuer": "Standard Chartered Bank (SCB Sunday)",
+      "type": "Bank Card",
+      "badge": "Upcoming · Sunday Only",
+      "discountPercent": 10,
+      "minSpendPkr": 3000,
+      "maxCapText": "Max Cap Rs. 1,500",
+      "validityWindow": "Every Sunday (01/11/2026)",
+      "issuanceSchedule": "Drops every Sunday at 00:00 PKT (Drops Tomorrow)",
+      "activeDays": [
+        0
+      ],
+      "schedule": "Sundays Only (Upcoming)",
+      "status": "UPCOMING",
+      "upcomingNote": "Drops Sunday at 00:00 PKT (Tomorrow)",
+      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fpages.daraz.pk%2Fwow%2Fgcp%2Fdaraz%2Fchannel%2Fpk%2Fpayment-promotions%2Fscb-sunday-all-deals",
+      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals"
     },
     {
       "id": "daraz-app-voucher-max-150",
