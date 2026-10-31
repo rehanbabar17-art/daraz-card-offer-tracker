@@ -165,12 +165,19 @@ def main():
             f"- {o['issuer']}: {o['discountPercent']}% OFF (Min Rs. {o.get('minSpendPkr', '')})"
             for o in active_today if o.get("section") == "Choice Voucher"
         ]
+        upcoming_lines = [
+            f"- {o['issuer']}: {o['discountPercent']}% OFF ({o.get('maxCapText', '')}, Min Rs. {o.get('minSpendPkr', '')}) [{o.get('schedule', '')}]"
+            for o in upcoming
+        ]
 
         msg_body = [
             f"DARAZ MOBILE APP VOUCHERS ACTIVE TODAY ({weekday_str}, {pkt_date_str} PKT):",
             "",
-            "🏦 BANK VOUCHERS:",
+            "🏦 BANK VOUCHERS (ACTIVE TODAY):",
             *(bank_lines if bank_lines else ["None today"]),
+            "",
+            "⏳ UPCOMING BANK VOUCHERS (IN APP):",
+            *(upcoming_lines if upcoming_lines else ["None upcoming"]),
             "",
             "🏷️ VOUCHER MAX:",
             *(max_lines if max_lines else ["None today"]),
