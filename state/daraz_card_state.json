@@ -1,14 +1,33 @@
 {
   "last_notified_pkt_date": "2026-10-31",
-  "last_checked_pkt": "2026-10-31T17:47:53.339291+05:00",
+  "last_checked_pkt": "2026-10-31T17:55:42.182519+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
     "api": "mtop.lazada.detail.getVouchers"
   },
-  "active_vouchers_count": 8,
+  "active_vouchers_count": 11,
   "vouchers": [
+    {
+      "id": "daraz-app-askari-saturday-10pct",
+      "voucherId": "mtop_daraz_askari_sat_10",
+      "section": "Bank Vouchers",
+      "issuer": "Askari Bank (Askari Saturday)",
+      "type": "Bank Card",
+      "badge": "Askari Saturday",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "Every Saturday",
+      "activeDays": [
+        6
+      ],
+      "schedule": "Saturdays Only (Active Today)",
+      "status": "ACTIVE_NOW",
+      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fpages.daraz.pk%2Fwow%2Fgcp%2Fdaraz%2Fchannel%2Fpk%2Fpayment-promotions%2Faskarisaturday",
+      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday"
+    },
     {
       "id": "daraz-app-jazzcash-25pct",
       "voucherId": "mtop_daraz_jazzcash_wallet_25pct",
@@ -96,6 +115,51 @@
       "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_gold_8_2026",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_gold_8_2026"
+    },
+    {
+      "id": "daraz-app-js-bank-weekend-10pct",
+      "voucherId": "mtop_daraz_js_bank_weekend_10",
+      "section": "Bank Vouchers",
+      "issuer": "JS Bank (Weekend Deals)",
+      "type": "Bank Card",
+      "badge": "Weekend Deal",
+      "discountPercent": 10,
+      "minSpendPkr": 2500,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "Saturdays & Sundays",
+      "activeDays": [
+        6,
+        0
+      ],
+      "schedule": "Saturdays & Sundays (Active Today)",
+      "status": "ACTIVE_NOW",
+      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fwww.daraz.pk%2Fwow%2Fi%2Fpk%2Fpayment-partners%2Fjs-bank",
+      "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/js-bank"
+    },
+    {
+      "id": "daraz-app-easypaisa-10pct",
+      "voucherId": "mtop_daraz_easypaisa_wallet_10",
+      "section": "Bank Vouchers",
+      "issuer": "Easypaisa Mobile Wallet",
+      "type": "Digital Wallet",
+      "badge": "10% OFF Wallet",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
+      "maxCapText": "Max Cap Rs. 300",
+      "validityWindow": "Active Daily",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily",
+      "status": "ACTIVE_NOW",
+      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fpages.daraz.pk%2Fwow%2Fgcp%2Fdaraz%2Fchannel%2Fpk%2Fpayment-promotions%2Fdigital-payments",
+      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments"
     },
     {
       "id": "daraz-app-voucher-max-150",
