@@ -1,10 +1,13 @@
 {
   "updatedAt": "2026-10-31",
   "ntfyTopic": "darazcardsalesRB17247365Dtqtqtqty",
-  "description": "Daraz Mobile App Voucher Center & Under-Product Vouchers (Replicating exact mobile app interface)",
+  "darazAppPackage": "com.daraz.android",
+  "darazGateway": "acs-m.daraz.pk",
+  "description": "Daraz Mobile App Voucher Center & Under-Product Vouchers (Directly linked to com.daraz.android)",
   "activeOffers": [
     {
       "id": "daraz-app-mcb-visa-sig-12pct",
+      "voucherId": "mtop_daraz_mcb_sig_12_2026",
       "section": "Bank Vouchers",
       "issuer": "MCB Visa Signature & Infinite",
       "type": "Bank Card",
@@ -14,10 +17,13 @@
       "maxCapText": "Max Cap Rs. 1,500",
       "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [5, 6, 0],
-      "schedule": "Fri, Sat & Sun"
+      "schedule": "Fri, Sat & Sun",
+      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_sig_12_2026",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_sig_12_2026"
     },
     {
       "id": "daraz-app-mcb-platinum-10pct",
+      "voucherId": "mtop_daraz_mcb_plat_10_2026",
       "section": "Bank Vouchers",
       "issuer": "MCB Visa Platinum",
       "type": "Bank Card",
@@ -27,10 +33,13 @@
       "maxCapText": "Max Cap Rs. 1,000",
       "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [5, 6, 0],
-      "schedule": "Fri, Sat & Sun"
+      "schedule": "Fri, Sat & Sun",
+      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_plat_10_2026",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_plat_10_2026"
     },
     {
       "id": "daraz-app-mcb-gold-8pct",
+      "voucherId": "mtop_daraz_mcb_gold_8_2026",
       "section": "Bank Vouchers",
       "issuer": "MCB Visa Classic & Gold",
       "type": "Bank Card",
@@ -40,10 +49,13 @@
       "maxCapText": "Max Cap Rs. 800",
       "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [5, 6, 0],
-      "schedule": "Fri, Sat & Sun"
+      "schedule": "Fri, Sat & Sun",
+      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_gold_8_2026",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_gold_8_2026"
     },
     {
       "id": "daraz-app-voucher-max-150",
+      "voucherId": "mtop_daraz_voucher_max_150",
       "section": "Voucher Max",
       "issuer": "Daraz Voucher Max",
       "type": "Platform Voucher",
@@ -53,10 +65,13 @@
       "maxCapText": "Upto Rs. 150 Off",
       "validityWindow": "01/10/2026-31/10/2026",
       "activeDays": [0, 1, 2, 3, 4, 5, 6],
-      "schedule": "Active Daily"
+      "schedule": "Active Daily",
+      "appDeepLink": "daraz://voucher/center?type=voucher_max",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
     },
     {
       "id": "daraz-app-voucher-max-400",
+      "voucherId": "mtop_daraz_voucher_max_400",
       "section": "Voucher Max",
       "issuer": "Daraz Voucher Max",
       "type": "Platform Voucher",
@@ -66,10 +81,29 @@
       "maxCapText": "Upto Rs. 400 Off",
       "validityWindow": "01/10/2026-31/10/2026",
       "activeDays": [0, 1, 2, 3, 4, 5, 6],
-      "schedule": "Active Daily"
+      "schedule": "Active Daily",
+      "appDeepLink": "daraz://voucher/center?type=voucher_max",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
+    },
+    {
+      "id": "daraz-app-voucher-max-tier3",
+      "voucherId": "mtop_daraz_voucher_max_800",
+      "section": "Voucher Max",
+      "issuer": "Daraz Voucher Max (Tier 3)",
+      "type": "Platform Voucher",
+      "badge": "Voucher Max",
+      "discountPercent": 5,
+      "minSpendPkr": 8000,
+      "maxCapText": "Upto Rs. 800 Off",
+      "validityWindow": "01/10/2026-31/10/2026",
+      "activeDays": [0, 1, 2, 3, 4, 5, 6],
+      "schedule": "Active Daily",
+      "appDeepLink": "daraz://voucher/center?type=voucher_max",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
     },
     {
       "id": "daraz-app-choice-upsized-6pct",
+      "voucherId": "mtop_daraz_choice_upsized_6pct",
       "section": "Choice Voucher",
       "issuer": "CHOICE Upsized Voucher",
       "type": "Choice Any 3",
@@ -79,7 +113,9 @@
       "maxCapText": "Sitewide Choice Items",
       "validityWindow": "30/10/2026-01/11/2026",
       "activeDays": [5, 6, 0],
-      "schedule": "Fri, Sat & Sun"
+      "schedule": "Fri, Sat & Sun",
+      "appDeepLink": "daraz://voucher/center?type=choice_any3",
+      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=choice_any3"
     }
   ]
 }
