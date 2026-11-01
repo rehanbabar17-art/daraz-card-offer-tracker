@@ -1,13 +1,13 @@
 {
-  "last_notified_pkt_date": "2026-11-01",
-  "last_checked_pkt": "2026-11-01T22:05:15.755915+05:00",
+  "last_notified_pkt_date": "2026-11-02",
+  "last_checked_pkt": "2026-11-02T03:42:48.364929+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
     "api": "mtop.lazada.detail.getVouchers"
   },
-  "active_vouchers_count": 9,
+  "active_vouchers_count": 5,
   "vouchers": [
     {
       "id": "daraz-app-jazzcash-25pct",
@@ -36,72 +36,6 @@
       "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
     },
     {
-      "id": "daraz-app-mcb-visa-sig-12pct",
-      "voucherId": "mtop_daraz_mcb_sig_12_2026",
-      "section": "Bank Vouchers",
-      "issuer": "MCB Visa Signature & Infinite",
-      "type": "Bank Card",
-      "badge": "Limited Redemption",
-      "discountPercent": 12,
-      "minSpendPkr": 3000,
-      "maxCapText": "Max Cap Rs. 1,500",
-      "validityWindow": "30/10/2026-01/11/2026",
-      "issuanceSchedule": "Replenishes daily at 00:00 PKT (Oct 30 – Nov 1)",
-      "activeDays": [
-        5,
-        6,
-        0
-      ],
-      "schedule": "Fri, Sat & Sun",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_sig_12_2026",
-      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_sig_12_2026"
-    },
-    {
-      "id": "daraz-app-mcb-platinum-10pct",
-      "voucherId": "mtop_daraz_mcb_plat_10_2026",
-      "section": "Bank Vouchers",
-      "issuer": "MCB Visa Platinum",
-      "type": "Bank Card",
-      "badge": "Limited Redemption",
-      "discountPercent": 10,
-      "minSpendPkr": 3000,
-      "maxCapText": "Max Cap Rs. 1,000",
-      "validityWindow": "30/10/2026-01/11/2026",
-      "issuanceSchedule": "Replenishes daily at 00:00 PKT (Oct 30 – Nov 1)",
-      "activeDays": [
-        5,
-        6,
-        0
-      ],
-      "schedule": "Fri, Sat & Sun",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_plat_10_2026",
-      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_plat_10_2026"
-    },
-    {
-      "id": "daraz-app-mcb-gold-8pct",
-      "voucherId": "mtop_daraz_mcb_gold_8_2026",
-      "section": "Bank Vouchers",
-      "issuer": "MCB Visa Classic & Gold",
-      "type": "Bank Card",
-      "badge": "Limited Redemption",
-      "discountPercent": 8,
-      "minSpendPkr": 3000,
-      "maxCapText": "Max Cap Rs. 800",
-      "validityWindow": "30/10/2026-01/11/2026",
-      "issuanceSchedule": "Replenishes daily at 00:00 PKT (Oct 30 – Nov 1)",
-      "activeDays": [
-        5,
-        6,
-        0
-      ],
-      "schedule": "Fri, Sat & Sun",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://voucher/center?voucherId=mtop_daraz_mcb_gold_8_2026",
-      "webCollectUrl": "https://www.daraz.pk/voucher-center/?voucherId=mtop_daraz_mcb_gold_8_2026"
-    },
-    {
       "id": "daraz-app-unionpay-12pct",
       "voucherId": "mtop_daraz_unionpay_12_sun",
       "section": "Bank Vouchers",
@@ -125,25 +59,25 @@
       "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/union-pay"
     },
     {
-      "id": "daraz-app-scb-sunday-10pct",
-      "voucherId": "mtop_daraz_scb_sunday_10",
+      "id": "daraz-app-albaraka-bank-10pct",
+      "voucherId": "mtop_daraz_albaraka_mastercard_10",
       "section": "Bank Vouchers",
-      "issuer": "Standard Chartered Bank (SCB Sunday)",
+      "issuer": "Al Baraka Bank (Mastercard Debit)",
       "type": "Bank Card",
-      "badge": "Upcoming · Sunday Only",
+      "badge": "Upcoming · Monday",
       "discountPercent": 10,
-      "minSpendPkr": 3000,
-      "maxCapText": "Max Cap Rs. 1,500",
-      "validityWindow": "Every Sunday (01/11/2026)",
-      "issuanceSchedule": "Drops every Sunday at 00:00 PKT (Drops Tomorrow)",
+      "minSpendPkr": 1000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "Mondays & Campaign Days",
+      "issuanceSchedule": "Drops Mondays at 00:00 PKT (Al Baraka Mastercard)",
       "activeDays": [
-        0
+        1
       ],
-      "schedule": "Sundays Only (Upcoming)",
+      "schedule": "Mondays Only (Upcoming)",
       "status": "UPCOMING",
-      "upcomingNote": "Drops Sunday at 00:00 PKT (Tomorrow)",
-      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fpages.daraz.pk%2Fwow%2Fgcp%2Fdaraz%2Fchannel%2Fpk%2Fpayment-promotions%2Fscb-sunday-all-deals",
-      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals"
+      "upcomingNote": "Drops Monday at 00:00 PKT (In 2 days)",
+      "appDeepLink": "daraz://voucher/center?id=albaraka",
+      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments"
     },
     {
       "id": "daraz-app-voucher-max-150",
@@ -196,28 +130,6 @@
       "status": "ACTIVE_NOW",
       "appDeepLink": "daraz://voucher/center?type=voucher_max",
       "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
-    },
-    {
-      "id": "daraz-app-choice-upsized-6pct",
-      "voucherId": "mtop_daraz_choice_upsized_6pct",
-      "section": "Choice Voucher",
-      "issuer": "CHOICE Upsized Voucher",
-      "type": "Choice Any 3",
-      "badge": "Choice Any 3",
-      "discountPercent": 6,
-      "minSpendPkr": 699,
-      "maxCapText": "Sitewide Choice Items",
-      "validityWindow": "30/10/2026-01/11/2026",
-      "issuanceSchedule": "Active across weekend campaign (Oct 30 – Nov 1)",
-      "activeDays": [
-        5,
-        6,
-        0
-      ],
-      "schedule": "Fri, Sat & Sun",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://voucher/center?type=choice_any3",
-      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=choice_any3"
     }
   ]
 }
