@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-11-02T17:34:43.159Z",
+  "products": [
+    {
+      "name": "User-provided Daraz product example",
+      "sourceUrl": "https://s.daraz.pk/s.22e8o",
+      "resolvedUrl": "https://www.daraz.pk/products/the-vintage-clothing-mens-clothing-summer-breathable-t-shirt-and-black-trouser-gym-wear-and-comfortable-summer-tracksuits-for-men-summer-tracksuit-for-men-summer-track-suits-for-men-track-suits-for-boys-track-suit-for-boys-tracksuit-for-boy-i669256526-s3159688261.html",
+      "itemId": "669256526",
+      "skuId": "3159688261",
+      "checkedAt": "2026-11-02T17:34:08.268Z",
+      "status": "unavailable",
+      "mtopTokenPresent": true,
+      "error": "The product page did not issue a detectable voucher API request.",
+      "vouchers": []
+    }
+  ]
+}
