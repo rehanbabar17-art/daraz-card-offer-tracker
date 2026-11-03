@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   app-voucher-scan:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - name: Check out repository
@@ -20,19 +20,16 @@ jobs:
 
       - name: Enable KVM for Android emulator
         run: |
-          if [ -e /dev/kvm ]; then
-            sudo chmod 666 /dev/kvm
-            ls -l /dev/kvm
-          else
-            echo "No /dev/kvm device; Android emulator action will use its automatic acceleration fallback."
-          fi
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Install Appium and UiAutomator2 driver
         run: |
           npm install --global appium
           appium driver install uiautomator2
 
-      - name: Boot ARM64 emulator, install verified APKPure XAPK, and scan
+      - name: Boot Android 11 emulator, install verified APKPure XAPK, and scan
         uses: reactivecircus/android-emulator-runner@v2
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
@@ -40,7 +37,7 @@ jobs:
         with:
           api-level: 30
           target: google_apis
-          arch: arm64-v8a
+          arch: x86_64
           profile: pixel_4
           emulator-boot-timeout: 900
           disable-animations: true

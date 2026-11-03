@@ -158,14 +158,17 @@ def main() -> None:
                 )
         print("Verified APKPure XAPK hash, Daraz signing certificate, package and version.")
 
-        abi = subprocess.run(
-            ["adb", "shell", "getprop", "ro.product.cpu.abi"],
+        abi_list = subprocess.run(
+            ["adb", "shell", "getprop", "ro.product.cpu.abilist"],
             check=True,
             capture_output=True,
             text=True,
         ).stdout.strip()
-        if abi != "arm64-v8a":
-            raise RuntimeError(f"Expected an ARM64 Android emulator, found ABI {abi!r}")
+        if "arm64-v8a" not in abi_list.split(","):
+            raise RuntimeError(
+                "Android emulator does not advertise ARM64 binary translation; "
+                f"supported ABI list is {abi_list!r}"
+            )
 
         subprocess.run(
             ["adb", "install-multiple", "-r", *(str(path) for path in extracted)],
