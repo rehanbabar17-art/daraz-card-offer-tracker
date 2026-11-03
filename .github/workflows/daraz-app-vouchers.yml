@@ -12,8 +12,8 @@ concurrency:
 
 jobs:
   app-voucher-scan:
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -29,18 +29,16 @@ jobs:
           npm install --global appium
           appium driver install uiautomator2
 
-      - name: Boot Play Store emulator and scan product vouchers
+      - name: Boot ARM64 emulator, install verified APKPure XAPK, and scan
         uses: reactivecircus/android-emulator-runner@v2
         env:
-          PLAY_STORE_EMAIL: ${{ secrets.PLAY_STORE_EMAIL }}
-          PLAY_STORE_PASSWORD: ${{ secrets.PLAY_STORE_PASSWORD }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
         with:
-          api-level: 35
-          target: google_apis_playstore
-          arch: x86_64
-          profile: pixel_7_pro
+          api-level: 30
+          target: google_apis
+          arch: arm64-v8a
+          profile: pixel_4
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
@@ -49,7 +47,10 @@ jobs:
             . .venv-appium/bin/activate
             python -m pip install --disable-pip-version-check --quiet Appium-Python-Client
 
-            # Keep Appium's request log out of Actions logs. It may contain UI command payloads.
+            # Verify APKPure's published SHA-256 and Daraz signer before sideloading split APKs.
+            python scripts/install_daraz_xapk.py
+
+            # Keep Appium's request log out of Actions logs.
             appium --address 127.0.0.1 --port 4723 --log-level error --log /tmp/appium.log >/dev/null 2>&1 &
             for attempt in $(seq 1 60); do
               if curl --silent --fail http://127.0.0.1:4723/status >/dev/null; then

@@ -21,15 +21,12 @@ from typing import Any
 
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
-from appium.webdriver.common.appiumby import AppiumBy
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, WebDriverException
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import WebDriverException
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCTS_FILE = ROOT / "products.json"
 STATE_FILE = ROOT / "data" / "app-product-vouchers.json"
 APP_PACKAGE = "com.daraz.android"
-PLAY_STORE_PACKAGE = "com.android.vending"
 APPIUM_URL = os.getenv("APPIUM_URL", "http://127.0.0.1:4723")
 
 
@@ -55,67 +52,6 @@ def page_text_nodes(driver: webdriver.Remote) -> list[str]:
     return nodes
 
 
-def text_present(driver: webdriver.Remote, pattern: str) -> bool:
-    source = " ".join(page_text_nodes(driver))
-    return bool(re.search(pattern, source, re.IGNORECASE))
-
-
-def tap_text(driver: webdriver.Remote, text: str, timeout: int = 6) -> bool:
-    try:
-        element = WebDriverWait(driver, timeout).until(
-            lambda d: d.find_element(AppiumBy.ANDROID_UIAUTOMATOR,
-                                    f'new UiSelector().textContains("{text}")')
-        )
-        element.click()
-        return True
-    except (TimeoutException, NoSuchElementException, WebDriverException):
-        return False
-
-
-def fill_first_edit_text(driver: webdriver.Remote, value: str, timeout: int = 10) -> bool:
-    try:
-        field = WebDriverWait(driver, timeout).until(
-            lambda d: d.find_element(AppiumBy.CLASS_NAME, "android.widget.EditText")
-        )
-        field.clear()
-        field.send_keys(value)
-        return True
-    except (TimeoutException, NoSuchElementException, WebDriverException):
-        return False
-
-
-def enter_play_store_account_if_needed(driver: webdriver.Remote) -> None:
-    email = os.getenv("PLAY_STORE_EMAIL", "").strip()
-    password = os.getenv("PLAY_STORE_PASSWORD", "")
-    if not text_present(driver, r"sign in|use your google account|add an account"):
-        return
-    if not email or not password:
-        raise RuntimeError(
-            "Play Store login is needed. Add PLAY_STORE_EMAIL and PLAY_STORE_PASSWORD "
-            "as GitHub Actions repository secrets; do not put them in code or workflow YAML."
-        )
-
-    tap_text(driver, "Sign in", timeout=8)
-    time.sleep(2)
-    if not fill_first_edit_text(driver, email):
-        raise RuntimeError("Could not locate the Play Store email field; Google login UI may have changed.")
-    driver.press_keycode(66)  # Enter/Next
-    time.sleep(3)
-
-    if text_present(driver, r"captcha|verify it's you|2.step|two.step|phone|security key|check your phone"):
-        raise RuntimeError("Google requested a verification step; workflow stops for manual verification.")
-
-    if not fill_first_edit_text(driver, password, timeout=12):
-        raise RuntimeError("Could not locate the Play Store password field; Google login UI may have changed.")
-    driver.press_keycode(66)
-    time.sleep(8)
-
-    if text_present(driver, r"captcha|verify it's you|2.step|two.step|phone|security key|check your phone"):
-        raise RuntimeError("Google requested a verification step; workflow stops for manual verification.")
-    if text_present(driver, r"wrong password|couldn't find your google account|account disabled"):
-        raise RuntimeError("Google rejected the Play Store sign-in; no further login attempts will be made.")
-
-
 def adb_package_installed(package: str) -> bool:
     result = subprocess.run(
         ["adb", "shell", "pm", "path", package],
@@ -125,33 +61,6 @@ def adb_package_installed(package: str) -> bool:
         timeout=15,
     )
     return result.returncode == 0 and "package:" in result.stdout
-
-
-def open_play_store_product(driver: webdriver.Remote) -> None:
-    driver.execute_script(
-        "mobile: deepLink",
-        {"url": f"market://details?id={APP_PACKAGE}", "package": PLAY_STORE_PACKAGE},
-    )
-    time.sleep(5)
-    enter_play_store_account_if_needed(driver)
-
-    if adb_package_installed(APP_PACKAGE):
-        return
-
-    if not tap_text(driver, "Install", timeout=15):
-        if text_present(driver, r"not available|country|device isn't compatible"):
-            raise RuntimeError("Daraz is not installable from Play Store on this emulator/account/region.")
-        raise RuntimeError("Could not find the Play Store Install button for Daraz.")
-
-    # Wait up to three minutes for Play Store to complete the official installation.
-    deadline = time.time() + 180
-    while time.time() < deadline:
-        if adb_package_installed(APP_PACKAGE):
-            return
-        if text_present(driver, r"captcha|verify it's you|2.step|two.step|check your phone"):
-            raise RuntimeError("Play Store requested extra verification; workflow stops without bypassing it.")
-        time.sleep(3)
-    raise RuntimeError("Timed out waiting for Play Store to install Daraz.")
 
 
 def extract_voucher_text(driver: webdriver.Remote, product_url: str) -> dict[str, Any]:
@@ -251,8 +160,9 @@ def main() -> int:
     driver: webdriver.Remote | None = None
     results: list[dict[str, Any]] = []
     try:
+        if not adb_package_installed(APP_PACKAGE):
+            raise RuntimeError("Daraz is not installed; run scripts/install_daraz_xapk.py first.")
         driver = webdriver.Remote(APPIUM_URL, options=options)
-        open_play_store_product(driver)
         driver.activate_app(APP_PACKAGE)
         for product in products:
             try:
