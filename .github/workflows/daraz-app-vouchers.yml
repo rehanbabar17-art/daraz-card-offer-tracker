@@ -20,9 +20,12 @@ jobs:
 
       - name: Enable KVM for Android emulator
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+          if [ -e /dev/kvm ]; then
+            sudo chmod 666 /dev/kvm
+            ls -l /dev/kvm
+          else
+            echo "No /dev/kvm device; Android emulator action will use its automatic acceleration fallback."
+          fi
 
       - name: Install Appium and UiAutomator2 driver
         run: |
@@ -39,7 +42,9 @@ jobs:
           target: google_apis
           arch: arm64-v8a
           profile: pixel_4
+          emulator-boot-timeout: 900
           disable-animations: true
+          disable-linux-hw-accel: auto
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             set -euo pipefail
