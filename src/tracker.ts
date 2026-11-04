@@ -463,10 +463,12 @@ export async function runTracker(): Promise<void> {
     console.warn('Direct ALD-Lamp fetch warning:', err);
   }
 
-  let browser;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let browser: any;
   let mobileDeviceConfig: Record<string, unknown> = {};
   try {
-    const pw = await import('playwright');
+    const pwModuleName = 'playwright';
+    const pw = await import(pwModuleName);
     mobileDeviceConfig = pw.devices['Pixel 7'] || {};
     browser = await pw.chromium.launch({ headless: true });
   } catch (err: unknown) {
@@ -496,7 +498,7 @@ export async function runTracker(): Promise<void> {
       const jsonInterceptedTexts: string[] = [];
 
       // Rule 2: Intercept network JSON responses with voucher keywords
-      page.on('response', async (response) => {
+      page.on('response', async (response: { headers: () => Record<string, string>; url: () => string; text: () => Promise<string> }) => {
         try {
           const contentType = response.headers()['content-type'] || '';
           const url = response.url();
