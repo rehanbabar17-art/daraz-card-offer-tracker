@@ -1,4 +1,3 @@
-import { chromium, devices } from 'playwright';
 import fs from 'fs';
 import path from 'path';
 
@@ -426,8 +425,11 @@ export async function runTracker(): Promise<void> {
     }
   }
 
+  const isGithubActions = process.env.GITHUB_ACTIONS === 'true';
   const artifactsDir = path.join(process.cwd(), 'artifacts');
-  fs.mkdirSync(artifactsDir, { recursive: true });
+  if (isGithubActions) {
+    fs.mkdirSync(artifactsDir, { recursive: true });
+  }
 
   const stateDir = path.join(process.cwd(), 'data');
   fs.mkdirSync(stateDir, { recursive: true });
@@ -462,8 +464,11 @@ export async function runTracker(): Promise<void> {
   }
 
   let browser;
+  let mobileDeviceConfig: Record<string, unknown> = {};
   try {
-    browser = await chromium.launch({ headless: true });
+    const pw = await import('playwright');
+    mobileDeviceConfig = pw.devices['Pixel 7'] || {};
+    browser = await pw.chromium.launch({ headless: true });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     console.warn(`Playwright Chromium binary not available in this container (${msg.slice(0, 80)}). Relying on Direct API & merged state.`);
@@ -471,7 +476,7 @@ export async function runTracker(): Promise<void> {
 
   if (browser) {
     const context = await browser.newContext({
-      ...devices['Pixel 7'],
+      ...mobileDeviceConfig,
       locale: 'en-PK',
       timezoneId: 'Asia/Karachi',
     });
@@ -538,8 +543,10 @@ export async function runTracker(): Promise<void> {
 
         await page.waitForTimeout(3000);
 
-        const screenshotPath = path.join(artifactsDir, `page-${pageIndex}.png`);
-        await page.screenshot({ path: screenshotPath, fullPage: true });
+        if (isGithubActions) {
+          const screenshotPath = path.join(artifactsDir, `page-${pageIndex}.png`);
+          await page.screenshot({ path: screenshotPath, fullPage: true });
+        }
 
         const hrefs = await page.evaluate(() => {
           const links: string[] = [];
