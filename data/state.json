@@ -1,5 +1,13 @@
 {
   "lastDigestDatePKT": "2026-11-04",
+  "source": "Daraz Voucher Center & Official Payment Promotions API",
+  "categories": [
+    "Wallet Vouchers",
+    "Bank Vouchers",
+    "Voucher Max",
+    "Free Shipping",
+    "Coins & Seller Discounts"
+  ],
   "offers": [
     {
       "id": "easypaisa-10pct-cap1000",
@@ -30,7 +38,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     },
     {
       "id": "zindigi-25pct-cap1000",
@@ -43,7 +51,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     },
     {
       "id": "albaraka-15pct-min500",
@@ -110,7 +118,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     },
     {
       "id": "hbl-10pct-min1000",
@@ -267,7 +275,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     },
     {
       "id": "ubl-10pct-cap1000",
@@ -280,7 +288,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     },
     {
       "id": "visa-10pct-cap900",
@@ -293,7 +301,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     },
     {
       "id": "vmax-1100-min19999",
@@ -504,7 +512,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     },
     {
       "id": "hblbank-10pct-cap900",
@@ -517,7 +525,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     },
     {
       "id": "standardchartered-10pct-cap1000",
@@ -530,8 +538,8 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-04T12:54:49.569Z"
+      "scrapedAt": "2026-11-04T18:01:19.728Z"
     }
   ],
-  "scrapedAt": "2026-11-04T12:54:49.615Z"
+  "scrapedAt": "2026-11-04T18:01:41.532Z"
 }
