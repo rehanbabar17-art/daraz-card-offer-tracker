@@ -1,6 +1,11 @@
 node_modules/
-__pycache__/
-.env
-.env.*
-!.env.example
+build/
+dist/
+coverage/
 .DS_Store
+*.log
+.env*
+!.env.example
+artifacts/
+dev-dist/
+bun.lock
