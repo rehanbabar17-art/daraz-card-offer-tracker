@@ -1,26 +1,24 @@
 {
   "last_notified_pkt_date": "2026-11-04",
-  "last_checked_pkt": "2026-11-04T07:58:23.905716+05:00",
+  "last_checked_pkt": "2026-11-04T22:50:08.135608+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
     "api": "mtop.lazada.detail.getVouchers"
   },
-  "active_vouchers_count": 4,
+  "active_vouchers_count": 13,
   "vouchers": [
     {
-      "id": "daraz-app-jazzcash-25pct",
-      "voucherId": "mtop_daraz_jazzcash_wallet_25pct",
+      "id": "easypaisa-10pct",
       "section": "Bank Vouchers",
-      "issuer": "JazzCash Mobile Wallet",
+      "issuer": "Easypaisa Wallet",
       "type": "Digital Wallet",
-      "badge": "Active Daily · 25% OFF",
-      "discountPercent": 25,
-      "minSpendPkr": 1000,
-      "maxCapText": "Max Cap Rs. 500",
-      "validityWindow": "Active Daily",
-      "issuanceSchedule": "Continuous daily allocation at 00:00 PKT",
+      "badge": "Active Daily",
+      "discountPercent": 10,
+      "minSpendPkr": 500,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "01/11/2026 - 30/11/2026",
       "activeDays": [
         0,
         1,
@@ -30,44 +28,161 @@
         5,
         6
       ],
-      "schedule": "Active Daily",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fwww.daraz.pk%2Fwow%2Fi%2Fpk%2Fpayment-partners%2Fjazzcash",
-      "webCollectUrl": "https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash"
+      "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
+      "status": "ACTIVE_NOW"
     },
     {
-      "id": "daraz-app-hbl-wednesday-10pct",
-      "voucherId": "mtop_daraz_hbl_wed_10",
+      "id": "jazzcash-10pct",
       "section": "Bank Vouchers",
-      "issuer": "HBL (HBL Wednesday)",
-      "type": "Bank Card",
-      "badge": "Upcoming · Wednesday",
+      "issuer": "JazzCash Wallet",
+      "type": "Digital Wallet",
+      "badge": "Active Daily",
       "discountPercent": 10,
-      "minSpendPkr": 0,
+      "minSpendPkr": 500,
+      "maxCapText": "Max Cap Rs. 1,000 (2/week)",
+      "validityWindow": "01/11/2026 - 30/11/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "zindigi-25pct",
+      "section": "Bank Vouchers",
+      "issuer": "JS Zindigi Wallet",
+      "type": "Digital Wallet",
+      "badge": "Active Daily",
+      "discountPercent": 25,
+      "minSpendPkr": 500,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "01/11/2026 - 30/11/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "hbl-wed-tier1",
+      "section": "Bank Vouchers",
+      "issuer": "HBL Debit/Credit Card (Tier 1)",
+      "type": "Bank Card",
+      "badge": "Wednesday Special",
+      "discountPercent": 10,
+      "minSpendPkr": 1000,
       "maxCapText": "Max Cap Rs. 900",
-      "validityWindow": "Every Wednesday",
-      "issuanceSchedule": "Drops every Wednesday at 00:00 PKT",
+      "validityWindow": "04/11/2026 - 04/11/2026",
       "activeDays": [
         3
       ],
-      "schedule": "Wednesdays Only (Upcoming)",
-      "status": "UPCOMING",
-      "upcomingNote": "Drops Wednesday at 00:00 PKT (In 4 days)",
-      "appDeepLink": "daraz://browser?url=https%3A%2F%2Fpages.daraz.pk%2Fwow%2Fgcp%2Fdaraz%2Fchannel%2Fpk%2Fpayment-promotions%2Fhblwednesday",
-      "webCollectUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday"
+      "schedule": "Wednesday (04/11/2026)",
+      "status": "ACTIVE_NOW"
     },
     {
-      "id": "daraz-app-voucher-max-150",
-      "voucherId": "mtop_daraz_voucher_max_150",
+      "id": "hbl-wed-tier2",
+      "section": "Bank Vouchers",
+      "issuer": "HBL Debit/Credit Card (Tier 2)",
+      "type": "Bank Card",
+      "badge": "Wednesday Special",
+      "discountPercent": 10,
+      "minSpendPkr": 2000,
+      "maxCapText": "Max Cap Rs. 900",
+      "validityWindow": "04/11/2026 - 04/11/2026",
+      "activeDays": [
+        3
+      ],
+      "schedule": "Wednesday (04/11/2026)",
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "meezan-10pct",
+      "section": "Bank Vouchers",
+      "issuer": "Meezan Bank",
+      "type": "Bank Card",
+      "badge": "Active Daily",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapText": "Max Cap Rs. 10,000",
+      "validityWindow": "01/11/2026 - 30/11/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "ubl-10pct",
+      "section": "Bank Vouchers",
+      "issuer": "UBL",
+      "type": "Bank Card",
+      "badge": "Active Daily",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "01/11/2026 - 30/11/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "visa-10pct",
+      "section": "Bank Vouchers",
+      "issuer": "Visa Cards",
+      "type": "Card Network",
+      "badge": "Active Daily",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapText": "Max Cap Rs. 900",
+      "validityWindow": "01/11/2026 - 30/11/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "vmax-1100",
       "section": "Voucher Max",
-      "issuer": "Daraz Voucher Max",
+      "issuer": "Daraz Voucher Max (Flat Rs. 1,100 OFF)",
       "type": "Platform Voucher",
       "badge": "Voucher Max",
-      "discountPercent": 4,
-      "minSpendPkr": 599,
-      "maxCapText": "Upto Rs. 150 Off",
-      "validityWindow": "01/10/2026-31/10/2026",
-      "issuanceSchedule": "Auto-applied or collect under product daily",
+      "discountPercent": 6,
+      "minSpendPkr": 19999,
+      "maxCapText": "Flat Rs. 1,100 Off (01/11 - 30/11)",
+      "validityWindow": "01/11/2026 - 30/11/2026",
       "activeDays": [
         0,
         1,
@@ -78,22 +193,62 @@
         6
       ],
       "schedule": "Active Daily",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://voucher/center?type=voucher_max",
-      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
+      "status": "ACTIVE_NOW"
     },
     {
-      "id": "daraz-app-voucher-max-400",
-      "voucherId": "mtop_daraz_voucher_max_400",
+      "id": "vmax-850",
       "section": "Voucher Max",
-      "issuer": "Daraz Voucher Max",
+      "issuer": "Daraz Voucher Max (Flat Rs. 850 OFF)",
+      "type": "Platform Voucher",
+      "badge": "Voucher Max",
+      "discountPercent": 6,
+      "minSpendPkr": 14999,
+      "maxCapText": "Flat Rs. 850 Off (01/11 - 30/11)",
+      "validityWindow": "01/11/2026 - 30/11/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily",
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "vmax-5pct-600",
+      "section": "Voucher Max",
+      "issuer": "Daraz Voucher Max (5% OFF)",
+      "type": "Platform Voucher",
+      "badge": "Voucher Max",
+      "discountPercent": 5,
+      "minSpendPkr": 9999,
+      "maxCapText": "Upto Rs. 600 Off (01/11 - 30/11)",
+      "validityWindow": "01/11/2026 - 30/11/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily",
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "vmax-4pct-400",
+      "section": "Voucher Max",
+      "issuer": "Daraz Voucher Max (4% OFF)",
       "type": "Platform Voucher",
       "badge": "Voucher Max",
       "discountPercent": 4,
       "minSpendPkr": 4000,
-      "maxCapText": "Upto Rs. 400 Off",
-      "validityWindow": "01/10/2026-31/10/2026",
-      "issuanceSchedule": "Auto-applied or collect under product daily",
+      "maxCapText": "Upto Rs. 400 Off (01/11 - 30/11)",
+      "validityWindow": "01/11/2026 - 30/11/2026",
       "activeDays": [
         0,
         1,
@@ -104,9 +259,29 @@
         6
       ],
       "schedule": "Active Daily",
-      "status": "ACTIVE_NOW",
-      "appDeepLink": "daraz://voucher/center?type=voucher_max",
-      "webCollectUrl": "https://www.daraz.pk/voucher-center/?type=voucher_max"
+      "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "vmax-4pct-180",
+      "section": "Voucher Max",
+      "issuer": "Daraz Voucher Max (4% OFF)",
+      "type": "Platform Voucher",
+      "badge": "Voucher Max",
+      "discountPercent": 4,
+      "minSpendPkr": 499,
+      "maxCapText": "Upto Rs. 180 Off (01/11 - 30/11)",
+      "validityWindow": "01/11/2026 - 30/11/2026",
+      "activeDays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "schedule": "Active Daily",
+      "status": "ACTIVE_NOW"
     }
   ]
 }
