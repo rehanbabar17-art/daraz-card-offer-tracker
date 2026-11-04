@@ -1,15 +1,9 @@
-name: Check Daraz Card Offers (Start-of-Day PKT + Intraday New Offers Only)
+name: Check Daraz Card Offers
 
 on:
   schedule:
-    # 19:05 UTC = 12:05 AM PKT (Start of the day in Pakistan), plus every 6 hours to catch new intraday offers
     - cron: '5 19,1,7,13 * * *'
   workflow_dispatch:
-    inputs:
-      force_notify:
-        description: 'Force send notification even if today was already notified and no new offers appeared'
-        required: false
-        default: 'false'
 
 permissions:
   contents: write
@@ -19,9 +13,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  track-live-gcp-offers:
+  check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,30 +23,33 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
-        run: |
-          npm ci || npm install
-          npx playwright install chromium
+        run: npm ci
 
-      - name: Run Strict DOM & Daily PKT Discount Tracker
-        env:
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'darazcardsalesRB17247365Dtqtqtqty' }}
-          NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
-          FORCE_NOTIFY: ${{ github.event.inputs.force_notify || 'false' }}
+      - name: Install Playwright Chromium with system dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Daraz Live Playwright Tracker
         run: npx tsx src/tracker.ts
-
-      - name: Scan product-page vouchers in Android-sized browser
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
-        run: npm run product-vouchers
 
-      - name: Commit updated live offer state
+      - name: Upload Page Screenshots Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daraz-page-screenshots
+          path: artifacts/
+          retention-days: 7
+
+      - name: Commit and Push state.json
+        if: success()
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/state.json data/product-vouchers.json state/daraz_card_state.json || true
-          git diff --staged --quiet || (git commit -m "chore: update verified live Daraz DOM & daily PKT voucher state [skip ci]" && git pull --rebase origin main && git push)
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/state.json
+          git diff --cached --quiet || git commit -m 'Update Daraz scraped offer state [skip ci]'
+          git push
