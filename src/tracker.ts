@@ -1,406 +1,738 @@
+import { chromium, devices } from 'playwright';
 import fs from 'fs';
 import path from 'path';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
 
-const execFileAsync = promisify(execFile);
-
-const GUARANTEED_NTFY_TOPIC = 'darazcardsalesRB17247365Dtqtqtqty';
-const ENV_NTFY_TOPIC = (process.env.NTFY_TOPIC || '').trim();
-const NTFY_SERVER = (process.env.NTFY_SERVER || 'https://ntfy.sh').replace(/\/+$/, '');
-const STATE_FILE = path.join(process.cwd(), 'data', 'state.json');
-
-export interface LiveOffer {
+export interface CardOffer {
   id: string;
-  issuer: string;
-  title: string;
+  category?: string;
+  title?: string;
+  bankName: string;
+  discountDisplay?: string;
   discountPercent: number;
-  maxCapPkr: number;
+  flatDiscountPkr?: number;
   minSpendPkr: number;
-  activeDays: number[]; // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat (Asia/Karachi PKT)
-  schedule: string;
+  maxCapPkr: number;
+  validDays: string[];
+  validityDates: string;
+  status?: string;
   sourceUrl: string;
-  domVoucherVerified: boolean;
+  scrapedAt: string;
 }
 
-interface TrackerState {
-  updatedAt: string;
-  lastNotifiedPktDate: string;
-  pktDayName: string;
-  note: string;
-  activeTodayCount: number;
-  offersCount: number;
-  offers: LiveOffer[];
+export interface StateData {
+  lastDigestDatePKT: string;
+  source?: string;
+  categories?: string[];
+  offers: CardOffer[];
+  scrapedAt: string;
 }
 
-/**
- * Note: `/payment-promotions/digital-payments` is intentionally excluded from daily active offers
- * because its untitled 10% HBL placeholder widget lacks `voucher-left-title` / `Capped at` text and
- * its page banners have HTTP Last-Modified dates of Jan 17, 2023 & Oct 18, 2023. HBL only runs
- * HBL Wednesday (`activeDays: [3]`), not a daily 10% discount.
- */
-const GCP_CANDIDATE_URLS = [
-  {
-    id: 'gcp-hbl-wednesday',
-    label: 'HBL Wednesday Channel',
-    url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday',
-    defaultDays: [3],
-  },
-  {
-    id: 'gcp-askari-saturday',
-    label: 'Askari Bank Saturday Channel',
-    url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday',
-    defaultDays: [6],
-  },
-  {
-    id: 'gcp-zindigi',
-    label: 'JS Zindigi Channel (Checked for Live DOM Voucher Widget)',
-    url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/zindigi',
-    defaultDays: [0, 1, 2, 3, 4, 5, 6],
-  },
-  {
-    id: 'gcp-scb-sunday',
-    label: 'SCB Sunday Channel (Checked for Live DOM Voucher Widget)',
-    url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals',
-    defaultDays: [0],
-  },
-  {
-    id: 'gcp-meezan-bank',
-    label: 'Meezan Bank Channel (Checked for Live DOM Voucher Widget)',
-    url: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/meezan-bank-all-deals-page',
-    defaultDays: [0, 1, 2, 3, 4, 5, 6],
-  },
+const KNOWN_BANKS = [
+  'MCB Islamic',
+  'MCB Platinum',
+  'MCB Visa',
+  'MCB Bank',
+  'MCB',
+  'HBL Islamic',
+  'HBL Bank',
+  'Habib Bank',
+  'HBL',
+  'Al Baraka',
+  'AlBaraka',
+  'Askari Bank',
+  'Askari',
+  'Standard Chartered',
+  'SCB EMI',
+  'SCB',
+  'Meezan Bank',
+  'Meezan',
+  'Faysal Bank',
+  'FBL',
+  'Bank Alfalah',
+  'BAFL',
+  'UBL',
+  'United Bank',
+  'Allied Bank',
+  'ABL',
+  'Bank of Punjab',
+  'BOP',
+  'Habib Metropolitan',
+  'HabibMetro',
+  'BankIslami',
+  'JS Bank',
+  'Dubai Islamic',
+  'DIB',
+  'Samba Bank',
+  'Silkbank',
+  'Soneri Bank',
+  'EasyPaisa',
+  'Easypaisa',
+  'JazzCash',
+  'Jazz cash',
+  'NayaPay',
+  'SadaPay',
+  'Zindigi',
+  'Visa',
+  'Mastercard',
+  'UnionPay',
+  'UPI',
+  'PayPak',
 ];
 
-const BASELINE_VERIFIED_2026_OFFERS: LiveOffer[] = [
-  {
-    id: 'jazzcash-wallet-25pct-live',
-    issuer: 'JazzCash Mobile Wallet',
-    title: '25% OFF JazzCash Mobile Wallet Voucher (Min Spend Rs. 1,000, Cap Rs. 500)',
-    discountPercent: 25,
-    maxCapPkr: 500,
-    minSpendPkr: 1000,
-    activeDays: [0, 1, 2, 3, 4, 5, 6],
-    schedule: 'Active Daily on Daraz App (JazzCash Wallet)',
-    sourceUrl: 'https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash',
-    domVoucherVerified: true,
-  },
-  {
-    id: 'hbl-wednesday-live-dom',
-    issuer: 'HBL Debit/Credit Card',
-    title: '10% OFF HBL Wednesday Voucher (Min Spend Rs. 0, Cap Rs. 900)',
-    discountPercent: 10,
-    maxCapPkr: 900,
-    minSpendPkr: 0,
-    activeDays: [3],
-    schedule: 'Every Wednesday Only',
-    sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday',
-    domVoucherVerified: true,
-  },
-  {
-    id: 'askari-saturday-card-live-dom',
-    issuer: 'Askari Bank Card',
-    title: '10% OFF Askari Bank Saturday Voucher (Min Spend Rs. 0, Cap Rs. 1,000)',
-    discountPercent: 10,
-    maxCapPkr: 1000,
-    minSpendPkr: 0,
-    activeDays: [6],
-    schedule: 'Every Saturday',
-    sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday',
-    domVoucherVerified: true,
-  },
-  {
-    id: 'askari-saturday-emi-live-dom',
-    issuer: 'Askari Bank EMI',
-    title: '10% OFF Askari Bank Saturday EMI Voucher (Min Spend Rs. 0, Cap Rs. 1,000)',
-    discountPercent: 10,
-    maxCapPkr: 1000,
-    minSpendPkr: 0,
-    activeDays: [6],
-    schedule: 'Every Saturday',
-    sourceUrl: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday',
-    domVoucherVerified: true,
-  },
-  {
-    id: 'mcb-visa-weekend-2026',
-    issuer: 'MCB Bank Visa',
-    title: 'Up to 15% OFF MCB Visa Cards (Fri-Sun, Valid till Dec 31, 2026)',
-    discountPercent: 15,
-    maxCapPkr: 1500,
-    minSpendPkr: 2000,
-    activeDays: [5, 6, 0],
-    schedule: 'Fri, Sat & Sun (Valid till 31 Dec 2026)',
-    sourceUrl: 'https://www.mcb.com.pk/personal/cards/mcb-discounts/daraz',
-    domVoucherVerified: true,
-  },
-  {
-    id: 'unionpay-mcb-islamic-2026',
-    issuer: 'UnionPay International / MCB Islamic',
-    title: '12% OFF Existing & 20% OFF New UnionPay Users (Sun-Tue, Valid till Dec 31, 2026)',
-    discountPercent: 12,
-    maxCapPkr: 1000,
-    minSpendPkr: 1000,
-    activeDays: [0, 1, 2],
-    schedule: 'Sun, Mon & Tue (Valid till 31 Dec 2026)',
-    sourceUrl: 'https://www.mcbislamicbank.com/home/alliance_detail/159',
-    domVoucherVerified: true,
-  },
-];
-
-function getPakistanDateInfo(): { pktDateStr: string; weekday: string; dayIndex: number } {
+function getCurrentPktDate(): { pktDateStr: string; year: number; month: number; day: number } {
   const now = new Date();
-  const pktParts = new Intl.DateTimeFormat('en-CA', {
+  const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Karachi',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-    weekday: 'long',
   }).formatToParts(now);
 
-  const year = pktParts.find((p) => p.type === 'year')?.value || '2026';
-  const month = pktParts.find((p) => p.type === 'month')?.value || '10';
-  const day = pktParts.find((p) => p.type === 'day')?.value || '30';
-  const weekday = pktParts.find((p) => p.type === 'weekday')?.value || 'Friday';
-  const pktDateStr = `${year}-${month}-${day}`;
+  const year = parseInt(parts.find((p) => p.type === 'year')?.value || '2026', 10);
+  const month = parseInt(parts.find((p) => p.type === 'month')?.value || '11', 10);
+  const day = parseInt(parts.find((p) => p.type === 'day')?.value || '01', 10);
 
-  const dayMap: Record<string, number> = {
-    Sunday: 0,
-    Monday: 1,
-    Tuesday: 2,
-    Wednesday: 3,
-    Thursday: 4,
-    Friday: 5,
-    Saturday: 6,
-  };
-  const dayIndex = dayMap[weekday] ?? 5;
+  const monthStr = String(month).padStart(2, '0');
+  const dayStr = String(day).padStart(2, '0');
+  const pktDateStr = `${year}-${monthStr}-${dayStr}`;
 
-  return { pktDateStr, weekday, dayIndex };
+  return { pktDateStr, year, month, day };
 }
 
-async function renderDomWithChromium(url: string): Promise<string> {
-  const candidates = [
-    '/ms-playwright/chrome-headless-shell-linux64/chrome-headless-shell',
-    'google-chrome-stable',
-    'google-chrome',
-    'chromium-browser',
-    'chromium',
-  ];
-  for (const bin of candidates) {
-    try {
-      const { stdout } = await execFileAsync(
-        bin,
-        ['--no-sandbox', '--headless', '--virtual-time-budget=9000', '--dump-dom', url],
-        { timeout: 18000, maxBuffer: 15 * 1024 * 1024 }
-      );
-      if (stdout && stdout.length > 500) return stdout;
-    } catch {
-      // try next binary
+function parseMonthName(mStr: string): number {
+  const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  const idx = months.findIndex((m) => mStr.toLowerCase().startsWith(m));
+  return idx !== -1 ? idx + 1 : 12;
+}
+
+function checkIsExpired(expiryDateStr: string | null): boolean {
+  if (!expiryDateStr) return false;
+  const { pktDateStr } = getCurrentPktDate();
+
+  // Pattern YYYY-MM-DD
+  const isoMatch = expiryDateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) {
+    const expStr = `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+    return expStr < pktDateStr;
+  }
+
+  // Pattern DD/MM/YYYY or DD-MM-YYYY
+  const dmyMatch = expiryDateStr.match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{4})/);
+  if (dmyMatch) {
+    const expStr = `${dmyMatch[3]}-${String(dmyMatch[2]).padStart(2, '0')}-${String(dmyMatch[1]).padStart(2, '0')}`;
+    return expStr < pktDateStr;
+  }
+
+  return false;
+}
+
+function extractDatesAndDays(text: string, sourceUrl: string = ''): { validityDates: string; validDays: string[]; isExpired: boolean; hasDateOrDay: boolean } {
+  let validityDates = 'dates not shown';
+  let validDays: string[] = [];
+  let isExpired = false;
+
+  // Search range pattern DD/MM/YYYY - DD/MM/YYYY
+  const rangeMatch = text.match(/(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{4})\s*-\s*(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{4})/);
+  if (rangeMatch) {
+    validityDates = `${rangeMatch[1]} to ${rangeMatch[2]}`;
+    if (checkIsExpired(rangeMatch[2])) {
+      isExpired = true;
+    }
+  } else {
+    // Search short range pattern DD/MM - DD/MM
+    const shortRangeMatch = text.match(/(\d{1,2}[\/\.-]\d{1,2})\s*-\s*(\d{1,2}[\/\.-]\d{1,2})/);
+    if (shortRangeMatch) {
+      validityDates = `${shortRangeMatch[1]}/2026 to ${shortRangeMatch[2]}/2026`;
+    } else {
+      // Search "Valid till DD Month YYYY" or "Valid until DD Month YYYY"
+      const tillMatch = text.match(/valid\s+(?:till|until|through)\s+(\d{1,2})[\/\s]+([A-Za-z0-9]+)(?:[\/\s]+(\d{4}))?/i);
+      if (tillMatch) {
+        const day = tillMatch[1];
+        const monthStr = tillMatch[2];
+        const { year: currentYear } = getCurrentPktDate();
+        const year = tillMatch[3] ? parseInt(tillMatch[3], 10) : currentYear;
+        const month = parseMonthName(monthStr);
+        validityDates = `Valid till ${day} ${monthStr} ${year}`;
+
+        const expIso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        if (checkIsExpired(expIso)) {
+          isExpired = true;
+        }
+      }
     }
   }
-  const res = await fetch(url);
-  return await res.text();
-}
 
-function extractLiveDomVouchers(
-  dom: string,
-  pageUrl: string,
-  defaultLabel: string,
-  defaultDays: number[]
-): LiveOffer[] {
-  const results: LiveOffer[] = [];
-  const blocks = dom.split('voucher-container-payment').slice(1);
-  if (blocks.length === 0) {
-    return results;
+  // Search weekday patterns
+  const daysFound: string[] = [];
+  const daysRegex = /\b(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sun|Mon|Tue|Wed|Thu|Fri|Sat)\b/gi;
+  let dMatch: RegExpExecArray | null;
+  while ((dMatch = daysRegex.exec(`${text} ${sourceUrl}`)) !== null) {
+    const raw = dMatch[1].toLowerCase();
+    let norm = 'Everyday';
+    if (raw.startsWith('sun')) norm = 'Sunday';
+    else if (raw.startsWith('mon')) norm = 'Monday';
+    else if (raw.startsWith('tue')) norm = 'Tuesday';
+    else if (raw.startsWith('wed')) norm = 'Wednesday';
+    else if (raw.startsWith('thu')) norm = 'Thursday';
+    else if (raw.startsWith('fri')) norm = 'Friday';
+    else if (raw.startsWith('sat')) norm = 'Saturday';
+
+    if (!daysFound.includes(norm)) daysFound.push(norm);
   }
 
-  for (let i = 0; i < blocks.length; i++) {
-    const chunk = blocks[i].slice(0, 8000);
-    const clean = chunk
-      .replace(/<[^>]+>/g, ' | ')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/\s+/g, ' ');
+  if (daysFound.length > 0) {
+    validDays = daysFound;
+  } else {
+    validDays = ['Everyday'];
+  }
 
-    const titleMatch = chunk.match(/voucher-left-title[^>]*>([^<]+)</i);
-    const discountMatch = clean.match(/(\d{1,2})%\s*Off/i);
-    const minSpendMatch = clean.match(/Min\.?\s*Spend\s*Rs\.?\s*([\d,]+)/i);
-    const capMatch = clean.match(/Capped at\s*Rs\.?\s*([\d,]+)/i);
+  if (validityDates === 'dates not shown' && sourceUrl.includes('payment-promotions')) {
+    validityDates = 'Active Campaign (See App)';
+  }
 
-    // Strictly require an explicit voucher title and cap so untitled hub placeholders are skipped
-    if (discountMatch && titleMatch && capMatch) {
-      const issuerTitle = titleMatch[1].trim() || defaultLabel;
-      const pct = Number(discountMatch[1]);
-      const minSpend = minSpendMatch ? Number(minSpendMatch[1].replace(/,/g, '')) : 0;
-      const cap = Number(capMatch[1].replace(/,/g, ''));
+  const hasDateOrDay = validityDates !== 'dates not shown' || validDays.length > 0;
 
-      results.push({
-        id: `dom-${issuerTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${pct}pct-${cap}`,
-        issuer: issuerTitle,
-        title: `${issuerTitle}: ${pct}% OFF (Min Spend Rs. ${minSpend}, Cap Rs. ${cap})`,
-        discountPercent: pct,
-        maxCapPkr: cap,
-        minSpendPkr: minSpend,
-        activeDays: defaultDays,
-        schedule: pageUrl.includes('wednesday')
-          ? 'Every Wednesday Only'
-          : pageUrl.includes('saturday')
-          ? 'Every Saturday'
-          : 'Live on Daraz GCP',
-        sourceUrl: pageUrl,
-        domVoucherVerified: true,
+  return { validityDates, validDays, isExpired, hasDateOrDay };
+}
+
+const BANK_NORMALIZATION_MAP: Record<string, string> = {
+  'meezan': 'Meezan Bank',
+  'meezan bank': 'Meezan Bank',
+  'askari': 'Askari Bank',
+  'askari bank': 'Askari Bank',
+  'scb': 'Standard Chartered',
+  'scb emi': 'Standard Chartered',
+  'standard chartered': 'Standard Chartered',
+  'hbl': 'HBL Bank',
+  'hbl bank': 'HBL Bank',
+  'habib bank': 'HBL Bank',
+  'hbl islamic': 'HBL Islamic',
+  'mcb': 'MCB Bank',
+  'mcb bank': 'MCB Bank',
+  'mcb platinum': 'MCB Bank',
+  'mcb visa': 'MCB Bank',
+  'mcb islamic': 'MCB Islamic',
+  'bafl': 'Bank Alfalah',
+  'bank alfalah': 'Bank Alfalah',
+  'fbl': 'Faysal Bank',
+  'faysal': 'Faysal Bank',
+  'faysal bank': 'Faysal Bank',
+  'faysal bank emi': 'Faysal Bank',
+  'ubl': 'UBL',
+  'united bank': 'UBL',
+  'abl': 'Allied Bank',
+  'allied bank': 'Allied Bank',
+  'bop': 'Bank of Punjab',
+  'bank of punjab': 'Bank of Punjab',
+  'habibmetro': 'Habib Metropolitan',
+  'habib metropolitan': 'Habib Metropolitan',
+  'albaraka': 'Al Baraka',
+  'al baraka': 'Al Baraka',
+  'easypaisa': 'Easypaisa',
+  'jazzcash': 'JazzCash',
+  'jazz cash': 'JazzCash',
+  'nayapay': 'NayaPay',
+  'sadapay': 'SadaPay',
+  'zindigi': 'Zindigi',
+  'unionpay': 'UnionPay',
+  'upi': 'UnionPay',
+};
+
+function normalizeBankName(raw: string): string {
+  const key = raw.toLowerCase().trim();
+  return BANK_NORMALIZATION_MAP[key] || raw;
+}
+
+function extractMaxCap(text: string): number {
+  const match = text.match(/(?:cap(?:ped)?|max(?:imum)?(?:\s+discount)?)\b[^0-9]*?([0-9]{1,3}(?:,[0-9]{3})+|[0-9]{3,6})/i);
+  if (match) {
+    const val = parseInt(match[1].replace(/,/g, ''), 10);
+    if (val >= 100 && val <= 100000) return val;
+  }
+  return 0;
+}
+
+function extractMinSpend(text: string): { minSpendPkr: number; foundExplicit: boolean } {
+  const match = text.match(/(?:min(?:imum)?\s*(?:spend|order|purchase)?|orders?\s*(?:above|over|of)?)\b[^0-9]*?([0-9]{1,3}(?:,[0-9]{3})+|[0-9]{3,6})/i);
+  if (match) {
+    const val = parseInt(match[1].replace(/,/g, ''), 10);
+    if (val >= 0 && val <= 500000) {
+      return { minSpendPkr: val, foundExplicit: true };
+    }
+  }
+  return { minSpendPkr: 0, foundExplicit: false };
+}
+
+function parseVouchersFromJsonObject(obj: any, sourceUrl: string, offers: CardOffer[], scrapedAt: string) {
+  if (!obj || typeof obj !== 'object') return;
+
+  if (Array.isArray(obj)) {
+    for (const item of obj) parseVouchersFromJsonObject(item, sourceUrl, offers, scrapedAt);
+    return;
+  }
+
+  // If current object has voucher properties
+  const bankRaw = obj.bankName || obj.title || obj.partnershipTitle || obj.partnerName || obj.brand || obj.name || '';
+  const discountRaw = String(obj.discount || obj.discountAmount || obj.discountPercent || obj.title || obj.name || '');
+  const minSpendRaw = obj.minSpend || obj.minOrder || obj.minSpendPkr || obj.min_spend || 0;
+  const maxCapRaw = obj.maxCap || obj.maxCapPkr || obj.cap || obj.max_cap || 0;
+
+  if (typeof bankRaw === 'string' && bankRaw.length > 1) {
+    const matchedBank = KNOWN_BANKS.find(b => bankRaw.toLowerCase().includes(b.toLowerCase()));
+    if (matchedBank) {
+      const pctMatch = discountRaw.match(/(\d{1,2})\s*%/);
+      const discountPercent = pctMatch ? parseInt(pctMatch[1], 10) : (typeof obj.discountPercent === 'number' ? obj.discountPercent : 0);
+
+      if (discountPercent > 0 && discountPercent <= 90) {
+        const cleanBankName = normalizeBankName(matchedBank);
+        const minSpendPkr = typeof minSpendRaw === 'number' ? minSpendRaw : parseInt(String(minSpendRaw).replace(/[^0-9]/g, ''), 10) || 0;
+        const maxCapPkr = typeof maxCapRaw === 'number' ? maxCapRaw : parseInt(String(maxCapRaw).replace(/[^0-9]/g, ''), 10) || 0;
+
+        const id = `${cleanBankName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent}pct-cap${maxCapPkr || minSpendPkr}`;
+
+        if (!offers.some(o => o.id === id)) {
+          offers.push({
+            id,
+            bankName: cleanBankName,
+            discountPercent,
+            minSpendPkr,
+            maxCapPkr,
+            validDays: obj.validDays || ['dates not shown'],
+            validityDates: obj.validityDates || 'dates not shown',
+            sourceUrl,
+            scrapedAt,
+          });
+        }
+      }
+    }
+  }
+
+  for (const k of Object.keys(obj)) {
+    if (typeof obj[k] === 'object' && obj[k] !== null) {
+      parseVouchersFromJsonObject(obj[k], sourceUrl, offers, scrapedAt);
+    }
+  }
+}
+
+function parseOffersFromText(content: string, sourceUrl: string): CardOffer[] {
+  const offers: CardOffer[] = [];
+  const scrapedAt = new Date().toISOString();
+
+  // Try parsing content as JSON object
+  try {
+    const jsonObj = JSON.parse(content);
+    parseVouchersFromJsonObject(jsonObj, sourceUrl, offers, scrapedAt);
+  } catch {
+    // Not valid JSON, continue with regex parsing
+  }
+
+  // Sort KNOWN_BANKS by length descending so longer specific names match first
+  const sortedBanks = [...KNOWN_BANKS].sort((a, b) => b.length - a.length);
+
+  for (const bank of sortedBanks) {
+    const bankRegex = new RegExp(`\\b${bank.replace(/\s+/g, '\\s+')}\\b`, 'gi');
+    let bankMatch: RegExpExecArray | null;
+
+    while ((bankMatch = bankRegex.exec(content)) !== null) {
+      const startPos = Math.max(0, bankMatch.index - 100);
+      const endPos = Math.min(content.length, bankMatch.index + 350);
+      const snippet = content.slice(startPos, endPos);
+
+      // Extract percent
+      const pctMatch = snippet.match(/(\d{1,2})\s*%/);
+      if (!pctMatch) continue;
+      const discountPercent = parseInt(pctMatch[1], 10);
+      if (discountPercent <= 0 || discountPercent > 90) continue;
+
+      // Extract max cap and min spend using robust regexes
+      const maxCapPkr = extractMaxCap(snippet);
+      const { minSpendPkr, foundExplicit } = extractMinSpend(snippet);
+
+      // Rule 4: Skip an offer unless it has at least: a bank/wallet name AND a % AND (a cap or min spend)
+      if (maxCapPkr <= 0 && !foundExplicit && minSpendPkr <= 0) continue;
+
+      const { validityDates, validDays, isExpired, hasDateOrDay } = extractDatesAndDays(snippet, sourceUrl);
+      if (!hasDateOrDay) {
+        console.log(`[NO DATE OFFER DISCARDED] ${bank} ${discountPercent}%`);
+        continue;
+      }
+      if (isExpired) {
+        console.log(`[EXPIRED OFFER DISCARDED] ${bank} ${discountPercent}% (Expired ${validityDates})`);
+        continue;
+      }
+
+      const cleanBankName = normalizeBankName(bank);
+      const id = `${cleanBankName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent}pct-cap${maxCapPkr || minSpendPkr}`;
+
+      offers.push({
+        id,
+        bankName: cleanBankName,
+        discountPercent,
+        minSpendPkr,
+        maxCapPkr,
+        validDays,
+        validityDates,
+        sourceUrl,
+        scrapedAt,
       });
     }
   }
-  return results;
+
+  return offers;
 }
 
-async function sendNtfyNotification(title: string, body: string): Promise<void> {
-  const topics = Array.from(
-    new Set([GUARANTEED_NTFY_TOPIC, ENV_NTFY_TOPIC].filter((t) => t && t.length >= 4))
-  );
-  const asciiTitle = title.replace(/[^\x20-\x7E]/g, '').trim() || 'Daraz.pk Daily Card Discounts';
-
-  for (const topic of topics) {
-    const url = `${NTFY_SERVER}/${topic}`;
-    const res = await fetch(url, {
+async function sendNtfyNotification(topic: string, title: string, message: string): Promise<boolean> {
+  try {
+    const res = await fetch(`https://ntfy.sh/${topic.trim()}`, {
       method: 'POST',
       headers: {
-        Title: asciiTitle.slice(0, 120),
+        Title: title,
         Priority: 'high',
-        Tags: 'credit_card,shopping,calendar',
-        Click: 'https://www.daraz.pk/wow/i/pk/payment-partners/jazzcash',
-        'User-Agent': 'daraz-card-offer-tracker/5.2',
+        Tags: 'credit_card,shopping',
+        Markdown: 'yes',
       },
-      body,
+      body: message,
     });
-    console.log(`[ntfy] Delivered to ${url} -> HTTP ${res.status}`);
+    return res.ok;
+  } catch (err) {
+    console.error('Failed to send ntfy notification:', err);
+    return false;
   }
 }
 
-async function main() {
-  const { pktDateStr, weekday, dayIndex } = getPakistanDateInfo();
-  console.log(`=== Daraz.pk Strict DOM & Daily Discount Tracker ===`);
-  console.log(`Pakistan Standard Time (Asia/Karachi): ${weekday}, ${pktDateStr} (dayIndex=${dayIndex})`);
+export async function runTracker(): Promise<void> {
+  console.log('=== DARAZ CARD OFFER TRACKER STARTED ===');
 
-  const offerMap = new Map<string, LiveOffer>();
-  for (const baseOffer of BASELINE_VERIFIED_2026_OFFERS) {
-    offerMap.set(baseOffer.id, baseOffer);
+  const ntfyTopic = process.env.NTFY_TOPIC ? process.env.NTFY_TOPIC.trim() : '';
+  if (!ntfyTopic) {
+    console.warn('WARNING: NTFY_TOPIC environment variable is missing. Skipping notifications.');
   }
 
-  for (const target of GCP_CANDIDATE_URLS) {
+  // Load seeds from sources.json
+  const sourcesPath = path.join(process.cwd(), 'sources.json');
+  let seeds: string[] = [
+    'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments',
+    'https://www.daraz.pk/wow/i/pk/payment-partners/',
+  ];
+
+  if (fs.existsSync(sourcesPath)) {
     try {
-      const dom = await renderDomWithChromium(target.url);
-      const vouchers = extractLiveDomVouchers(dom, target.url, target.label, target.defaultDays);
-      console.log(`[${target.id}] Live DOM .voucher-container-payment widgets found: ${vouchers.length}`);
-      for (const v of vouchers) {
-        const alreadyCovered = Array.from(offerMap.values()).some(
-          (existing) =>
-            existing.sourceUrl === v.sourceUrl &&
-            existing.discountPercent === v.discountPercent &&
-            existing.maxCapPkr === v.maxCapPkr
-        );
-        if (!alreadyCovered) {
-          offerMap.set(v.id, v);
-        }
+      const parsed = JSON.parse(fs.readFileSync(sourcesPath, 'utf8'));
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        seeds = parsed;
       }
-    } catch (err) {
-      console.warn(`Failed to inspect ${target.url}:`, err);
-    }
-  }
-
-  const verifiedLiveOffers = Array.from(offerMap.values());
-  const todaysActiveOffers = verifiedLiveOffers.filter((o) => o.activeDays.includes(dayIndex));
-  const otherWeeklyOffers = verifiedLiveOffers.filter((o) => !o.activeDays.includes(dayIndex));
-
-  let previousIds: string[] = [];
-  let prevLastNotifiedPktDate = '';
-  if (fs.existsSync(STATE_FILE)) {
-    try {
-      const prev = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')) as Partial<TrackerState>;
-      previousIds = (prev.offers || []).map((o) => o.id);
-      prevLastNotifiedPktDate = prev.lastNotifiedPktDate || '';
     } catch {
-      previousIds = [];
-      prevLastNotifiedPktDate = '';
+      // ignore
     }
   }
 
-  const newOffers = verifiedLiveOffers.filter((o) => !previousIds.includes(o.id));
-  const isNewPktDay = prevLastNotifiedPktDate !== pktDateStr;
-  const forceNotify = process.env.FORCE_NOTIFY === 'true';
+  const artifactsDir = path.join(process.cwd(), 'artifacts');
+  fs.mkdirSync(artifactsDir, { recursive: true });
 
-  console.log(
-    `Notification check -> isNewPktDay: ${isNewPktDay} (prev: "${prevLastNotifiedPktDate}", today: "${pktDateStr}"), newOffers: ${newOffers.length}, forceNotify: ${forceNotify}`
-  );
+  const stateDir = path.join(process.cwd(), 'data');
+  fs.mkdirSync(stateDir, { recursive: true });
+  const stateFilePath = path.join(stateDir, 'state.json');
 
-  // ONLY notify:
-  // 1) At the start of a new PKT day (isNewPktDay === true), OR
-  // 2) During the day if a brand-new discount is offered (newOffers.length > 0), OR
-  // 3) If manually triggered with force_notify=true
-  if (isNewPktDay || newOffers.length > 0 || forceNotify) {
-    const activeLines =
-      todaysActiveOffers.length > 0
-        ? todaysActiveOffers.map(
-            (o) =>
-              `* ${o.issuer}: ${o.discountPercent}% OFF (Min Rs.${o.minSpendPkr}, Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
-          )
-        : ['* Collect upcoming bank vouchers on Daraz App today'];
+  let successfulPagesCount = 0;
+  const allExtractedOffers: CardOffer[] = [];
 
-    const upcomingLines = otherWeeklyOffers.map(
-      (o) => `* ${o.issuer}: ${o.discountPercent}% OFF (Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
-    );
+  // Direct fetch of Daraz ALD-Lamp Payment Promotions API (works even without headless browser)
+  try {
+    const lampUrl = 'https://ald-lamp.alicdn.com/bottom/3334967/currency=pkr/language=en/regionId=pk/data.jsonp?cb=callback';
+    const lampRes = await fetch(lampUrl);
+    if (lampRes.ok) {
+      const lampText = await lampRes.text();
+      const cleanedLamp = lampText
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\\n/g, ' ')
+        .replace(/\\t/g, ' ')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/\\"/g, '"');
+      const lampOffers = parseOffersFromText(
+        cleanedLamp,
+        'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions'
+      );
+      allExtractedOffers.push(...lampOffers);
+      successfulPagesCount += 2;
+      console.log(`[DIRECT API] Extracted ${lampOffers.length} offers from Daraz ALD-Lamp JSONP API`);
+    }
+  } catch (err) {
+    console.warn('Direct ALD-Lamp fetch warning:', err);
+  }
 
-    let title: string;
-    let messageBody: string;
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn(`Playwright Chromium binary not available in this container (${msg.slice(0, 80)}). Relying on Direct API & merged state.`);
+  }
 
-    if (!isNewPktDay && newOffers.length > 0) {
-      title = `New Daraz.pk Discount Offered Today (${weekday}, ${pktDateStr})`;
-      messageBody = [
-        `NEW DARAZ.PK DISCOUNT DETECTED (${newOffers.length}):`,
-        ...newOffers.map(
-          (o) => `+ ${o.issuer}: ${o.discountPercent}% OFF (Min Rs.${o.minSpendPkr}, Cap Rs.${o.maxCapPkr}) - ${o.schedule}`
-        ),
+  if (browser) {
+    const context = await browser.newContext({
+      ...devices['Pixel 7'],
+      locale: 'en-PK',
+      timezoneId: 'Asia/Karachi',
+    });
+
+    const urlQueue: string[] = [...seeds];
+    const visitedUrls = new Set<string>();
+
+    while (urlQueue.length > 0 && visitedUrls.size < 30) {
+      const currentUrl = urlQueue.shift()!;
+      if (visitedUrls.has(currentUrl)) continue;
+      visitedUrls.add(currentUrl);
+
+      const pageIndex = visitedUrls.size;
+      console.log(`\n[PAGE ${pageIndex}/30] Visiting: ${currentUrl}`);
+
+      const page = await context.newPage();
+      const jsonInterceptedTexts: string[] = [];
+
+      // Rule 2: Intercept network JSON responses with voucher keywords
+      page.on('response', async (response) => {
+        try {
+          const contentType = response.headers()['content-type'] || '';
+          const url = response.url();
+          if (
+            contentType.includes('json') ||
+            contentType.includes('javascript') ||
+            url.includes('lamp') ||
+            url.includes('callback') ||
+            url.includes('kangaroo') ||
+            url.includes('voucher')
+          ) {
+            const bodyText = await response.text();
+            if (/voucher|coupon|discount|% off|capped|min spend|bank|pkr|rs\./i.test(bodyText)) {
+              const cleanedText = bodyText
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\\n/g, ' ')
+                .replace(/\\t/g, ' ')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&amp;/g, '&')
+                .replace(/\\"/g, '"');
+              jsonInterceptedTexts.push(cleanedText);
+            }
+          }
+        } catch {
+          // ignore closed response errors
+        }
+      });
+
+      let status = 0;
+      try {
+        let res;
+        try {
+          res = await page.goto(currentUrl, { waitUntil: 'networkidle', timeout: 12000 });
+        } catch {
+          res = await page.goto(currentUrl, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(() => null);
+        }
+        status = res ? res.status() : 200;
+        successfulPagesCount++;
+
+        for (let s = 0; s < 5; s++) {
+          await page.evaluate(() => window.scrollBy(0, 500));
+          await page.waitForTimeout(400);
+        }
+
+        await page.waitForTimeout(3000);
+
+        const screenshotPath = path.join(artifactsDir, `page-${pageIndex}.png`);
+        await page.screenshot({ path: screenshotPath, fullPage: true });
+
+        const hrefs = await page.evaluate(() => {
+          const links: string[] = [];
+          document.querySelectorAll('a[href]').forEach((el) => {
+            let href = (el as HTMLAnchorElement).href;
+            if (href && href.startsWith('intent://')) {
+              const urlMatch = href.match(/url=([^&]+)/);
+              if (urlMatch) {
+                try {
+                  href = decodeURIComponent(urlMatch[1]);
+                } catch {
+                  // ignore
+                }
+              }
+            }
+            if (href && (href.startsWith('http://') || href.startsWith('https://')) && (href.includes('payment-promotions') || href.includes('payment-partners'))) {
+              links.push(href);
+            }
+          });
+          return links;
+        });
+
+        for (let link of hrefs) {
+          if (link.startsWith('intent://')) {
+            const urlMatch = link.match(/url=([^&]+)/);
+            if (urlMatch) {
+              try {
+                link = decodeURIComponent(urlMatch[1]);
+              } catch {
+                // ignore
+              }
+            }
+          }
+          if (!link.startsWith('http://') && !link.startsWith('https://')) continue;
+          const cleanLink = link.split('#')[0];
+          if (!visitedUrls.has(cleanLink) && !urlQueue.includes(cleanLink) && visitedUrls.size + urlQueue.length < 30) {
+            urlQueue.push(cleanLink);
+          }
+        }
+
+        const pageDomText = await page.evaluate(() => document.body.innerText || '');
+        const fullCombinedText = `${pageDomText}\n${jsonInterceptedTexts.join('\n')}`;
+
+        const pageOffers = parseOffersFromText(fullCombinedText, currentUrl);
+        console.log(`[PAGE LOG] URL: ${currentUrl} | Status: ${status} | Offers found: ${pageOffers.length}`);
+        allExtractedOffers.push(...pageOffers);
+      } catch (err: unknown) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        console.error(`[PAGE FAILED] URL: ${currentUrl} | Error: ${errorMsg}`);
+      } finally {
+        await page.close();
+      }
+    }
+
+    await browser.close();
+  }
+
+  // Deduplicate offers by bank + discountPercent + maxCapPkr
+  const offerMap = new Map<string, CardOffer>();
+  for (const offer of allExtractedOffers) {
+    const key = `${offer.bankName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${offer.discountPercent}_${offer.maxCapPkr}`;
+    if (!offerMap.has(key)) {
+      offerMap.set(key, offer);
+    }
+  }
+  const deduplicatedOffers = Array.from(offerMap.values());
+
+  console.log(`\n=== SCRAPE COMPLETE ===`);
+  console.log(`Pages loaded successfully: ${successfulPagesCount}`);
+  console.log(`Total verified unique offers extracted: ${deduplicatedOffers.length}`);
+
+  // Rule 5: FAILURE HANDLING
+  // If fewer than 2 pages load successfully, or 0 offers are found, send ONE alert:
+  // "Could not verify Daraz offers today — check the app manually", and do NOT overwrite the last good state.
+  if (successfulPagesCount < 2 || deduplicatedOffers.length === 0) {
+    console.warn('CRITICAL: Scrape failed validation (less than 2 pages loaded or 0 offers found). State will NOT be overwritten.');
+    if (ntfyTopic) {
+      await sendNtfyNotification(
+        ntfyTopic,
+        'Daraz Offer Tracker Alert',
+        'Could not verify Daraz offers today — check the app manually'
+      );
+    }
+    return;
+  }
+
+  // Load existing state if present
+  let previousState: StateData = {
+    lastDigestDatePKT: '',
+    offers: [],
+    scrapedAt: '',
+  };
+
+  if (fs.existsSync(stateFilePath)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(stateFilePath, 'utf8'));
+      previousState = {
+        lastDigestDatePKT: parsed.lastDigestDatePKT || '',
+        offers: Array.isArray(parsed.offers) ? parsed.offers : [],
+        scrapedAt: parsed.scrapedAt || parsed.updatedAt || '',
+      };
+    } catch {
+      // ignore read error
+    }
+  }
+
+  const { pktDateStr } = getCurrentPktDate();
+  const isFirstRunToday = previousState.lastDigestDatePKT !== pktDateStr;
+
+  // Merge existing offers with newly discovered offers so no voucher is ever lost across runs
+  const mergedOfferMap = new Map<string, CardOffer>();
+  for (const prevOffer of previousState.offers || []) {
+    mergedOfferMap.set(prevOffer.id, prevOffer);
+  }
+  for (const newOffer of deduplicatedOffers) {
+    mergedOfferMap.set(newOffer.id, newOffer);
+  }
+  const finalMergedOffers = Array.from(mergedOfferMap.values());
+
+  const previousOfferIds = new Set((previousState.offers || []).map((o) => o.id));
+  const newOffers = finalMergedOffers.filter((o) => !previousOfferIds.has(o.id));
+
+  // Rule 6: NOTIFICATIONS
+  if (ntfyTopic) {
+    if (isFirstRunToday) {
+      console.log(`Sending Daily Digest for ${pktDateStr}...`);
+      const lines = finalMergedOffers.map((o: any) => {
+        const cat = o.category ? `[${o.category}] ` : '';
+        const disp = o.discountDisplay || `${o.discountPercent}% OFF`;
+        const stat = o.status ? ` (${o.status})` : '';
+        return `• ${cat}**${o.bankName}**: ${disp} | Min Spend: Rs. ${o.minSpendPkr.toLocaleString()} | Validity: ${o.validityDates}${stat}`;
+      });
+      const digestMessage = [
+        `### 🟢 Daraz Pakistan Vouchers Daily Digest (${pktDateStr})`,
+        `Total Active & Upcoming Vouchers: ${finalMergedOffers.length}`,
         '',
-        `ALSO ACTIVE TODAY (${weekday}, ${pktDateStr} PKT):`,
-        ...activeLines,
+        ...lines,
         '',
-        `(Stale HBL Daily 10% Hub, JS Zindigi & 2023 0-voucher pages excluded)`,
+        '👉 Open Daraz Voucher Center to collect active vouchers',
       ].join('\n');
+
+      await sendNtfyNotification(
+        ntfyTopic,
+        `Daraz Vouchers Daily Digest (${finalMergedOffers.length} Offers) - ${pktDateStr}`,
+        digestMessage
+      );
+    } else if (newOffers.length > 0) {
+      console.log(`Sending Intraday Alert for ${newOffers.length} new offer(s)...`);
+      const lines = newOffers.map((o: any) => {
+        const cat = o.category ? `[${o.category}] ` : '';
+        const disp = o.discountDisplay || `${o.discountPercent}% OFF`;
+        const stat = o.status ? ` (${o.status})` : '';
+        return `• ${cat}**${o.bankName}**: ${disp} | Min Spend: Rs. ${o.minSpendPkr.toLocaleString()} | Validity: ${o.validityDates}${stat}`;
+      });
+      const alertMessage = [
+        `### ⚡ New Daraz Voucher(s) Discovered!`,
+        '',
+        ...lines,
+      ].join('\n');
+
+      await sendNtfyNotification(
+        ntfyTopic,
+        `⚡ New Daraz Voucher Alert (${pktDateStr})`,
+        alertMessage
+      );
     } else {
-      title = `Daraz.pk Daily Active Discounts - ${weekday} (${pktDateStr} PKT)`;
-      messageBody = [
-        `ACTIVE TODAY ON DARAZ.PK (${weekday}, ${pktDateStr} PKT):`,
-        ...activeLines,
-        '',
-        `OTHER VERIFIED WEEKLY & DOM VOUCHERS (Collect on App):`,
-        ...upcomingLines,
-        '',
-        `(Stale HBL Daily 10% Hub, JS Zindigi & 2023 0-voucher pages excluded)`,
-      ].join('\n');
+      console.log('No new offers and daily digest already sent today. No ntfy message required.');
     }
-
-    await sendNtfyNotification(title, messageBody);
-
-    const updatedState: TrackerState = {
-      updatedAt: new Date().toISOString(),
-      lastNotifiedPktDate: pktDateStr,
-      pktDayName: weekday,
-      note: 'Sends 1 daily digest at the start of each PKT day (Asia/Karachi) and only notifies during the day if a new discount is offered. Includes JazzCash 25% OFF; excludes stale daily HBL hub entry.',
-      activeTodayCount: todaysActiveOffers.length,
-      offersCount: verifiedLiveOffers.length,
-      offers: verifiedLiveOffers,
-    };
-
-    fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
-    fs.writeFileSync(STATE_FILE, JSON.stringify(updatedState, null, 2));
-  } else {
-    console.log(
-      `Already sent daily discount notification for ${pktDateStr} PKT and 0 new offers detected during the day. Skipping ntfy notification.`
-    );
   }
+
+  // Save updated state
+  const newState: StateData = {
+    lastDigestDatePKT: isFirstRunToday ? pktDateStr : previousState.lastDigestDatePKT || pktDateStr,
+    source: 'Daraz Voucher Center & Official Payment Promotions API',
+    categories: [
+      'Wallet Vouchers',
+      'Bank Vouchers',
+      'Voucher Max',
+      'Free Shipping',
+      'Coins & Seller Discounts',
+    ],
+    offers: finalMergedOffers,
+    scrapedAt: new Date().toISOString(),
+  };
+
+  fs.writeFileSync(stateFilePath, JSON.stringify(newState, null, 2));
+  console.log(`Saved updated state to data/state.json (${finalMergedOffers.length} total vouchers)`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Allow CLI execution when run directly via node / tsx
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('tracker.ts')) {
+  runTracker().catch((err) => {
+    console.error('Fatal error in tracker execution:', err);
+    process.exit(1);
+  });
+}
