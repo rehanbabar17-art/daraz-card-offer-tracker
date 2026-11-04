@@ -1,9 +1,8 @@
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { runTracker, type CardOffer, type StateData } from './src/tracker.ts';
+import type { StateData } from './src/tracker.ts';
 
 dotenv.config();
 
@@ -50,6 +49,7 @@ app.get('/api/offers', (_req, res) => {
 // API route to manually trigger live Playwright scraper run
 app.post('/api/tracker/run', async (_req, res) => {
   try {
+    const { runTracker } = await import('./src/tracker.ts');
     await runTracker();
     const statePath = path.join(process.cwd(), 'data', 'state.json');
     let stateData: StateData = { lastDigestDatePKT: '', offers: [], scrapedAt: '' };
@@ -89,6 +89,7 @@ app.get('/api/sources', (_req, res) => {
 
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true, hmr: false },
       appType: 'custom',
@@ -115,8 +116,8 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 }
 
