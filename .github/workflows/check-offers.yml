@@ -29,7 +29,7 @@ jobs:
         run: npm install --legacy-peer-deps --no-audit --no-fund
 
       - name: Install Playwright Chromium with system dependencies
-        run: npx playwright install --with-deps chromium
+        run: npm install --no-save --legacy-peer-deps playwright && npx playwright install --with-deps chromium
 
       - name: Run Daraz Live Playwright Tracker
         run: npx tsx src/tracker.ts
