@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import type { StateData } from './src/tracker.ts';
 
 dotenv.config();
 
@@ -17,7 +16,7 @@ app.get('/api/offers', (_req, res) => {
   if (fs.existsSync(statePath)) {
     try {
       const raw = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-      const data: StateData = {
+      const data = {
         lastDigestDatePKT: raw.lastDigestDatePKT || '',
         source: raw.source || 'Daraz Voucher Center & Official Payment Promotions API',
         categories: Array.isArray(raw.categories)
@@ -28,7 +27,7 @@ app.get('/api/offers', (_req, res) => {
       };
       res.json({ ok: true, data });
       return;
-    } catch (err: unknown) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       res.status(500).json({ ok: false, error: `Failed to read state.json: ${errorMsg}` });
       return;
@@ -52,7 +51,13 @@ app.post('/api/tracker/run', async (_req, res) => {
     const { runTracker } = await import('./src/tracker.ts');
     await runTracker();
     const statePath = path.join(process.cwd(), 'data', 'state.json');
-    let stateData: StateData = { lastDigestDatePKT: '', offers: [], scrapedAt: '' };
+    let stateData = {
+      lastDigestDatePKT: '',
+      source: 'Daraz Voucher Center & Official Payment Promotions API',
+      categories: ['Wallet Vouchers', 'Bank Vouchers', 'Voucher Max', 'Free Shipping', 'Coins & Seller Discounts'],
+      offers: [],
+      scrapedAt: '',
+    };
     if (fs.existsSync(statePath)) {
       const raw = JSON.parse(fs.readFileSync(statePath, 'utf8'));
       stateData = {
@@ -66,7 +71,7 @@ app.post('/api/tracker/run', async (_req, res) => {
       };
     }
     res.json({ ok: true, message: 'Scrape completed', data: stateData });
-  } catch (err: unknown) {
+  } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     res.status(500).json({ ok: false, error: errorMsg });
   }
@@ -103,7 +108,7 @@ async function startServer() {
         let template = fs.readFileSync(templatePath, 'utf-8');
         template = await vite.transformIndexHtml(req.originalUrl, template);
         res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
-      } catch (e: unknown) {
+      } catch (e) {
         if (e instanceof Error) vite.ssrFixStacktrace(e);
         next(e);
       }
