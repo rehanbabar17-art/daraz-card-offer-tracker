@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   track-daraz-vouchers:
@@ -16,6 +17,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Keep scheduled workflow active
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api --method PUT "/repos/${{ github.repository }}/actions/workflows/daraz-card-tracker.yml/enable" || true
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
