@@ -1,6 +1,6 @@
 {
-  "last_notified_pkt_date": "2026-11-05",
-  "last_checked_pkt": "2026-11-05T23:40:40.995868+05:00",
+  "last_notified_pkt_date": "2026-11-06",
+  "last_checked_pkt": "2026-11-06T05:04:26.829882+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
