@@ -1,13 +1,12 @@
 {
-  "last_notified_pkt_date": "2026-11-06",
-  "last_checked_pkt": "2026-11-06T22:53:17.467483+05:00",
+  "last_notified_pkt_date": "2026-11-07",
+  "last_checked_pkt": "2026-11-07T04:42:28.657339+05:00",
   "daraz_gateway": {
-    "status": 200,
-    "reachable": true,
-    "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
-    "api": "mtop.lazada.detail.getVouchers"
+    "status": 0,
+    "reachable": false,
+    "error": "HTTP Error 419: "
   },
-  "active_vouchers_count": 11,
+  "active_vouchers_count": 12,
   "vouchers": [
     {
       "id": "easypaisa-10pct",
@@ -140,6 +139,22 @@
       ],
       "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
       "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "askari-sat-10pct",
+      "section": "Bank Vouchers",
+      "issuer": "Askari Bank",
+      "type": "Bank Card",
+      "badge": "Saturday Special",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "07/11/2026 - 07/11/2026",
+      "activeDays": [
+        6
+      ],
+      "schedule": "Saturday (07/11/2026)",
+      "status": "UPCOMING"
     },
     {
       "id": "vmax-1100",
