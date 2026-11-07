@@ -1,12 +1,13 @@
 {
-  "last_notified_pkt_date": "2026-11-07",
-  "last_checked_pkt": "2026-11-07T21:49:02.138730+05:00",
+  "last_notified_pkt_date": "2026-11-08",
+  "last_checked_pkt": "2026-11-08T03:39:11.431112+05:00",
   "daraz_gateway": {
-    "status": 0,
-    "reachable": false,
-    "error": "HTTP Error 419: "
+    "status": 200,
+    "reachable": true,
+    "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
+    "api": "mtop.lazada.detail.getVouchers"
   },
-  "active_vouchers_count": 12,
+  "active_vouchers_count": 15,
   "vouchers": [
     {
       "id": "easypaisa-10pct",
@@ -141,19 +142,67 @@
       "status": "ACTIVE_NOW"
     },
     {
-      "id": "askari-sat-10pct",
+      "id": "scb-emi-10pct",
       "section": "Bank Vouchers",
-      "issuer": "Askari Bank",
+      "issuer": "SCB EMI (Standard Chartered)",
       "type": "Bank Card",
-      "badge": "Saturday Special",
+      "badge": "Sunday Special",
       "discountPercent": 10,
-      "minSpendPkr": 0,
+      "minSpendPkr": 3000,
       "maxCapText": "Max Cap Rs. 1,000",
-      "validityWindow": "07/11/2026 - 07/11/2026",
+      "validityWindow": "08/11/2026 - 08/11/2026",
       "activeDays": [
-        6
+        0
       ],
-      "schedule": "Saturday (07/11/2026)",
+      "schedule": "Sunday (08/11/2026)",
+      "status": "UPCOMING"
+    },
+    {
+      "id": "scb-15pct",
+      "section": "Bank Vouchers",
+      "issuer": "Standard Chartered",
+      "type": "Bank Card",
+      "badge": "Sunday Special",
+      "discountPercent": 15,
+      "minSpendPkr": 3000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "08/11/2026 - 08/11/2026",
+      "activeDays": [
+        0
+      ],
+      "schedule": "Sunday (08/11/2026)",
+      "status": "UPCOMING"
+    },
+    {
+      "id": "mcb-plat-10pct",
+      "section": "Bank Vouchers",
+      "issuer": "MCB Platinum",
+      "type": "Bank Card",
+      "badge": "Sunday Special",
+      "discountPercent": 10,
+      "minSpendPkr": 3000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "08/11/2026 - 08/11/2026",
+      "activeDays": [
+        0
+      ],
+      "schedule": "Sunday (08/11/2026)",
+      "status": "UPCOMING"
+    },
+    {
+      "id": "mcb-visa-10pct",
+      "section": "Bank Vouchers",
+      "issuer": "MCB Visa",
+      "type": "Bank Card",
+      "badge": "Sunday Special",
+      "discountPercent": 10,
+      "minSpendPkr": 3000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "08/11/2026 - 08/11/2026",
+      "activeDays": [
+        0
+      ],
+      "schedule": "Sunday (08/11/2026)",
       "status": "UPCOMING"
     },
     {
