@@ -1,11 +1,10 @@
 {
   "last_notified_pkt_date": "2026-11-07",
-  "last_checked_pkt": "2026-11-07T14:54:44.318307+05:00",
+  "last_checked_pkt": "2026-11-07T21:49:02.138730+05:00",
   "daraz_gateway": {
-    "status": 200,
-    "reachable": true,
-    "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
-    "api": "mtop.lazada.detail.getVouchers"
+    "status": 0,
+    "reachable": false,
+    "error": "HTTP Error 419: "
   },
   "active_vouchers_count": 12,
   "vouchers": [
