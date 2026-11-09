@@ -1,13 +1,13 @@
 {
-  "last_notified_pkt_date": "2026-11-09",
-  "last_checked_pkt": "2026-11-09T16:18:04.862619+05:00",
+  "last_notified_pkt_date": "2026-11-10",
+  "last_checked_pkt": "2026-11-10T04:45:03.222608+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
     "api": "mtop.lazada.detail.getVouchers"
   },
-  "active_vouchers_count": 11,
+  "active_vouchers_count": 14,
   "vouchers": [
     {
       "id": "easypaisa-10pct",
@@ -140,6 +140,54 @@
       ],
       "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
       "status": "ACTIVE_NOW"
+    },
+    {
+      "id": "unionpay-12pct",
+      "section": "Bank Vouchers",
+      "issuer": "UnionPay (Tier 1)",
+      "type": "Card Network",
+      "badge": "Limited Redemption",
+      "discountPercent": 12,
+      "minSpendPkr": 500,
+      "maxCapText": "Max Cap Rs. 500",
+      "validityWindow": "03/11/2026 - 03/11/2026",
+      "activeDays": [
+        2
+      ],
+      "schedule": "Tuesday (03/11/2026)",
+      "status": "UPCOMING"
+    },
+    {
+      "id": "unionpay-20pct",
+      "section": "Bank Vouchers",
+      "issuer": "UnionPay (Tier 2)",
+      "type": "Card Network",
+      "badge": "Limited Redemption",
+      "discountPercent": 20,
+      "minSpendPkr": 1000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "03/11/2026 - 03/11/2026",
+      "activeDays": [
+        2
+      ],
+      "schedule": "Tuesday (03/11/2026)",
+      "status": "UPCOMING"
+    },
+    {
+      "id": "faysal-20pct",
+      "section": "Bank Vouchers",
+      "issuer": "Faysal Bank",
+      "type": "Bank Card",
+      "badge": "11.11 Campaign",
+      "discountPercent": 20,
+      "minSpendPkr": 1000,
+      "maxCapText": "Max Cap Rs. 1,000",
+      "validityWindow": "10/11/2026 - 10/11/2026",
+      "activeDays": [
+        2
+      ],
+      "schedule": "Tuesday (10/11/2026)",
+      "status": "UPCOMING"
     },
     {
       "id": "vmax-1100",
