@@ -10,276 +10,8 @@
   ],
   "offers": [
     {
-      "id": "easypaisa-10pct-cap1000",
-      "category": "Wallet Vouchers",
-      "title": "Easypaisa 10% OFF",
-      "bankName": "Easypaisa",
-      "discountDisplay": "10% OFF (Cap Rs. 1,000)",
-      "discountPercent": 10,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 500,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Active Campaign",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "jazzcash-10pct-cap1000",
-      "bankName": "JazzCash",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "Active Campaign (See App)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
-    },
-    {
-      "id": "zindigi-25pct-cap1000",
-      "bankName": "Zindigi",
-      "discountPercent": 25,
-      "minSpendPkr": 0,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "Active Campaign (See App)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
-    },
-    {
-      "id": "albaraka-15pct-min500",
-      "category": "Bank Vouchers",
-      "title": "Al Baraka 15% OFF",
-      "bankName": "Al Baraka",
-      "discountDisplay": "15% OFF",
-      "discountPercent": 15,
-      "flatDiscountPkr": 500,
-      "minSpendPkr": 500,
-      "maxCapPkr": 500,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "02/11/2026 - 02/11/2026",
-      "status": "Limited Redemption",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "unionpay-12pct-min500",
-      "category": "Bank Vouchers",
-      "title": "UnionPay 12% OFF (Tier 1)",
-      "bankName": "UnionPay (Tier 1)",
-      "discountDisplay": "12% OFF",
-      "discountPercent": 12,
-      "flatDiscountPkr": 500,
-      "minSpendPkr": 500,
-      "maxCapPkr": 500,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "03/11/2026 - 03/11/2026",
-      "status": "Active Today",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "unionpay-20pct-min1000",
-      "category": "Bank Vouchers",
-      "title": "UnionPay 20% OFF (Tier 2)",
-      "bankName": "UnionPay (Tier 2)",
-      "discountDisplay": "20% OFF",
-      "discountPercent": 20,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 1000,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "03/11/2026 - 03/11/2026",
-      "status": "Ran Out",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "unionpay-8pct-cap1000",
-      "bankName": "UnionPay",
-      "discountPercent": 8,
-      "minSpendPkr": 0,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "Active Campaign (See App)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
-    },
-    {
-      "id": "hbl-10pct-min1000",
-      "category": "Bank Vouchers",
-      "title": "HBL Card 10% OFF (Tier 1)",
-      "bankName": "HBL Debit/Credit Card (Tier 1)",
-      "discountDisplay": "10% OFF (Cap Rs. 900)",
-      "discountPercent": 10,
-      "flatDiscountPkr": 900,
-      "minSpendPkr": 1000,
-      "maxCapPkr": 900,
-      "validDays": [
-        "Wednesday"
-      ],
-      "validityDates": "04/11/2026 - 04/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "hbl-10pct-min2000",
-      "category": "Bank Vouchers",
-      "title": "HBL Card 10% OFF (Tier 2)",
-      "bankName": "HBL Debit/Credit Card (Tier 2)",
-      "discountDisplay": "10% OFF (Cap Rs. 900)",
-      "discountPercent": 10,
-      "flatDiscountPkr": 900,
-      "minSpendPkr": 2000,
-      "maxCapPkr": 900,
-      "validDays": [
-        "Wednesday"
-      ],
-      "validityDates": "04/11/2026 - 04/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "askaribank-10pct-nomin",
-      "category": "Bank Vouchers",
-      "title": "Askari Bank 10% OFF",
+      "id": "askaribank-10pct-cap1000",
       "bankName": "Askari Bank",
-      "discountDisplay": "10% OFF (Cap Rs. 1,000)",
-      "discountPercent": 10,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 0,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Saturday"
-      ],
-      "validityDates": "07/11/2026 - 07/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "scbemi-10pct-min3000",
-      "category": "Bank Vouchers",
-      "title": "SCB EMI 10% OFF",
-      "bankName": "SCB EMI",
-      "discountDisplay": "10% OFF (Cap Rs. 1,000)",
-      "discountPercent": 10,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 3000,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Sunday"
-      ],
-      "validityDates": "08/11/2026 - 08/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "scb-15pct-min3000",
-      "category": "Bank Vouchers",
-      "title": "Standard Chartered 15% OFF",
-      "bankName": "Standard Chartered",
-      "discountDisplay": "15% OFF (Cap Rs. 1,000)",
-      "discountPercent": 15,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 3000,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Sunday"
-      ],
-      "validityDates": "08/11/2026 - 08/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "mcbplatinum-10pct-min3000",
-      "category": "Bank Vouchers",
-      "title": "MCB Platinum 10% OFF",
-      "bankName": "MCB Platinum",
-      "discountDisplay": "10% OFF (Cap Rs. 1,000)",
-      "discountPercent": 10,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 3000,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Sunday"
-      ],
-      "validityDates": "08/11/2026 - 08/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "mcbvisa-10pct-min3000",
-      "category": "Bank Vouchers",
-      "title": "MCB Visa 10% OFF",
-      "bankName": "MCB Visa",
-      "discountDisplay": "10% OFF (Cap Rs. 1,000)",
-      "discountPercent": 10,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 3000,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Sunday"
-      ],
-      "validityDates": "08/11/2026 - 08/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "faysalbank-20pct-min1000",
-      "category": "Bank Vouchers",
-      "title": "Faysal Bank 20% OFF",
-      "bankName": "Faysal Bank",
-      "discountDisplay": "20% OFF (Cap Rs. 1,000)",
-      "discountPercent": 20,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 1000,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "10/11/2026 - 10/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "meezanbank-10pct-cap10000",
-      "bankName": "Meezan Bank",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapPkr": 10000,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "Active Campaign (See App)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
-    },
-    {
-      "id": "ubl-10pct-cap1000",
-      "bankName": "UBL",
       "discountPercent": 10,
       "minSpendPkr": 0,
       "maxCapPkr": 1000,
@@ -288,20 +20,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
-    },
-    {
-      "id": "visa-10pct-cap900",
-      "bankName": "Visa",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapPkr": 900,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "Active Campaign (See App)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
     },
     {
       "id": "vmax-1100-min19999",
@@ -394,125 +113,40 @@
       "scrapedAt": "2026-11-03T13:05:00.000Z"
     },
     {
-      "id": "freeship-500-min3000",
-      "category": "Free Shipping",
-      "title": "Free Shipping Voucher Rs. 500",
-      "bankName": "Selected Sellers",
-      "discountDisplay": "Free Shipping (Rs. 500)",
-      "discountPercent": 100,
-      "flatDiscountPkr": 500,
-      "minSpendPkr": 3000,
-      "maxCapPkr": 500,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Collectible (x3)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "freeship-300-min1499",
-      "category": "Free Shipping",
-      "title": "Free Shipping Voucher Rs. 300",
-      "bankName": "Selected Sellers",
-      "discountDisplay": "Free Shipping (Rs. 300)",
-      "discountPercent": 100,
-      "flatDiscountPkr": 300,
-      "minSpendPkr": 1499,
-      "maxCapPkr": 300,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Collectible",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "freeship-265-min699",
-      "category": "Free Shipping",
-      "title": "Fashion Free Shipping Rs. 265",
-      "bankName": "Fashion Category",
-      "discountDisplay": "Free Shipping (Rs. 265)",
-      "discountPercent": 100,
-      "flatDiscountPkr": 265,
-      "minSpendPkr": 699,
-      "maxCapPkr": 265,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "Valid till 30 Nov",
-      "status": "Use Now",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "freeship-200-min299",
-      "category": "Free Shipping",
-      "title": "Free Shipping Voucher Rs. 200",
-      "bankName": "Selected Sellers",
-      "discountDisplay": "Free Shipping (Rs. 200)",
-      "discountPercent": 100,
-      "flatDiscountPkr": 200,
-      "minSpendPkr": 299,
-      "maxCapPkr": 200,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Use Now",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "coins-6500-save65",
-      "category": "Coins & Seller Discounts",
-      "title": "Daraz Coins (6,500 Coins)",
-      "bankName": "Daraz Coins",
-      "discountDisplay": "Save Rs. 65",
-      "discountPercent": 1,
-      "flatDiscountPkr": 65,
-      "minSpendPkr": 0,
-      "maxCapPkr": 65,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "Active",
-      "status": "Collect Coins",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "seller-albaraka-15pct",
-      "category": "Coins & Seller Discounts",
-      "title": "Al Baraka Store Voucher 15% OFF",
-      "bankName": "Al Baraka Store",
-      "discountDisplay": "15% OFF",
-      "discountPercent": 15,
-      "flatDiscountPkr": 500,
-      "minSpendPkr": 500,
-      "maxCapPkr": 500,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "02/11/2026 - 02/11/2026",
-      "status": "Collect",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
-      "id": "askaribank-10pct-cap1000",
-      "bankName": "Askari Bank",
+      "id": "easypaisa-10pct-cap1000",
+      "category": "Wallet Vouchers",
+      "title": "Easypaisa 10% OFF",
+      "bankName": "Easypaisa",
+      "discountDisplay": "10% OFF (Cap Rs. 1,000)",
       "discountPercent": 10,
-      "minSpendPkr": 0,
+      "flatDiscountPkr": 1000,
+      "minSpendPkr": 500,
       "maxCapPkr": 1000,
       "validDays": [
         "Everyday"
       ],
-      "validityDates": "Active Campaign (See App)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
+      "validityDates": "01/11/2026 - 30/11/2026",
+      "status": "Active Campaign",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/digital-payments",
+      "scrapedAt": "2026-11-03T13:05:00.000Z"
+    },
+    {
+      "id": "faysalbank-20pct-min1000",
+      "category": "Bank Vouchers",
+      "title": "Faysal Bank 20% OFF",
+      "bankName": "Faysal Bank",
+      "discountDisplay": "20% OFF (Cap Rs. 1,000)",
+      "discountPercent": 20,
+      "flatDiscountPkr": 1000,
+      "minSpendPkr": 1000,
+      "maxCapPkr": 1000,
+      "validDays": [
+        "Everyday"
+      ],
+      "validityDates": "10/11/2026 - 10/11/2026",
+      "status": "Starts Soon",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
+      "scrapedAt": "2026-11-03T13:05:00.000Z"
     },
     {
       "id": "hblbank-10pct-cap900",
@@ -525,7 +159,33 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
+    },
+    {
+      "id": "jazzcash-10pct-cap1000",
+      "bankName": "JazzCash",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapPkr": 1000,
+      "validDays": [
+        "Everyday"
+      ],
+      "validityDates": "Active Campaign (See App)",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
+    },
+    {
+      "id": "meezanbank-10pct-cap10000",
+      "bankName": "Meezan Bank",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapPkr": 10000,
+      "validDays": [
+        "Everyday"
+      ],
+      "validityDates": "Active Campaign (See App)",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
     },
     {
       "id": "standardchartered-10pct-cap1000",
@@ -538,8 +198,60 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T15:02:49.304Z"
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
+    },
+    {
+      "id": "ubl-10pct-cap1000",
+      "bankName": "UBL",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapPkr": 1000,
+      "validDays": [
+        "Everyday"
+      ],
+      "validityDates": "Active Campaign (See App)",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
+    },
+    {
+      "id": "unionpay-8pct-cap1000",
+      "bankName": "UnionPay",
+      "discountPercent": 8,
+      "minSpendPkr": 0,
+      "maxCapPkr": 1000,
+      "validDays": [
+        "Everyday"
+      ],
+      "validityDates": "Active Campaign (See App)",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
+    },
+    {
+      "id": "visa-10pct-cap900",
+      "bankName": "Visa",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapPkr": 900,
+      "validDays": [
+        "Everyday"
+      ],
+      "validityDates": "Active Campaign (See App)",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
+    },
+    {
+      "id": "zindigi-25pct-cap1000",
+      "bankName": "Zindigi",
+      "discountPercent": 25,
+      "minSpendPkr": 0,
+      "maxCapPkr": 1000,
+      "validDays": [
+        "Everyday"
+      ],
+      "validityDates": "Active Campaign (See App)",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
+      "scrapedAt": "2026-11-10T15:29:34.060Z"
     }
   ],
-  "scrapedAt": "2026-11-10T15:03:13.300Z"
+  "scrapedAt": "2026-11-10T15:33:26.750Z"
 }
