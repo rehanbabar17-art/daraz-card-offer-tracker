@@ -141,7 +141,12 @@ function extractDatesAndDays(text: string, sourceUrl: string = ''): { validityDa
     // Search short range pattern DD/MM - DD/MM
     const shortRangeMatch = text.match(/(\d{1,2}[\/\.-]\d{1,2})\s*-\s*(\d{1,2}[\/\.-]\d{1,2})/);
     if (shortRangeMatch) {
-      validityDates = `${shortRangeMatch[1]}/2026 to ${shortRangeMatch[2]}/2026`;
+      const { year: currentYear } = getCurrentPktDate();
+      const endIso = `${currentYear}-${shortRangeMatch[2].split(/[\/\.-]/).reverse().map((p) => pad2(parseInt(p, 10))).join('-')}`;
+      validityDates = `${shortRangeMatch[1]}/${currentYear} to ${shortRangeMatch[2]}/${currentYear}`;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(endIso) && checkIsExpired(endIso)) {
+        isExpired = true;
+      }
     } else {
       // Search "Valid till DD Month YYYY" or "Valid until DD Month YYYY"
       const tillMatch = text.match(/valid\s+(?:till|until|through)\s+(\d{1,2})[\/\s]+([A-Za-z0-9]+)(?:[\/\s]+(\d{4}))?/i);
@@ -242,6 +247,74 @@ function normalizeBankName(raw: string): string {
   return BANK_NORMALIZATION_MAP[key] || raw;
 }
 
+// Anything above this is almost certainly not a real card discount (e.g. a "100%"
+// price-slash badge picked up from nearby markup).
+const MAX_TRUSTED_PERCENT = 90;
+
+function pad2(n: number): string {
+  return String(n).padStart(2, '0');
+}
+
+/**
+ * Best-effort end date (YYYY-MM-DD) for an offer, taken from its validity text.
+ * Returns null when the offer carries no usable date, which is common for the
+ * Daraz payment-promotions pages ("Upto 10% Off with Max Cap Rs. 1000").
+ */
+function offerEndDate(validityDates: string | undefined): string | null {
+  const text = validityDates || '';
+
+  const iso = [...text.matchAll(/(\d{4})-(\d{2})-(\d{2})/g)];
+  if (iso.length > 0) return iso[iso.length - 1][0];
+
+  const dmy = [...text.matchAll(/(\d{1,2})[\/.]{1}(\d{1,2})[\/.]{1}(\d{4})/g)];
+  if (dmy.length > 0) {
+    const last = dmy[dmy.length - 1];
+    return `${last[3]}-${pad2(parseInt(last[2], 10))}-${pad2(parseInt(last[1], 10))}`;
+  }
+
+  if (/till|until|through|upton/i.test(text)) {
+    const till = text.match(/(\d{1,2})\s+([A-Za-z]{3,})/);
+    if (till) {
+      const { year } = getCurrentPktDate();
+      const explicitYear = text.match(/(\d{1,2})\s+([A-Za-z]{3,})\s*,?\s*(\d{4})/);
+      const month = parseMonthName(till[2]);
+      const y = explicitYear ? parseInt(explicitYear[3], 10) : year;
+      return `${y}-${pad2(month)}-${pad2(parseInt(till[1], 10))}`;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Identity of a real-world offer: same bank, same discount, same spend/cap band.
+ * Used both to collapse duplicate matches within one scan (the bank list contains
+ * overlapping aliases like "Askari Bank" and "Askari") and to match offers between
+ * runs, independently of the legacy `id` format.
+ */
+function offerKey(offer: { bankName: string; discountPercent: number; minSpendPkr: number; maxCapPkr: number }): string {
+  const bank = offer.bankName.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return `${bank}_${offer.discountPercent}_${offer.minSpendPkr}_${offer.maxCapPkr}`;
+}
+
+/**
+ * Why a previously stored offer should no longer be reported.
+ * Returning null means it is still trustworthy and should be kept.
+ */
+function retirementReason(offer: CardOffer, freshKeys: Set<string>, todayPkt: string): string | null {
+  if (!Number.isFinite(offer.discountPercent) || offer.discountPercent <= 0) return 'no usable discount';
+  if (offer.discountPercent > MAX_TRUSTED_PERCENT) return `implausible discount (${offer.discountPercent}%)`;
+
+  const end = offerEndDate(offer.validityDates);
+  if (end && end < todayPkt) return `expired ${end}`;
+
+  // No end date (e.g. "Active Campaign (See App)"): keep it only while the source
+  // still reports it, otherwise it is unverifiable residue from an older scan.
+  if (!end && !freshKeys.has(offerKey(offer))) return 'no longer listed by its source';
+
+  return null;
+}
+
 function extractMaxCap(text: string): number {
   const match = text.match(/(?:cap(?:ped)?|max(?:imum)?(?:\s+discount)?)\b[^0-9]*?([0-9]{1,3}(?:,[0-9]{3})+|[0-9]{3,6})/i);
   if (match) {
@@ -282,7 +355,7 @@ function parseVouchersFromJsonObject(obj: any, sourceUrl: string, offers: CardOf
       const pctMatch = discountRaw.match(/(\d{1,2})\s*%/);
       const discountPercent = pctMatch ? parseInt(pctMatch[1], 10) : (typeof obj.discountPercent === 'number' ? obj.discountPercent : 0);
 
-      if (discountPercent > 0 && discountPercent <= 90) {
+      if (discountPercent > 0 && discountPercent <= MAX_TRUSTED_PERCENT) {
         const cleanBankName = normalizeBankName(matchedBank);
         const minSpendPkr = typeof minSpendRaw === 'number' ? minSpendRaw : parseInt(String(minSpendRaw).replace(/[^0-9]/g, ''), 10) || 0;
         const maxCapPkr = typeof maxCapRaw === 'number' ? maxCapRaw : parseInt(String(maxCapRaw).replace(/[^0-9]/g, ''), 10) || 0;
@@ -313,7 +386,7 @@ function parseVouchersFromJsonObject(obj: any, sourceUrl: string, offers: CardOf
   }
 }
 
-function parseOffersFromText(content: string, sourceUrl: string): CardOffer[] {
+export function parseOffersFromText(content: string, sourceUrl: string): CardOffer[] {
   const offers: CardOffer[] = [];
   const scrapedAt = new Date().toISOString();
 
@@ -338,10 +411,10 @@ function parseOffersFromText(content: string, sourceUrl: string): CardOffer[] {
       const snippet = content.slice(startPos, endPos);
 
       // Extract percent
-      const pctMatch = snippet.match(/(\d{1,2})\s*%/);
+      const pctMatch = snippet.match(/(\d{1,3})\s*%/);
       if (!pctMatch) continue;
       const discountPercent = parseInt(pctMatch[1], 10);
-      if (discountPercent <= 0 || discountPercent > 90) continue;
+      if (discountPercent <= 0 || discountPercent > MAX_TRUSTED_PERCENT) continue;
 
       // Extract max cap and min spend using robust regexes
       const maxCapPkr = extractMaxCap(snippet);
@@ -380,9 +453,15 @@ function parseOffersFromText(content: string, sourceUrl: string): CardOffer[] {
   return offers;
 }
 
-async function sendNtfyNotification(topic: string, title: string, message: string): Promise<boolean> {
+async function sendNtfyNotification(
+  topic: string,
+  title: string,
+  message: string,
+  server: string = 'https://ntfy.sh',
+): Promise<boolean> {
   try {
-    const res = await fetch(`https://ntfy.sh/${topic.trim()}`, {
+    const base = (server || 'https://ntfy.sh').replace(/\/+$/, '');
+    const res = await fetch(`${base}/${topic.trim()}`, {
       method: 'POST',
       headers: {
         Title: title,
@@ -403,9 +482,15 @@ export async function runTracker(): Promise<void> {
   console.log('=== DARAZ CARD OFFER TRACKER STARTED ===');
 
   const ntfyTopic = process.env.NTFY_TOPIC ? process.env.NTFY_TOPIC.trim() : '';
+  // README documents NTFY_SERVER for self-hosted ntfy; honour it here too.
+  const ntfyServer = (process.env.NTFY_SERVER || 'https://ntfy.sh').trim();
   if (!ntfyTopic) {
     console.warn('WARNING: NTFY_TOPIC environment variable is missing. Skipping notifications.');
   }
+
+  // A silent Playwright failure used to be invisible: the run "succeeded" on the
+  // single fallback API and then re-saved stale offers. Fail loudly instead.
+  const requireBrowser = process.env.ALLOW_DEGRADED !== '1';
 
   // Load seeds from sources.json
   const sourcesPath = path.join(process.cwd(), 'sources.json');
@@ -435,7 +520,8 @@ export async function runTracker(): Promise<void> {
   fs.mkdirSync(stateDir, { recursive: true });
   const stateFilePath = path.join(stateDir, 'state.json');
 
-  let successfulPagesCount = 0;
+  let browserPagesLoaded = 0;
+  let apiPagesLoaded = 0;
   const allExtractedOffers: CardOffer[] = [];
 
   // Direct fetch of Daraz ALD-Lamp Payment Promotions API (works even without headless browser)
@@ -456,7 +542,7 @@ export async function runTracker(): Promise<void> {
         'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions'
       );
       allExtractedOffers.push(...lampOffers);
-      successfulPagesCount += 2;
+      apiPagesLoaded += 1;
       console.log(`[DIRECT API] Extracted ${lampOffers.length} offers from Daraz ALD-Lamp JSONP API`);
     }
   } catch (err) {
@@ -465,6 +551,7 @@ export async function runTracker(): Promise<void> {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let browser: any;
+  let browserLaunchError: string | null = null;
   let mobileDeviceConfig: Record<string, unknown> = {};
   try {
     const pwModuleName = 'playwright';
@@ -473,7 +560,25 @@ export async function runTracker(): Promise<void> {
     browser = await pw.chromium.launch({ headless: true });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.warn(`Playwright Chromium binary not available in this container (${msg.slice(0, 80)}). Relying on Direct API & merged state.`);
+    browserLaunchError = msg;
+    console.error(`Playwright Chromium could not be launched: ${msg.slice(0, 200)}`);
+  }
+
+  if (!browser && requireBrowser) {
+    console.error(
+      'CRITICAL: the browser never started, so the voucher-center pages were not scanned. ' +
+        'Refusing to rewrite state from the fallback API alone (set ALLOW_DEGRADED=1 to override).',
+    );
+    if (ntfyTopic) {
+      await sendNtfyNotification(
+        ntfyTopic,
+        'Daraz Offer Tracker Alert',
+        `Scanner could not start its browser (${browserLaunchError?.slice(0, 120) || 'unknown error'}). Offers were NOT refreshed — check the app manually.`,
+        ntfyServer,
+      );
+    }
+    process.exitCode = 1;
+    return;
   }
 
   if (browser) {
@@ -535,8 +640,8 @@ export async function runTracker(): Promise<void> {
         } catch {
           res = await page.goto(currentUrl, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(() => null);
         }
-        status = res ? res.status() : 200;
-        successfulPagesCount++;
+        status = res ? res.status() : 0;
+        if (status >= 200 && status < 400) browserPagesLoaded++; else console.warn(`[PAGE NON-2XX] ${currentUrl} returned ${status}`);
 
         for (let s = 0; s < 5; s++) {
           await page.evaluate(() => window.scrollBy(0, 500));
@@ -606,30 +711,54 @@ export async function runTracker(): Promise<void> {
     await browser.close();
   }
 
-  // Deduplicate offers by bank + discountPercent + maxCapPkr
+  // Deduplicate offers that describe the same real-world deal. The bank list has
+  // overlapping aliases ("Askari Bank"/"Askari", "Meezan Bank"/"Meezan"), so one
+  // page snippet could previously produce two identical rows.
   const offerMap = new Map<string, CardOffer>();
+  const completeness = (o: CardOffer): number =>
+    (offerEndDate(o.validityDates) ? 2 : 0) + (o.minSpendPkr > 0 ? 1 : 0);
   for (const offer of allExtractedOffers) {
-    const key = `${offer.bankName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${offer.discountPercent}_${offer.maxCapPkr}`;
-    if (!offerMap.has(key)) {
+    const key = offerKey(offer);
+    const existing = offerMap.get(key);
+    if (!existing || completeness(offer) > completeness(existing)) {
       offerMap.set(key, offer);
     }
   }
   const deduplicatedOffers = Array.from(offerMap.values());
 
+  const pagesLoaded = browserPagesLoaded + apiPagesLoaded;
   console.log(`\n=== SCRAPE COMPLETE ===`);
-  console.log(`Pages loaded successfully: ${successfulPagesCount}`);
+  console.log(`Browser pages loaded: ${browserPagesLoaded} | Fallback API sources: ${apiPagesLoaded}`);
   console.log(`Total verified unique offers extracted: ${deduplicatedOffers.length}`);
+
+  if (browserPagesLoaded === 0 && requireBrowser) {
+    console.error(
+      'CRITICAL: no browser page loaded, so the voucher center was not scanned. State will NOT be overwritten.',
+    );
+    if (ntfyTopic) {
+      await sendNtfyNotification(
+        ntfyTopic,
+        'Daraz Offer Tracker Alert',
+        'Could not verify Daraz offers today — check the app manually',
+        ntfyServer,
+      );
+    }
+    process.exitCode = 1;
+    return;
+  }
 
   // Rule 5: FAILURE HANDLING
   // If fewer than 2 pages load successfully, or 0 offers are found, send ONE alert:
   // "Could not verify Daraz offers today — check the app manually", and do NOT overwrite the last good state.
-  if (successfulPagesCount < 2 || deduplicatedOffers.length === 0) {
+  const minimumSources = requireBrowser ? 2 : 1;
+  if (pagesLoaded < minimumSources || deduplicatedOffers.length === 0) {
     console.warn('CRITICAL: Scrape failed validation (less than 2 pages loaded or 0 offers found). State will NOT be overwritten.');
     if (ntfyTopic) {
       await sendNtfyNotification(
         ntfyTopic,
         'Daraz Offer Tracker Alert',
-        'Could not verify Daraz offers today — check the app manually'
+        'Could not verify Daraz offers today — check the app manually',
+        ntfyServer
       );
     }
     return;
@@ -658,18 +787,36 @@ export async function runTracker(): Promise<void> {
   const { pktDateStr } = getCurrentPktDate();
   const isFirstRunToday = previousState.lastDigestDatePKT !== pktDateStr;
 
-  // Merge existing offers with newly discovered offers so no voucher is ever lost across runs
+  // Carry stored offers forward only while they can still be trusted: an expired
+  // validity ends an offer, and an undated one must be re-confirmed by this scan.
+  // Previously the state was append-only, which is why expires vouchers and old
+  // parsing artefacts stayed on the list forever.
+  const freshKeys = new Set(deduplicatedOffers.map(offerKey));
   const mergedOfferMap = new Map<string, CardOffer>();
+  const retired: string[] = [];
+
   for (const prevOffer of previousState.offers || []) {
-    mergedOfferMap.set(prevOffer.id, prevOffer);
+    const reason = retirementReason(prevOffer, freshKeys, pktDateStr);
+    if (reason) {
+      retired.push(`${prevOffer.bankName} ${prevOffer.discountPercent}% — ${reason}`);
+      continue;
+    }
+    mergedOfferMap.set(offerKey(prevOffer), prevOffer);
   }
   for (const newOffer of deduplicatedOffers) {
-    mergedOfferMap.set(newOffer.id, newOffer);
+    mergedOfferMap.set(offerKey(newOffer), newOffer);
   }
-  const finalMergedOffers = Array.from(mergedOfferMap.values());
+  const finalMergedOffers = Array.from(mergedOfferMap.values()).sort((a, b) =>
+    a.bankName.localeCompare(b.bankName),
+  );
 
-  const previousOfferIds = new Set((previousState.offers || []).map((o) => o.id));
-  const newOffers = finalMergedOffers.filter((o) => !previousOfferIds.has(o.id));
+  if (retired.length > 0) {
+    console.log(`Retired ${retired.length} stale offer(s):`);
+    for (const line of retired) console.log(`  - ${line}`);
+  }
+
+  const previousOfferKeys = new Set((previousState.offers || []).map(offerKey));
+  const newOffers = finalMergedOffers.filter((o) => !previousOfferKeys.has(offerKey(o)));
 
   // Rule 6: NOTIFICATIONS
   if (ntfyTopic) {
@@ -693,7 +840,8 @@ export async function runTracker(): Promise<void> {
       await sendNtfyNotification(
         ntfyTopic,
         `Daraz Vouchers Daily Digest (${finalMergedOffers.length} Offers) - ${pktDateStr}`,
-        digestMessage
+        digestMessage,
+        ntfyServer
       );
     } else if (newOffers.length > 0) {
       console.log(`Sending Intraday Alert for ${newOffers.length} new offer(s)...`);
@@ -712,7 +860,8 @@ export async function runTracker(): Promise<void> {
       await sendNtfyNotification(
         ntfyTopic,
         `⚡ New Daraz Voucher Alert (${pktDateStr})`,
-        alertMessage
+        alertMessage,
+        ntfyServer
       );
     } else {
       console.log('No new offers and daily digest already sent today. No ntfy message required.');

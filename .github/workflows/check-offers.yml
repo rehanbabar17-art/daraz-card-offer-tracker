@@ -35,6 +35,7 @@ jobs:
         run: npx tsx src/tracker.ts
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
 
       - name: Upload Page Screenshots Artifacts
         if: always()

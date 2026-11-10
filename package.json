@@ -9,7 +9,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "check": "tsx src/tracker.ts",
+    "product-vouchers": "tsx src/product-vouchers.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
