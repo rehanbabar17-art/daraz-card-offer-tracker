@@ -1,5 +1,5 @@
 {
-  "lastDigestDatePKT": "2026-11-10",
+  "lastDigestDatePKT": "2026-11-11",
   "source": "Daraz Voucher Center & Official Payment Promotions API",
   "categories": [
     "Wallet Vouchers",
@@ -20,7 +20,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     },
     {
       "id": "vmax-1100-min19999",
@@ -131,24 +131,6 @@
       "scrapedAt": "2026-11-03T13:05:00.000Z"
     },
     {
-      "id": "faysalbank-20pct-min1000",
-      "category": "Bank Vouchers",
-      "title": "Faysal Bank 20% OFF",
-      "bankName": "Faysal Bank",
-      "discountDisplay": "20% OFF (Cap Rs. 1,000)",
-      "discountPercent": 20,
-      "flatDiscountPkr": 1000,
-      "minSpendPkr": 1000,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "10/11/2026 - 10/11/2026",
-      "status": "Starts Soon",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/voucher-center/index",
-      "scrapedAt": "2026-11-03T13:05:00.000Z"
-    },
-    {
       "id": "hblbank-10pct-cap900",
       "bankName": "HBL Bank",
       "discountPercent": 10,
@@ -159,7 +141,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     },
     {
       "id": "jazzcash-10pct-cap1000",
@@ -172,7 +154,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     },
     {
       "id": "meezanbank-10pct-cap10000",
@@ -185,7 +167,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     },
     {
       "id": "standardchartered-10pct-cap1000",
@@ -198,7 +180,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     },
     {
       "id": "ubl-10pct-cap1000",
@@ -211,7 +193,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     },
     {
       "id": "unionpay-8pct-cap1000",
@@ -224,7 +206,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     },
     {
       "id": "visa-10pct-cap900",
@@ -237,7 +219,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     },
     {
       "id": "zindigi-25pct-cap1000",
@@ -250,8 +232,8 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-10T18:13:27.217Z"
+      "scrapedAt": "2026-11-10T19:01:04.568Z"
     }
   ],
-  "scrapedAt": "2026-11-10T18:15:40.471Z"
+  "scrapedAt": "2026-11-10T19:03:07.233Z"
 }
