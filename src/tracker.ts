@@ -523,6 +523,9 @@ export async function runTracker(): Promise<void> {
   let browserPagesLoaded = 0;
   let apiPagesLoaded = 0;
   const allExtractedOffers: CardOffer[] = [];
+  // Per-source yield, so a page that loads but contributes nothing is visible
+  // instead of looking like a silent success.
+  const sourceHealth: { url: string; status: number; offers: number; note?: string }[] = [];
 
   // Direct fetch of Daraz ALD-Lamp Payment Promotions API (works even without headless browser)
   try {
@@ -543,6 +546,7 @@ export async function runTracker(): Promise<void> {
       );
       allExtractedOffers.push(...lampOffers);
       apiPagesLoaded += 1;
+      sourceHealth.push({ url: lampUrl, status: lampRes.status, offers: lampOffers.length, note: 'ALD-Lamp JSONP' });
       console.log(`[DIRECT API] Extracted ${lampOffers.length} offers from Daraz ALD-Lamp JSONP API`);
     }
   } catch (err) {
@@ -700,9 +704,11 @@ export async function runTracker(): Promise<void> {
         const pageOffers = parseOffersFromText(fullCombinedText, currentUrl);
         console.log(`[PAGE LOG] URL: ${currentUrl} | Status: ${status} | Offers found: ${pageOffers.length}`);
         allExtractedOffers.push(...pageOffers);
+        sourceHealth.push({ url: currentUrl, status, offers: pageOffers.length });
       } catch (err: unknown) {
         const errorMsg = err instanceof Error ? err.message : String(err);
         console.error(`[PAGE FAILED] URL: ${currentUrl} | Error: ${errorMsg}`);
+        sourceHealth.push({ url: currentUrl, status, offers: 0, note: errorMsg.slice(0, 80) });
       } finally {
         await page.close();
       }
@@ -727,6 +733,21 @@ export async function runTracker(): Promise<void> {
   const deduplicatedOffers = Array.from(offerMap.values());
 
   const pagesLoaded = browserPagesLoaded + apiPagesLoaded;
+  console.log(`\n=== SOURCE HEALTH ===`);
+  for (const source of sourceHealth) {
+    const flag = source.offers === 0 ? 'EMPTY' : 'ok';
+    const status = source.status ? String(source.status) : '-';
+    console.log(
+      `[${flag.padEnd(5)}] ${status} | ${String(source.offers).padStart(2)} offer(s) | ${source.url}${source.note ? ` (${source.note})` : ''}`,
+    );
+  }
+  const emptySources = sourceHealth.filter((s) => s.offers === 0);
+  if (emptySources.length > 0) {
+    console.warn(
+      `[SOURCE WARNING] ${emptySources.length} of ${sourceHealth.length} source(s) yielded no offers — they loaded but had nothing extractable.`,
+    );
+  }
+
   console.log(`\n=== SCRAPE COMPLETE ===`);
   console.log(`Browser pages loaded: ${browserPagesLoaded} | Fallback API sources: ${apiPagesLoaded}`);
   console.log(`Total verified unique offers extracted: ${deduplicatedOffers.length}`);
