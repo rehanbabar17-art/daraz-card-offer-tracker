@@ -1,5 +1,5 @@
 {
-  "lastDigestDatePKT": "2026-11-11",
+  "lastDigestDatePKT": "2026-11-12",
   "source": "Daraz Voucher Center & Official Payment Promotions API",
   "categories": [
     "Wallet Vouchers",
@@ -20,7 +20,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     },
     {
       "id": "vmax-1100-min19999",
@@ -141,7 +141,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     },
     {
       "id": "jazzcash-10pct-cap1000",
@@ -154,7 +154,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     },
     {
       "id": "meezanbank-10pct-cap10000",
@@ -167,7 +167,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     },
     {
       "id": "standardchartered-10pct-cap1000",
@@ -180,7 +180,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     },
     {
       "id": "ubl-10pct-cap1000",
@@ -193,7 +193,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     },
     {
       "id": "unionpay-8pct-cap1000",
@@ -206,7 +206,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     },
     {
       "id": "visa-10pct-cap900",
@@ -219,7 +219,7 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     },
     {
       "id": "zindigi-25pct-cap1000",
@@ -232,8 +232,8 @@
       ],
       "validityDates": "Active Campaign (See App)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/termsandconditions",
-      "scrapedAt": "2026-11-11T17:00:59.892Z"
+      "scrapedAt": "2026-11-11T19:00:52.629Z"
     }
   ],
-  "scrapedAt": "2026-11-11T17:04:14.665Z"
+  "scrapedAt": "2026-11-11T19:03:55.227Z"
 }
