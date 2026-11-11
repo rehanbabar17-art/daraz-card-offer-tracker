@@ -28,13 +28,8 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps --no-audit --no-fund
 
-      - name: Install Playwright Chromium with system dependencies
-        run: |
-          echo 'APT::Acquire::Retries "5";' | sudo tee /etc/apt/apt.conf.d/80-retries
-          npm install --no-save --legacy-peer-deps playwright
-          npx playwright install chromium
-          sudo apt-get update -o Acquire::Retries=5 || true
-          npx playwright install-deps chromium || true
+      - name: Install Playwright Chromium
+        run: npm install --no-save --legacy-peer-deps playwright && npx playwright install chromium
 
       - name: Run Daraz Live Playwright Tracker
         run: npx tsx src/tracker.ts
