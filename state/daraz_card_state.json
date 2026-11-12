@@ -1,13 +1,13 @@
 {
-  "last_notified_pkt_date": "2026-11-11",
-  "last_checked_pkt": "2026-11-11T23:35:49.536262+05:00",
+  "last_notified_pkt_date": "2026-11-12",
+  "last_checked_pkt": "2026-11-12T06:27:34.184216+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "ret": "FAIL_SYS_PROTOPARAM_MISSED::缺少协议参数m-sign",
     "api": "mtop.lazada.detail.getVouchers"
   },
-  "active_vouchers_count": 13,
+  "active_vouchers_count": 11,
   "vouchers": [
     {
       "id": "easypaisa-10pct",
@@ -73,38 +73,6 @@
         6
       ],
       "schedule": "Active Daily (01/11/2026 - 30/11/2026)",
-      "status": "ACTIVE_NOW"
-    },
-    {
-      "id": "hbl-wed-tier1",
-      "section": "Bank Vouchers",
-      "issuer": "HBL Debit/Credit Card (Tier 1)",
-      "type": "Bank Card",
-      "badge": "Wednesday Special",
-      "discountPercent": 10,
-      "minSpendPkr": 1000,
-      "maxCapText": "Max Cap Rs. 900",
-      "validityWindow": "04/11/2026 - 04/11/2026",
-      "activeDays": [
-        3
-      ],
-      "schedule": "Wednesday (04/11/2026)",
-      "status": "ACTIVE_NOW"
-    },
-    {
-      "id": "hbl-wed-tier2",
-      "section": "Bank Vouchers",
-      "issuer": "HBL Debit/Credit Card (Tier 2)",
-      "type": "Bank Card",
-      "badge": "Wednesday Special",
-      "discountPercent": 10,
-      "minSpendPkr": 2000,
-      "maxCapText": "Max Cap Rs. 900",
-      "validityWindow": "04/11/2026 - 04/11/2026",
-      "activeDays": [
-        3
-      ],
-      "schedule": "Wednesday (04/11/2026)",
       "status": "ACTIVE_NOW"
     },
     {
