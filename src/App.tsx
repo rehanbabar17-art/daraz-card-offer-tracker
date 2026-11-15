@@ -75,6 +75,41 @@ function getCurrentPktInfo() {
   return { pktDateStr, pktWeekday, dayIndex: dayMap[pktWeekday] ?? 0 };
 }
 
+function getNextOccurrenceInfo(validDays: string[], pktDateStr: string, todayIndex: number) {
+  if (!Array.isArray(validDays) || validDays.length === 0 || validDays.some((d) => d.toLowerCase() === "everyday")) {
+    return { isToday: true, daysUntil: 0, label: `Active Daily (${pktDateStr.split("-").reverse().join("/")})` };
+  }
+  const dayIndices = validDays
+    .map((d) => WEEKDAY_NAMES.findIndex((w) => w.toLowerCase() === d.toLowerCase()))
+    .filter((i) => i !== -1);
+  if (dayIndices.length === 0) {
+    return { isToday: true, daysUntil: 0, label: "Active Campaign" };
+  }
+  if (dayIndices.includes(todayIndex)) {
+    const [y, m, d] = pktDateStr.split("-");
+    return { isToday: true, daysUntil: 0, label: `Active Today · ${WEEKDAY_NAMES[todayIndex].slice(0, 3)} ${d}/${m}/${y}` };
+  }
+  let bestDelta = 8;
+  let bestIdx = dayIndices[0];
+  for (const idx of dayIndices) {
+    const delta = (idx - todayIndex + 7) % 7 || 7;
+    if (delta < bestDelta) {
+      bestDelta = delta;
+      bestIdx = idx;
+    }
+  }
+  const [y, m, d] = pktDateStr.split("-").map((n) => parseInt(n, 10));
+  const baseUtc = new Date(Date.UTC(y, m - 1, d + bestDelta));
+  const dd = String(baseUtc.getUTCDate()).padStart(2, "0");
+  const mm = String(baseUtc.getUTCMonth() + 1).padStart(2, "0");
+  const yyyy = baseUtc.getUTCFullYear();
+  return {
+    isToday: false,
+    daysUntil: bestDelta,
+    label: `Next: ${WEEKDAY_NAMES[bestIdx]} (${dd}/${mm}/${yyyy})`,
+  };
+}
+
 export function App() {
   const pktInfo = getCurrentPktInfo();
   const [stateData, setStateData] = useState<StateData>({
@@ -169,7 +204,7 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
   const categoriesList = useMemo(() => {
-    return stateData.categories || ['Voucher Max', 'Free Shipping', 'Bank Vouchers', 'Coins & Seller Discounts'];
+    return stateData.categories || ['Bank Vouchers', 'Wallet Vouchers', 'Choice Voucher', 'Voucher Max'];
   }, [stateData.categories]);
 
   const filteredOffers = useMemo(() => {
@@ -195,6 +230,16 @@ export function App() {
       return validDays.some((d) => d.toLowerCase() === todayName.toLowerCase() || d.toLowerCase() === 'everyday');
     });
   }, [offersList, pktInfo.pktWeekday]);
+
+  const upcomingWeeklySchedule = useMemo(() => {
+    return offersList
+      .map((o) => ({
+        offer: o,
+        next: getNextOccurrenceInfo(o.validDays, pktInfo.pktDateStr, pktInfo.dayIndex),
+      }))
+      .filter((item) => !item.next.isToday)
+      .sort((a, b) => a.next.daysUntil - b.next.daysUntil);
+  }, [offersList, pktInfo.pktDateStr, pktInfo.dayIndex]);
 
   return (
     <div className="min-h-screen bg-[#F6F6F6] text-slate-800 pb-16 font-sans antialiased">
@@ -351,13 +396,48 @@ export function App() {
           </div>
         </div>
 
+        {/* Upcoming Weekly Card Days (Dynamic PKT Calendar) */}
+        {upcomingWeeklySchedule.length > 0 && (
+          <div className="bg-amber-50/90 border border-amber-200 rounded-2xl p-3.5 space-y-2 shadow-2xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-amber-900">
+                <Clock className="h-4 w-4 text-amber-600" />
+                <h2 className="text-xs font-extrabold uppercase tracking-wide">Upcoming Card Days (PKT)</h2>
+              </div>
+              <span className="text-[10px] font-semibold text-amber-700">Replenish 00:00 PKT</span>
+            </div>
+            <div className="grid gap-1.5">
+              {upcomingWeeklySchedule.map(({ offer, next }) => (
+                <div
+                  key={`upcoming-${offer.id}`}
+                  className="bg-white/90 border border-amber-200/70 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs"
+                >
+                  <div>
+                    <span className="font-bold text-slate-900">{offer.bankName}</span>
+                    <span className="text-amber-800 font-semibold ml-1.5">
+                      {offer.discountDisplay || `${offer.discountPercent}% OFF`}
+                    </span>
+                    {offer.maxCapPkr > 0 && (
+                      <span className="text-[11px] text-slate-500 ml-1.5">
+                        (Cap Rs. {offer.maxCapPkr.toLocaleString()})
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md shrink-0">
+                    {next.label.replace("Next: ", "")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* List of Verified Scraped Offers */}
         <div className="space-y-3">
           {filteredOffers.map((offer) => {
             const validDays = Array.isArray(offer.validDays) ? offer.validDays : [];
-            const isToday = validDays.some(
-              (d) => d.toLowerCase() === pktInfo.pktWeekday.toLowerCase() || d.toLowerCase() === 'everyday'
-            );
+            const nextInfo = getNextOccurrenceInfo(validDays, pktInfo.pktDateStr, pktInfo.dayIndex);
+            const isToday = nextInfo.isToday;
 
             return (
               <div
@@ -421,7 +501,7 @@ export function App() {
                 <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3 text-slate-400" />
-                    <span>Days: {offer.validDays.join(', ')}</span>
+                    <span className={isToday ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'}>{nextInfo.label}</span>
                   </div>
                   <div className="text-[10px] font-mono text-slate-400">
                     Scraped: {new Date(offer.scrapedAt).toLocaleTimeString()}
