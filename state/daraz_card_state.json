@@ -1,6 +1,6 @@
 {
   "last_notified_pkt_date": "2026-11-18",
-  "last_checked_pkt": "2026-11-18T06:34:11.450022+05:00",
+  "last_checked_pkt": "2026-11-18T16:29:10.871142+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
@@ -24,9 +24,9 @@
     "Al Habib",
     "EasyPaisa 10%",
     "Daily Bank",
-    "HBL 15%",
     "Meezan 10%",
-    "Union Pay 15%"
+    "BOP",
+    "HBL 15%"
   ],
   "active_vouchers_count": 20,
   "vouchers": [
