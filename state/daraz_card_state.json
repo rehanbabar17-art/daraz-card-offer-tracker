@@ -1,6 +1,6 @@
 {
-  "last_notified_pkt_date": "2026-11-18",
-  "last_checked_pkt": "2026-11-18T16:29:10.871142+05:00",
+  "last_notified_pkt_date": "2026-11-19",
+  "last_checked_pkt": "2026-11-19T03:33:16.917288+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
@@ -28,7 +28,7 @@
     "BOP",
     "HBL 15%"
   ],
-  "active_vouchers_count": 20,
+  "active_vouchers_count": 19,
   "vouchers": [
     {
       "id": "allied-1111-40pct",
@@ -333,22 +333,6 @@
       ],
       "recurringWeekly": false,
       "schedule": "Active Daily (04/11/2026 - 20/11/2026)"
-    },
-    {
-      "id": "hbl-wed-weekly",
-      "section": "Bank Vouchers",
-      "issuer": "HBL Debit/Credit Card (Wednesday)",
-      "type": "Bank Card",
-      "badge": "Wednesday Weekly",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapText": "Max Cap Rs. 900",
-      "validityWindow": "01/11/2026 - 31/12/2026",
-      "activeDays": [
-        3
-      ],
-      "recurringWeekly": true,
-      "schedule": "Active Today (Wednesday 18/11/2026)"
     },
     {
       "id": "choice-upsized-10pct",
