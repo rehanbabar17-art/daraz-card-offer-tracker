@@ -1,6 +1,6 @@
 {
-  "last_notified_pkt_date": "2026-11-19",
-  "last_checked_pkt": "2026-11-19T21:29:29.139562+05:00",
+  "last_notified_pkt_date": "2026-11-20",
+  "last_checked_pkt": "2026-11-20T06:11:08.873796+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
@@ -8,27 +8,27 @@
     "live_tabs_verified": 19
   },
   "live_upr_tabs": [
-    "MCB 15%",
     "UnionPay 15%",
-    "AL Habib 30%",
-    "SCB 10%",
     "Jazzcash 25%",
     "Upaisa 40%",
-    "Bank Alfalah",
     "BOP 25%",
     "Easypaisa",
     "Allied Bank",
     "Choice Upsized Voucher",
     "Bank of Punjab",
+    "MCB 15%",
     "Alfalah 20%",
+    "SCB 10%",
     "Al Habib",
     "EasyPaisa 10%",
     "Daily Bank",
     "Meezan 10%",
+    "Al Habib 30%",
     "BOP",
+    "Bank Alfalah",
     "HBL 15%"
   ],
-  "active_vouchers_count": 19,
+  "active_vouchers_count": 20,
   "vouchers": [
     {
       "id": "allied-1111-40pct",
@@ -333,6 +333,22 @@
       ],
       "recurringWeekly": false,
       "schedule": "Active Daily (04/11/2026 - 20/11/2026)"
+    },
+    {
+      "id": "meezan-fri-weekly",
+      "section": "Bank Vouchers",
+      "issuer": "Meezan Bank (Meezan Fridays)",
+      "type": "Bank Card",
+      "badge": "Friday Weekly",
+      "discountPercent": 10,
+      "minSpendPkr": 0,
+      "maxCapText": "Up to 10% Off",
+      "validityWindow": "01/11/2026 - 31/12/2026",
+      "activeDays": [
+        5
+      ],
+      "recurringWeekly": true,
+      "schedule": "Active Today (Friday 20/11/2026)"
     },
     {
       "id": "choice-upsized-10pct",
