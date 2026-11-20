@@ -1,6 +1,6 @@
 {
-  "last_notified_pkt_date": "2026-11-20",
-  "last_checked_pkt": "2026-11-20T16:20:07.527088+05:00",
+  "last_notified_pkt_date": "2026-11-21",
+  "last_checked_pkt": "2026-11-21T03:13:17.236746+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
@@ -8,103 +8,28 @@
     "live_tabs_verified": 19
   },
   "live_upr_tabs": [
-    "MCB 15%",
     "UnionPay 15%",
-    "AL Habib 30%",
-    "SCB 10%",
     "Jazzcash 25%",
     "Upaisa 40%",
-    "Bank Alfalah",
     "BOP 25%",
     "Easypaisa",
     "Allied Bank",
     "Choice Upsized Voucher",
     "Bank of Punjab",
+    "MCB 15%",
     "Alfalah 20%",
+    "SCB 10%",
     "Al Habib",
     "EasyPaisa 10%",
     "Daily Bank",
     "Meezan 10%",
+    "Al Habib 30%",
     "BOP",
+    "Bank Alfalah",
     "HBL 15%"
   ],
-  "active_vouchers_count": 20,
+  "active_vouchers_count": 11,
   "vouchers": [
-    {
-      "id": "allied-1111-40pct",
-      "section": "Bank Vouchers",
-      "issuer": "Allied Bank (ABL)",
-      "type": "Bank Card",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "Allied Bank"
-      ],
-      "discountPercent": 40,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 40% Off (Cap Rs. 4,000 on select Visa cards)",
-      "validityWindow": "10/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (10/11/2026 - 20/11/2026)"
-    },
-    {
-      "id": "upaisa-1111-40pct",
-      "section": "Bank Vouchers",
-      "issuer": "UPaisa Wallet",
-      "type": "Digital Wallet",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "Upaisa"
-      ],
-      "discountPercent": 40,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 40% Off (Collect in Voucher Center)",
-      "validityWindow": "05/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (05/11/2026 - 20/11/2026)"
-    },
-    {
-      "id": "alhabib-1111-30pct",
-      "section": "Bank Vouchers",
-      "issuer": "Bank AL Habib (Visa Debit)",
-      "type": "Bank Card",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "Al Habib"
-      ],
-      "discountPercent": 30,
-      "minSpendPkr": 3000,
-      "maxCapText": "Up to 30% Off (Cap Rs. 1,500 · Visa Debit)",
-      "validityWindow": "04/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (04/11/2026 - 20/11/2026)"
-    },
     {
       "id": "bop-1111-25pct",
       "section": "Bank Vouchers",
@@ -132,108 +57,6 @@
       "schedule": "Active Daily (05/11/2026 - 30/11/2026)"
     },
     {
-      "id": "jazzcash-1111-25pct",
-      "section": "Bank Vouchers",
-      "issuer": "JazzCash Wallet",
-      "type": "Digital Wallet",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "Jazzcash"
-      ],
-      "discountPercent": 25,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 25% Off (Limited Daily Quota)",
-      "validityWindow": "03/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (03/11/2026 - 20/11/2026)"
-    },
-    {
-      "id": "alfalah-1111-20pct",
-      "section": "Bank Vouchers",
-      "issuer": "Bank Alfalah",
-      "type": "Bank Card",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "Alfalah"
-      ],
-      "discountPercent": 20,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 20% Off (Collect in Voucher Center)",
-      "validityWindow": "04/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (04/11/2026 - 20/11/2026)"
-    },
-    {
-      "id": "mcb-1111-15pct",
-      "section": "Bank Vouchers",
-      "issuer": "MCB Bank",
-      "type": "Bank Card",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "MCB"
-      ],
-      "discountPercent": 15,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 15% Off (Limited Daily Quota)",
-      "validityWindow": "04/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (04/11/2026 - 20/11/2026)"
-    },
-    {
-      "id": "unionpay-1111-15pct",
-      "section": "Bank Vouchers",
-      "issuer": "UnionPay",
-      "type": "Card Network",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "UnionPay",
-        "Union Pay",
-        "Unionpay"
-      ],
-      "discountPercent": 15,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 15% Off (Collect in Voucher Center)",
-      "validityWindow": "04/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (04/11/2026 - 20/11/2026)"
-    },
-    {
       "id": "hbl-1111-15pct",
       "section": "Bank Vouchers",
       "issuer": "HBL (11.11 Campaign)",
@@ -257,32 +80,6 @@
       ],
       "recurringWeekly": false,
       "schedule": "Active Daily (01/11/2026 - 30/11/2026)"
-    },
-    {
-      "id": "easypaisa-1111-10pct",
-      "section": "Bank Vouchers",
-      "issuer": "Easypaisa Wallet",
-      "type": "Digital Wallet",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "Easypaisa",
-        "EasyPaisa"
-      ],
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapText": "Flat 10% Off (Collect in Voucher Center)",
-      "validityWindow": "10/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (10/11/2026 - 20/11/2026)"
     },
     {
       "id": "meezan-1111-10pct",
@@ -310,45 +107,20 @@
       "schedule": "Active Daily (01/11/2026 - 30/11/2026)"
     },
     {
-      "id": "scb-1111-10pct",
+      "id": "askari-sat-weekly",
       "section": "Bank Vouchers",
-      "issuer": "Standard Chartered (SCB)",
+      "issuer": "Askari Bank (Askari Saturday)",
       "type": "Bank Card",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "SCB"
-      ],
+      "badge": "Saturday Weekly",
       "discountPercent": 10,
       "minSpendPkr": 0,
-      "maxCapText": "Up to 10% Off (Sitewide & EMI)",
-      "validityWindow": "04/11/2026 - 20/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (04/11/2026 - 20/11/2026)"
-    },
-    {
-      "id": "meezan-fri-weekly",
-      "section": "Bank Vouchers",
-      "issuer": "Meezan Bank (Meezan Fridays)",
-      "type": "Bank Card",
-      "badge": "Friday Weekly",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 10% Off",
+      "maxCapText": "Max Cap Rs. 1,000 (Sitewide & EMI)",
       "validityWindow": "01/11/2026 - 31/12/2026",
       "activeDays": [
-        5
+        6
       ],
       "recurringWeekly": true,
-      "schedule": "Active Today (Friday 20/11/2026)"
+      "schedule": "Active Today (Saturday 21/11/2026)"
     },
     {
       "id": "choice-upsized-10pct",
