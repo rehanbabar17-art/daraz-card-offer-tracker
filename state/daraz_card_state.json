@@ -1,32 +1,15 @@
 {
-  "last_notified_pkt_date": "2026-11-21",
-  "last_checked_pkt": "2026-11-21T20:15:27.106665+05:00",
+  "last_notified_pkt_date": "2026-11-22",
+  "last_checked_pkt": "2026-11-22T04:45:12.441188+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "sources_ok": 3,
-    "live_tabs_verified": 19
+    "live_tabs_verified": 2
   },
   "live_upr_tabs": [
-    "UnionPay 15%",
-    "Jazzcash 25%",
-    "Upaisa 40%",
-    "BOP 25%",
-    "Easypaisa",
-    "Allied Bank",
-    "Choice Upsized Voucher",
-    "Bank of Punjab",
-    "MCB 15%",
-    "Alfalah 20%",
-    "SCB 10%",
-    "Al Habib",
-    "EasyPaisa 10%",
-    "Daily Bank",
-    "Meezan 10%",
-    "Al Habib 30%",
-    "BOP",
-    "Bank Alfalah",
-    "HBL 15%"
+    "Daily Drop",
+    "Choice Upsized Voucher"
   ],
   "active_vouchers_count": 11,
   "vouchers": [
@@ -107,20 +90,20 @@
       "schedule": "Active Daily (01/11/2026 - 30/11/2026)"
     },
     {
-      "id": "askari-sat-weekly",
+      "id": "scb-sun-weekly",
       "section": "Bank Vouchers",
-      "issuer": "Askari Bank (Askari Saturday)",
+      "issuer": "Standard Chartered (SCB Sunday)",
       "type": "Bank Card",
-      "badge": "Saturday Weekly",
+      "badge": "Sunday Weekly",
       "discountPercent": 10,
       "minSpendPkr": 0,
-      "maxCapText": "Max Cap Rs. 1,000 (Sitewide & EMI)",
+      "maxCapText": "Up to 10% Off (SCB Credit Cards)",
       "validityWindow": "01/11/2026 - 31/12/2026",
       "activeDays": [
-        6
+        0
       ],
       "recurringWeekly": true,
-      "schedule": "Active Today (Saturday 21/11/2026)"
+      "schedule": "Active Today (Sunday 22/11/2026)"
     },
     {
       "id": "choice-upsized-10pct",
