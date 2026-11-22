@@ -23,7 +23,7 @@
       "validityDates": "01/11/2026 - 31/12/2026",
       "status": "Weekly (Saturday)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "hbl-wed-weekly",
@@ -40,7 +40,7 @@
       "validityDates": "01/11/2026 - 31/12/2026",
       "status": "Weekly (Wednesday)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "meezan-fri-weekly",
@@ -57,7 +57,7 @@
       "validityDates": "01/11/2026 - 31/12/2026",
       "status": "Weekly (Friday)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/meezan-bank-all-deals-page",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "scb-sun-weekly",
@@ -74,7 +74,7 @@
       "validityDates": "01/11/2026 - 31/12/2026",
       "status": "Weekly (Sunday)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "vmax-1100",
@@ -91,7 +91,7 @@
       "validityDates": "01/11/2026 - 30/11/2026",
       "status": "Active / Collectible",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "vmax-850",
@@ -108,7 +108,7 @@
       "validityDates": "01/11/2026 - 30/11/2026",
       "status": "Active / Collectible",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "vmax-5pct-600",
@@ -125,7 +125,7 @@
       "validityDates": "01/11/2026 - 30/11/2026",
       "status": "Active / Collectible",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "upr-voucher-choicevoucher-4pct-min999",
@@ -142,7 +142,7 @@
       "validityDates": "22/11/2026 - 26/11/2026",
       "status": "Active / Collectible",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "vmax-4pct-400",
@@ -159,7 +159,7 @@
       "validityDates": "01/11/2026 - 30/11/2026",
       "status": "Active / Collectible",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     },
     {
       "id": "vmax-4pct-180",
@@ -176,8 +176,8 @@
       "validityDates": "01/11/2026 - 30/11/2026",
       "status": "Active / Collectible",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-22T21:00:52.325Z"
+      "scrapedAt": "2026-11-22T23:00:54.005Z"
     }
   ],
-  "scrapedAt": "2026-11-22T21:02:13.722Z"
+  "scrapedAt": "2026-11-22T23:02:15.526Z"
 }
