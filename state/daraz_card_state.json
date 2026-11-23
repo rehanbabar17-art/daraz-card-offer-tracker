@@ -1,6 +1,6 @@
 {
-  "last_notified_pkt_date": "2026-11-22",
-  "last_checked_pkt": "2026-11-22T23:27:29.829234+05:00",
+  "last_notified_pkt_date": "2026-11-23",
+  "last_checked_pkt": "2026-11-23T05:11:05.453714+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
@@ -11,7 +11,7 @@
     "Daily Drop",
     "Choice Upsized Voucher"
   ],
-  "active_vouchers_count": 11,
+  "active_vouchers_count": 10,
   "vouchers": [
     {
       "id": "bop-1111-25pct",
@@ -88,22 +88,6 @@
       ],
       "recurringWeekly": false,
       "schedule": "Active Daily (01/11/2026 - 30/11/2026)"
-    },
-    {
-      "id": "scb-sun-weekly",
-      "section": "Bank Vouchers",
-      "issuer": "Standard Chartered (SCB Sunday)",
-      "type": "Bank Card",
-      "badge": "Sunday Weekly",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 10% Off (SCB Credit Cards)",
-      "validityWindow": "01/11/2026 - 31/12/2026",
-      "activeDays": [
-        0
-      ],
-      "recurringWeekly": true,
-      "schedule": "Active Today (Sunday 22/11/2026)"
     },
     {
       "id": "choice-upsized-10pct",
