@@ -1,40 +1,25 @@
 {
   "mode": "live-only",
-  "last_notified_pkt_date": "2026-11-24",
-  "last_checked_pkt": "2026-11-24T22:48:21.657737+05:00",
+  "authenticated_mobile_session": false,
+  "last_notified_pkt_date": "2026-11-25",
+  "last_checked_pkt": "2026-11-25T01:06:56.864630+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
-    "sources_ok": 3,
+    "sources_ok": 2,
+    "authenticated": false,
     "live_tabs_verified": 2,
-    "discovered_hubs": [
-      "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/payment-promotions/union-pay"
-    ]
+    "discovered_hubs": []
   },
   "live_upr_tabs": [
     "Choice Upsized Voucher",
     "Daily Drop"
   ],
   "notified_fingerprints": [
-    "Bank Vouchers|UnionPay|12% OFF|0|0",
     "Choice Voucher|CHOICE Voucher|4% OFF (Cap Rs. 80)|999|80"
   ],
-  "active_vouchers_count": 2,
+  "active_vouchers_count": 1,
   "vouchers": [
-    {
-      "id": "hp-unionpay-12pct",
-      "section": "Bank Vouchers",
-      "issuer": "UnionPay",
-      "title": "Unionpay 12%",
-      "discountPercent": 12,
-      "discountDisplay": "12% OFF",
-      "minSpendPkr": 0,
-      "maxCapPkr": 0,
-      "maxCapText": "Live Today on Daraz Homepage (Unionpay 12%)",
-      "validityWindow": "Active Today (24/11/2026)",
-      "status": "Live on Daraz Homepage",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/payment-promotions/union-pay"
-    },
     {
       "id": "vc-choicevoucher-4-min999",
       "section": "Choice Voucher",
