@@ -1,248 +1,53 @@
 {
-  "last_notified_pkt_date": "",
-  "last_checked_pkt": "2026-11-24T18:30:39.214623+05:00",
+  "mode": "live-only",
+  "last_notified_pkt_date": "2026-11-24",
+  "last_checked_pkt": "2026-11-24T22:48:21.657737+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "sources_ok": 3,
-    "live_tabs_verified": 2
+    "live_tabs_verified": 2,
+    "discovered_hubs": [
+      "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/payment-promotions/union-pay"
+    ]
   },
   "live_upr_tabs": [
-    "Daily Drop",
-    "Choice Upsized Voucher"
+    "Choice Upsized Voucher",
+    "Daily Drop"
   ],
-  "active_vouchers_count": 10,
+  "notified_fingerprints": [
+    "Bank Vouchers|UnionPay|12% OFF|0|0",
+    "Choice Voucher|CHOICE Voucher|4% OFF (Cap Rs. 80)|999|80"
+  ],
+  "active_vouchers_count": 2,
   "vouchers": [
     {
-      "id": "bop-1111-25pct",
+      "id": "hp-unionpay-12pct",
       "section": "Bank Vouchers",
-      "issuer": "Bank of Punjab (BOP)",
-      "type": "Bank Card",
-      "badge": "11.11 & Voucher Center",
-      "liveTabMatch": [
-        "Bank of Punjab",
-        "BOP"
-      ],
-      "discountPercent": 25,
+      "issuer": "UnionPay",
+      "title": "Unionpay 12%",
+      "discountPercent": 12,
+      "discountDisplay": "12% OFF",
       "minSpendPkr": 0,
-      "maxCapText": "Up to 25% Off (Voucher Center / World Cards)",
-      "validityWindow": "05/11/2026 - 30/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (05/11/2026 - 30/11/2026)"
+      "maxCapPkr": 0,
+      "maxCapText": "Live Today on Daraz Homepage (Unionpay 12%)",
+      "validityWindow": "Active Today (24/11/2026)",
+      "status": "Live on Daraz Homepage",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/payment-promotions/union-pay"
     },
     {
-      "id": "hbl-1111-15pct",
-      "section": "Bank Vouchers",
-      "issuer": "HBL (11.11 Campaign)",
-      "type": "Bank Card",
-      "badge": "11.11 Hub",
-      "liveTabMatch": [
-        "HBL"
-      ],
-      "discountPercent": 15,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 15% Off (11.11 Campaign · Nov 2026)",
-      "validityWindow": "01/11/2026 - 30/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (01/11/2026 - 30/11/2026)"
-    },
-    {
-      "id": "meezan-1111-10pct",
-      "section": "Bank Vouchers",
-      "issuer": "Meezan Bank (11.11 Campaign)",
-      "type": "Bank Card",
-      "badge": "11.11 Hub",
-      "liveTabMatch": [
-        "Meezan"
-      ],
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapText": "Up to 10% Off (11.11 Campaign · Nov 2026)",
-      "validityWindow": "01/11/2026 - 30/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (01/11/2026 - 30/11/2026)"
-    },
-    {
-      "id": "choice-upsized-10pct",
+      "id": "vc-choicevoucher-4-min999",
       "section": "Choice Voucher",
-      "issuer": "Daraz Choice Upsized Voucher",
-      "type": "Platform Voucher",
-      "badge": "Choice Voucher",
-      "discountPercent": 10,
-      "minSpendPkr": 1499,
-      "maxCapText": "10% Off (Cap Rs. 150 · 01/10 - 30/12)",
-      "validityWindow": "01/10/2026 - 30/12/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (01/10/2026 - 30/12/2026)"
-    },
-    {
-      "id": "choice-upsized-7pct",
-      "section": "Choice Voucher",
-      "issuer": "Daraz Choice Upsized Voucher",
-      "type": "Platform Voucher",
-      "badge": "Choice Voucher",
-      "discountPercent": 7,
-      "minSpendPkr": 1499,
-      "maxCapText": "7% Off (Cap Rs. 150 · 01/10 - 30/12)",
-      "validityWindow": "01/10/2026 - 30/12/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily (01/10/2026 - 30/12/2026)"
-    },
-    {
-      "id": "vmax-1100",
-      "section": "Voucher Max",
-      "issuer": "Daraz Voucher Max (Flat Rs. 1,100 OFF)",
-      "type": "Platform Voucher",
-      "badge": "Voucher Max",
-      "discountPercent": 6,
-      "minSpendPkr": 19999,
-      "maxCapText": "Flat Rs. 1,100 Off (01/11 - 30/11)",
-      "validityWindow": "01/11/2026 - 30/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily"
-    },
-    {
-      "id": "vmax-850",
-      "section": "Voucher Max",
-      "issuer": "Daraz Voucher Max (Flat Rs. 850 OFF)",
-      "type": "Platform Voucher",
-      "badge": "Voucher Max",
-      "discountPercent": 6,
-      "minSpendPkr": 14999,
-      "maxCapText": "Flat Rs. 850 Off (01/11 - 30/11)",
-      "validityWindow": "01/11/2026 - 30/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily"
-    },
-    {
-      "id": "vmax-5pct-600",
-      "section": "Voucher Max",
-      "issuer": "Daraz Voucher Max (5% OFF)",
-      "type": "Platform Voucher",
-      "badge": "Voucher Max",
-      "discountPercent": 5,
-      "minSpendPkr": 9999,
-      "maxCapText": "Upto Rs. 600 Off (01/11 - 30/11)",
-      "validityWindow": "01/11/2026 - 30/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily"
-    },
-    {
-      "id": "vmax-4pct-400",
-      "section": "Voucher Max",
-      "issuer": "Daraz Voucher Max (4% OFF)",
-      "type": "Platform Voucher",
-      "badge": "Voucher Max",
+      "issuer": "CHOICE Voucher",
+      "title": "CHOICE Voucher 4% OFF (Cap Rs. 80)",
       "discountPercent": 4,
-      "minSpendPkr": 4000,
-      "maxCapText": "Upto Rs. 400 Off (01/11 - 30/11)",
-      "validityWindow": "01/11/2026 - 30/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily"
-    },
-    {
-      "id": "vmax-4pct-180",
-      "section": "Voucher Max",
-      "issuer": "Daraz Voucher Max (4% OFF)",
-      "type": "Platform Voucher",
-      "badge": "Voucher Max",
-      "discountPercent": 4,
-      "minSpendPkr": 499,
-      "maxCapText": "Upto Rs. 180 Off (01/11 - 30/11)",
-      "validityWindow": "01/11/2026 - 30/11/2026",
-      "activeDays": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6
-      ],
-      "recurringWeekly": false,
-      "schedule": "Active Daily"
+      "discountDisplay": "4% OFF (Cap Rs. 80)",
+      "minSpendPkr": 999,
+      "maxCapPkr": 80,
+      "maxCapText": "Cap Rs. 80 · Collectible Now",
+      "validityWindow": "22/11/2026 - 26/11/2026",
+      "status": "Collectible Now",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center"
     }
-  ],
-  "notified_fingerprints": []
+  ]
 }
