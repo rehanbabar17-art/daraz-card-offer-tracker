@@ -1,5 +1,5 @@
 {
-  "lastDigestDatePKT": "2026-11-24",
+  "lastDigestDatePKT": "2026-11-25",
   "source": "Daraz Live Homepage & Voucher Center (100% Live Verified)",
   "categories": [
     "Bank Vouchers",
@@ -9,23 +9,6 @@
     "Platform Vouchers"
   ],
   "offers": [
-    {
-      "id": "hp-unionpay-12pct",
-      "category": "Bank Vouchers",
-      "title": "Unionpay 12%",
-      "bankName": "UnionPay",
-      "discountDisplay": "12% OFF",
-      "discountPercent": 12,
-      "minSpendPkr": 0,
-      "maxCapPkr": 0,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "Active Today (24/11/2026)",
-      "status": "Live on Daraz Homepage",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/payment-promotions/union-pay",
-      "scrapedAt": "2026-11-24T17:49:03.867Z"
-    },
     {
       "id": "vc-choicevoucher-4-min999",
       "category": "Choice Voucher",
@@ -41,8 +24,8 @@
       "validityDates": "22/11/2026 - 26/11/2026",
       "status": "Collectible Now",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-24T17:49:03.867Z"
+      "scrapedAt": "2026-11-24T19:00:45.439Z"
     }
   ],
-  "scrapedAt": "2026-11-24T17:49:40.847Z"
+  "scrapedAt": "2026-11-24T19:01:08.092Z"
 }
