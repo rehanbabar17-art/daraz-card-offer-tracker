@@ -8,6 +8,9 @@ Architecture (Zero Hardcoded Offers):
    - Any currently promoted campaign hubs (/megascenario/pk/..., /payment-promotions/...)
 2. Fetches live Daraz Mobile Voucher Center (wh_pid=/lazada/channel/pk/voucher/center)
    plus any live campaign/payment hubs linked from today's homepage.
+   - Supports optional DARAZ_COOKIE (GitHub Actions secret, host-pinned strictly to *.daraz.pk)
+     to unlock logged-in mobile Daily Drop and Vulcan Payment Discount Vouchers (VC_PDV /
+     VC_CAMPAIGN_PDV / VC_FLASHVOUCHER, including Easypaisa, JazzCash, and Bank vouchers).
 3. Strictly validates startTime/endTime and timeline dates against current PKT (UTC+5).
 4. NEVER falls back to hardcoded offers or expired legacy pages.
 5. Sends ONE accurate daily digest per PKT day, plus an intraday alert ONLY when a
@@ -21,7 +24,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.error import HTTPError
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 from urllib.request import Request, urlopen
 
 PKT = timezone(timedelta(hours=5))
@@ -43,6 +46,8 @@ VOUCHER_CENTER_URL = (
 )
 
 MAX_TRUSTED_PERCENT = 90
+VULCAN_PAYMENT_MODULE_IDS = {"105024071101", "105024071102"}
+VULCAN_SHIPPING_MODULE_IDS = {"172923102301", "105024071103"}
 
 # Ordered longest-first at match time to avoid partial collisions
 KNOWN_BANK_ALIASES = [
@@ -73,9 +78,30 @@ KNOWN_BANK_ALIASES = [
     ("NayaPay", ["nayapay", "naya pay"]),
     ("SadaPay", ["sadapay", "sada pay"]),
     ("Zindigi", ["zindigi"]),
+    ("Daraz Wallet", ["daraz wallet", "darazwallet"]),
 ]
 
-DIGITAL_WALLETS = {"Easypaisa", "JazzCash", "UPaisa", "NayaPay", "SadaPay", "Zindigi"}
+DIGITAL_WALLETS = {"Easypaisa", "JazzCash", "UPaisa", "NayaPay", "SadaPay", "Zindigi", "Daraz Wallet"}
+
+
+def get_sanitized_daraz_cookie():
+    raw = os.getenv("DARAZ_COOKIE", "") or ""
+    return re.sub(r"[\r\n]+", "", raw).strip()
+
+
+def is_trusted_daraz_url(url):
+    try:
+        parsed = urlparse(url)
+        if parsed.scheme != "https":
+            return False
+        host = (parsed.hostname or "").lower()
+        return host == "daraz.pk" or host.endswith(".daraz.pk")
+    except Exception:
+        return False
+
+
+def detect_daraz_authenticated_session(html):
+    return bool(re.search(r'"(?:userId|user_id)"\s*:\s*"?[1-9]\d*"?', html))
 
 
 def load_json(path):
@@ -94,15 +120,15 @@ def save_json(data, path):
     tmp.replace(p)
 
 
-def fetch_html(url, timeout=20):
-    req = Request(
-        url,
-        headers={
-            "User-Agent": MOBILE_UA,
-            "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
-            "Accept-Language": "en-PK,en;q=0.9",
-        },
-    )
+def fetch_html(url, timeout=20, daraz_cookie=""):
+    headers = {
+        "User-Agent": MOBILE_UA,
+        "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-PK,en;q=0.9",
+    }
+    if daraz_cookie and is_trusted_daraz_url(url):
+        headers["Cookie"] = daraz_cookie
+    req = Request(url, headers=headers)
     with urlopen(req, timeout=timeout) as resp:
         return resp.status, resp.read().decode("utf-8", "ignore")
 
@@ -200,6 +226,52 @@ def extract_json_array_after(text, marker):
     return results
 
 
+def extract_json_object_after(text, marker):
+    results = []
+    start_search = 0
+    while True:
+        idx = text.find(marker, start_search)
+        if idx == -1:
+            break
+        obj_start = text.find("{", idx + len(marker))
+        if obj_start == -1:
+            break
+        depth = 0
+        in_str = False
+        escape = False
+        end_idx = -1
+        for pos in range(obj_start, len(text)):
+            ch = text[pos]
+            if in_str:
+                if escape:
+                    escape = False
+                elif ch == "\\":
+                    escape = True
+                elif ch == '"':
+                    in_str = False
+            else:
+                if ch == '"':
+                    in_str = True
+                elif ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        end_idx = pos + 1
+                        break
+        if end_idx != -1:
+            try:
+                parsed = json.loads(text[obj_start:end_idx])
+                if isinstance(parsed, dict):
+                    results.append(parsed)
+            except Exception:
+                pass
+            start_search = end_idx
+        else:
+            start_search = idx + len(marker)
+    return results
+
+
 def parse_homepage_live_promos(html, now_pkt):
     """Extract live bank/card banners & active campaign/payment UPR URLs from Daraz.pk homepage."""
     today_dmy = now_pkt.strftime("%d/%m/%Y")
@@ -272,6 +344,233 @@ def parse_homepage_live_promos(html, now_pkt):
     return banner_offers, discovered_upr_urls[:8]
 
 
+def _collect_vulcan_benefit_items(payload):
+    items = []
+    if not isinstance(payload, dict):
+        return items
+
+    def push_list(arr):
+        if isinstance(arr, list):
+            for entry in arr:
+                if isinstance(entry, dict):
+                    items.append(entry)
+
+    rows = payload.get("benefitRowVos")
+    if isinstance(rows, list):
+        for row in rows:
+            if isinstance(row, dict):
+                push_list(row.get("showBenefitList"))
+                push_list(row.get("benefitList"))
+    push_list(payload.get("extBenefitVOList"))
+    push_list(payload.get("benefitList"))
+    push_list(payload.get("showBenefitList"))
+    biz_list = payload.get("bizBenefitList")
+    if isinstance(biz_list, list):
+        for biz in biz_list:
+            if isinstance(biz, dict):
+                push_list(biz.get("benefitList"))
+    return items
+
+
+def parse_vulcan_module_offers(html, source_url, now_pkt):
+    """Extract logged-in Daraz Vulcan Voucher Center modules (VC_PDV / VC_CAMPAIGN_PDV / VC_FLASHVOUCHER)."""
+    now_ms = int(now_pkt.timestamp() * 1000)
+    today_date = now_pkt.date()
+    offers = []
+
+    for container in extract_json_object_after(html, '"moduleData":'):
+        for module_id, raw_entry in container.items():
+            if not isinstance(raw_entry, dict):
+                continue
+            payload = raw_entry.get("data") if isinstance(raw_entry.get("data"), dict) else raw_entry
+            module_title = str(payload.get("title") or raw_entry.get("title") or "").strip()
+
+            for benefit in _collect_vulcan_benefit_items(payload):
+                legacy = (
+                    benefit.get("voucherLegacyInfo")
+                    if isinstance(benefit.get("voucherLegacyInfo"), dict)
+                    else (benefit.get("originalData") if isinstance(benefit.get("originalData"), dict) else {})
+                )
+                display = benefit.get("displayVO") if isinstance(benefit.get("displayVO"), dict) else {}
+
+                status_raw = str(
+                    benefit.get("recommendBenefitStatus")
+                    or legacy.get("bizStatusText")
+                    or legacy.get("voucherBizStatus")
+                    or benefit.get("voucherBizStatus")
+                    or ""
+                ).upper()
+                if "EXPIRED" in status_raw or status_raw == "USED":
+                    continue
+
+                tl_new_obj = legacy.get("timelineNew") if isinstance(legacy.get("timelineNew"), dict) else {}
+                tl_info_obj = legacy.get("timelineInfo") if isinstance(legacy.get("timelineInfo"), dict) else {}
+                end_ms = (
+                    parse_timestamp_ms(benefit.get("endTimestamp"))
+                    or parse_timestamp_ms(benefit.get("endTime"))
+                    or parse_timestamp_ms(legacy.get("endTimestamp"))
+                    or parse_timestamp_ms(tl_new_obj.get("endTimestamp"))
+                    or parse_timestamp_ms(tl_info_obj.get("endTime"))
+                )
+                if end_ms and end_ms < now_ms:
+                    continue
+
+                timeline_parts = [
+                    benefit.get("timeline") if isinstance(benefit.get("timeline"), str) else "",
+                    legacy.get("timelineNew") if isinstance(legacy.get("timelineNew"), str) else "",
+                    legacy.get("timelineInfo") if isinstance(legacy.get("timelineInfo"), str) else "",
+                    benefit.get("validTimeData") if isinstance(benefit.get("validTimeData"), str) else "",
+                ]
+                timeline_str = " ".join(p.strip() for p in timeline_parts if p and p.strip()).strip()
+                tl_end = parse_timeline_end_date(timeline_str)
+                if tl_end and tl_end < today_date:
+                    continue
+
+                discount_candidates = [
+                    benefit.get("discountTextLeft"),
+                    legacy.get("discountTextLeft"),
+                    legacy.get("leftDiscountText"),
+                    benefit.get("discountTextRight"),
+                    legacy.get("discountTextRight"),
+                    legacy.get("rightDiscountText"),
+                    legacy.get("topDiscountText"),
+                    legacy.get("discountTextRightShort"),
+                    benefit.get("value"),
+                    benefit.get("discountValue"),
+                    display.get("discountText"),
+                ]
+                discount_joined = " ".join(
+                    str(v).strip() for v in discount_candidates if v is not None and str(v).strip() != ""
+                )
+                pct_m = re.search(r"(\d{1,2})\s*%", discount_joined)
+                rs_m = re.search(r"Rs\.?\s*([0-9,]+)", discount_joined, re.I)
+                numeric_val = benefit.get("discountValue")
+                discount_pct = int(pct_m.group(1)) if pct_m else (
+                    int(numeric_val)
+                    if isinstance(numeric_val, (int, float)) and 0 < int(numeric_val) <= MAX_TRUSTED_PERCENT
+                    else 0
+                )
+                flat_rs = int(rs_m.group(1).replace(",", "")) if rs_m else 0
+                if discount_pct <= 0 and flat_rs <= 0:
+                    continue
+
+                threshold_text = " ".join(
+                    str(v)
+                    for v in (
+                        legacy.get("thresholdText"),
+                        legacy.get("thresholdTextShort"),
+                        benefit.get("valueDesc"),
+                        display.get("thresholdText"),
+                    )
+                    if v
+                )
+                min_m = re.search(r"Rs\.?\s*([0-9,]+)", threshold_text, re.I)
+                min_spend = int(min_m.group(1).replace(",", "")) if min_m else 0
+
+                cap_text_raw = " ".join(
+                    str(v)
+                    for v in (
+                        legacy.get("capCopyText"),
+                        legacy.get("capText"),
+                        legacy.get("thresholdCapText"),
+                        legacy.get("leftCapText"),
+                        legacy.get("rightCapText"),
+                        benefit.get("capCopyText"),
+                    )
+                    if v
+                )
+                cap_m = re.search(r"Rs\.?\s*([0-9,]+)", cap_text_raw, re.I) or re.search(r"([0-9,]+)", cap_text_raw)
+                max_cap = int(cap_m.group(1).replace(",", "")) if cap_m else flat_rs
+
+                voucher_type = str(legacy.get("voucherType") or benefit.get("voucherType") or "").lower()
+                title_text = str(
+                    benefit.get("title")
+                    or benefit.get("subTitle")
+                    or display.get("title")
+                    or legacy.get("markIconText")
+                    or module_title
+                    or ""
+                ).strip()
+                search_corpus = " ".join(
+                    str(v)
+                    for v in (
+                        title_text,
+                        benefit.get("subTitle"),
+                        benefit.get("description"),
+                        benefit.get("voucherTagDesc"),
+                        legacy.get("markIconText"),
+                        legacy.get("termsAndConditions"),
+                        legacy.get("termInfoKey"),
+                        legacy.get("partnerBannerIconUrl"),
+                        legacy.get("logoUrl"),
+                        benefit.get("logoUrl"),
+                        display.get("subTitle"),
+                        module_title,
+                    )
+                    if v
+                )
+
+                bank_match = match_bank_name(search_corpus)
+                if (str(module_id) in VULCAN_SHIPPING_MODULE_IDS or voucher_type == "shippingfee") and not bank_match:
+                    continue
+
+                is_payment_module = str(module_id) in VULCAN_PAYMENT_MODULE_IDS or voucher_type == "payment"
+                if bank_match:
+                    section = "Wallet Vouchers" if bank_match in DIGITAL_WALLETS else "Bank Vouchers"
+                    issuer = bank_match
+                elif is_payment_module:
+                    section = "Wallet Vouchers" if "wallet" in search_corpus.lower() else "Bank Vouchers"
+                    issuer = title_text or "Daraz Payment Voucher"
+                elif "choice" in search_corpus.lower():
+                    section = "Choice Voucher"
+                    issuer = title_text or "Choice Voucher"
+                elif "voucher max" in search_corpus.lower():
+                    section = "Voucher Max"
+                    issuer = "Daraz Voucher Max"
+                else:
+                    section = "Platform Vouchers"
+                    issuer = title_text or "Daraz Voucher"
+
+                if "RAN_OUT" in status_raw or "FULLY_REDEEMED" in status_raw or "OUT" in status_raw:
+                    status = "Ran Out (Restocks 00:00 PKT)"
+                elif status_raw == "USE_NOW":
+                    status = "Collected (Use Now)"
+                elif status_raw == "USE_LATER":
+                    status = "Upcoming Today"
+                else:
+                    status = "Collectible Now"
+
+                if flat_rs > 0 and not pct_m:
+                    disp = f"Flat Rs. {flat_rs:,} OFF"
+                else:
+                    disp = f"{discount_pct}% OFF" + (f" (Cap Rs. {max_cap:,})" if max_cap > 0 else "")
+
+                cap_label = f"Cap Rs. {max_cap:,}" if max_cap > 0 else "See App T&C"
+                end_str = datetime.fromtimestamp(end_ms / 1000, PKT).strftime("%d/%m/%Y") if end_ms else ""
+                validity = (
+                    re.sub(r"\s*-\s*", " - ", timeline_str)
+                    if timeline_str
+                    else (f"Valid until {end_str}" if end_str else f"Active ({now_pkt.strftime('%d/%m/%Y')})")
+                )
+
+                offers.append({
+                    "id": f"vulcan-{re.sub(r'[^a-z0-9]', '', issuer.lower())}-{discount_pct or flat_rs}-min{min_spend}",
+                    "section": section,
+                    "issuer": issuer,
+                    "title": f"{issuer} {disp}",
+                    "discountPercent": discount_pct,
+                    "discountDisplay": disp,
+                    "minSpendPkr": min_spend,
+                    "maxCapPkr": max_cap,
+                    "maxCapText": f"{cap_label} · {status}",
+                    "validityWindow": validity,
+                    "status": status,
+                    "sourceUrl": source_url,
+                })
+
+    return offers
+
+
 def parse_upr_live_offers(html, source_url, now_pkt):
     """Extract strictly active, non-expired bank/wallet tabs & collectible platform vouchers from a live UPR page."""
     now_ms = int(now_pkt.timestamp() * 1000)
@@ -300,19 +599,19 @@ def parse_upr_live_offers(html, source_url, now_pkt):
             end_str = datetime.fromtimestamp(end_ms / 1000, PKT).strftime("%d/%m/%Y") if end_ms else ""
             tab_window = f"{start_str} - {end_str}" if (start_str and end_str) else f"Active ({now_pkt.strftime('%d/%m/%Y')})"
 
-            # 1) Real collectible voucher cards inside this tab (e.g. Choice Voucher 4% OFF, Voucher Max, etc.)
+            # 1) Real collectible voucher cards inside this tab (e.g. Daily Drop, Choice Voucher, Voucher Max)
             for v in tab.get("voucher") or []:
                 if not isinstance(v, dict):
                     continue
                 v_end_ms = parse_timestamp_ms(v.get("endTime"))
                 if v_end_ms and v_end_ms < now_ms:
                     continue
-                timeline = str(v.get("timeline") or (v.get("voucherLegacyInfo") or {}).get("timelineNew") or "").strip()
+                legacy = v.get("voucherLegacyInfo") if isinstance(v.get("voucherLegacyInfo"), dict) else {}
+                timeline = str(v.get("timeline") or legacy.get("timelineNew") or "").strip()
                 tl_end = parse_timeline_end_date(timeline)
                 if tl_end and tl_end < today_date:
                     continue
 
-                legacy = v.get("voucherLegacyInfo") if isinstance(v.get("voucherLegacyInfo"), dict) else {}
                 val_str = str(v.get("value") or v.get("discountValue") or "").strip()
                 pct_m = re.search(r"(\d{1,2})\s*%", val_str)
                 rs_m = re.search(r"Rs\.?\s*([0-9,]+)", val_str, re.I)
@@ -334,14 +633,32 @@ def parse_upr_live_offers(html, source_url, now_pkt):
                 v_status_raw = str(v.get("recommendBenefitStatus") or legacy.get("bizStatusText") or "").upper()
                 if "RAN_OUT" in v_status_raw or "OUT" in v_status_raw:
                     status = "Ran Out (Restocks 00:00 PKT)"
+                elif v_status_raw == "USE_NOW":
+                    status = "Collected (Use Now)"
                 else:
                     status = "Collectible Now"
 
                 v_title = str(v.get("subTitle") or v.get("title") or title).strip()
-                bank_match = match_bank_name(f"{v_title} {title}")
+                bank_search_text = " ".join(
+                    str(x)
+                    for x in (
+                        v_title,
+                        title,
+                        v.get("description"),
+                        legacy.get("markIconText"),
+                        legacy.get("termsAndConditions"),
+                        legacy.get("partnerBannerIconUrl"),
+                        legacy.get("logoUrl"),
+                    )
+                    if x
+                )
+                bank_match = match_bank_name(bank_search_text)
                 if bank_match:
                     section = "Wallet Vouchers" if bank_match in DIGITAL_WALLETS else "Bank Vouchers"
                     issuer = bank_match
+                elif str(legacy.get("voucherType") or v.get("voucherType") or "").lower() == "payment":
+                    section = "Wallet Vouchers" if "wallet" in bank_search_text.lower() else "Bank Vouchers"
+                    issuer = v_title or "Daraz Payment Voucher"
                 elif "choice" in f"{v_title} {title}".lower():
                     section = "Choice Voucher"
                     issuer = v_title
@@ -403,6 +720,9 @@ def parse_upr_live_offers(html, source_url, now_pkt):
                 "status": "Active in Voucher Center",
                 "sourceUrl": source_url,
             })
+
+    # 3) Logged-in Daraz Vulcan Voucher Center modules (VC_PDV / VC_CAMPAIGN_PDV / VC_FLASHVOUCHER)
+    offers.extend(parse_vulcan_module_offers(html, source_url, now_pkt))
 
     return offers, live_tab_titles
 
@@ -502,6 +822,9 @@ def main():
 
     homepage_url = config.get("entryPoints", {}).get("homepage", HOMEPAGE_URL)
     vc_url = config.get("entryPoints", {}).get("voucherCenter", VOUCHER_CENTER_URL)
+    daraz_cookie = get_sanitized_daraz_cookie()
+    has_daraz_cookie = bool(daraz_cookie)
+    authenticated_session = False
 
     sources_ok = 0
     errors = []
@@ -511,7 +834,7 @@ def main():
 
     # 1. Live Mobile Homepage (discovers live bank hero banners + active seasonal campaign hubs)
     try:
-        st, hp_html = fetch_html(homepage_url)
+        st, hp_html = fetch_html(homepage_url, daraz_cookie=daraz_cookie)
         if 200 <= st < 400 and len(hp_html) > 10000:
             sources_ok += 1
             hp_offers, discovered_urls = parse_homepage_live_promos(hp_html, now_pkt)
@@ -524,13 +847,19 @@ def main():
 
     # 2. Live Mobile Voucher Center
     try:
-        st, vc_html = fetch_html(vc_url)
+        st, vc_html = fetch_html(vc_url, daraz_cookie=daraz_cookie)
         if 200 <= st < 400 and len(vc_html) > 10000:
             sources_ok += 1
+            authenticated_session = detect_daraz_authenticated_session(vc_html)
             vc_offers, vc_tabs = parse_upr_live_offers(vc_html, vc_url, now_pkt)
             raw_offers.extend(vc_offers)
             live_tabs.extend(vc_tabs)
-            print(f"[{now_pkt.isoformat()}] Live Voucher Center OK: {len(vc_offers)} live offer(s), tabs={vc_tabs}")
+            auth_label = (
+                "authenticated mobile session"
+                if (has_daraz_cookie and authenticated_session)
+                else ("cookie expired - anonymous fallback" if has_daraz_cookie else "public mobile session")
+            )
+            print(f"[{now_pkt.isoformat()}] Live Voucher Center OK ({auth_label}): {len(vc_offers)} live offer(s), tabs={vc_tabs}")
         else:
             errors.append(f"Voucher Center HTTP {st}")
     except Exception as exc:
@@ -545,7 +874,7 @@ def main():
             continue
         crawled_hubs.add(hub_url)
         try:
-            st, hub_html = fetch_html(hub_url)
+            st, hub_html = fetch_html(hub_url, daraz_cookie=daraz_cookie)
             if 200 <= st < 400 and len(hub_html) > 10000:
                 sources_ok += 1
                 hub_offers, hub_tabs = parse_upr_live_offers(hub_html, hub_url, now_pkt)
@@ -585,6 +914,16 @@ def main():
     is_new_pkt_day = last_notified_date != pkt_date_str
     newly_added = [o for o in live_offers if offer_fingerprint(o) not in prev_fps]
 
+    session_footer = (
+        "✅ *100% live-verified via authenticated Daraz mobile session*"
+        if authenticated_session
+        else (
+            "⚠️ *Saved DARAZ_COOKIE expired — refresh it in GitHub Secrets to include logged-in wallet/bank vouchers*"
+            if has_daraz_cookie
+            else f"✅ *100% live-verified from public Daraz.pk ({sources_ok} live sources, zero hardcoded offers)*"
+        )
+    )
+
     alerts = []
     if is_new_pkt_day or args.force_notify or args.dry_run:
         bank_lines = [format_offer_line(o) for o in bank_wallet_offers]
@@ -593,17 +932,17 @@ def main():
             f"### 🟢 LIVE DARAZ DISCOUNTS TODAY",
             f"**{weekday_str.upper()} · {pkt_date_str} ({time_pkt_str})**",
             "",
-            "🏦 **Live Bank & Card Discounts:**",
+            "🏦 **Live Bank & Wallet Discounts:**",
             *(bank_lines if bank_lines else ["• None currently active on Daraz Homepage or Voucher Center"]),
             "",
             "🏷️ **Live Platform Vouchers (Voucher Center):**",
             *(plat_lines if plat_lines else ["• None currently listed in Voucher Center"]),
             "",
-            f"✅ *100% live-verified directly from Daraz.pk ({sources_ok} live sources, zero hardcoded offers)*",
+            session_footer,
             "👉 https://www.daraz.pk/voucher-center/",
         ]
         alerts.append({
-            "title": f"Daraz Live Discounts ({len(bank_wallet_offers)} Bank, {len(platform_offers)} Voucher) - {weekday_str} {pkt_date_str}",
+            "title": f"Daraz Live Discounts ({len(bank_wallet_offers)} Bank/Wallet, {len(platform_offers)} Voucher) - {weekday_str} {pkt_date_str}",
             "body": "\n".join(msg),
             "tags": "white_check_mark,credit_card,shopping",
             "click": bank_wallet_offers[0]["sourceUrl"] if bank_wallet_offers else "https://www.daraz.pk/voucher-center/",
@@ -634,12 +973,14 @@ def main():
 
     new_state = {
         "mode": "live-only",
+        "authenticated_mobile_session": authenticated_session,
         "last_notified_pkt_date": pkt_date_str if alerts else last_notified_date,
         "last_checked_pkt": now_pkt.isoformat(),
         "daraz_gateway": {
             "status": 200,
             "reachable": True,
             "sources_ok": sources_ok,
+            "authenticated": authenticated_session,
             "live_tabs_verified": len(set(live_tabs)),
             "discovered_hubs": discovered_urls,
         },

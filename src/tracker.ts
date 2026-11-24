@@ -63,9 +63,80 @@ const KNOWN_BANK_ALIASES: Array<[string, string[]]> = [
   ['NayaPay', ['nayapay', 'naya pay']],
   ['SadaPay', ['sadapay', 'sada pay']],
   ['Zindigi', ['zindigi']],
+  ['Daraz Wallet', ['daraz wallet', 'darazwallet']],
 ];
 
-const DIGITAL_WALLETS = new Set(['Easypaisa', 'JazzCash', 'UPaisa', 'NayaPay', 'SadaPay', 'Zindigi']);
+const DIGITAL_WALLETS = new Set([
+  'Easypaisa',
+  'JazzCash',
+  'UPaisa',
+  'NayaPay',
+  'SadaPay',
+  'Zindigi',
+  'Daraz Wallet',
+]);
+
+const VULCAN_PAYMENT_MODULE_IDS = new Set(['105024071101', '105024071102']);
+const VULCAN_SHIPPING_MODULE_IDS = new Set(['172923102301', '105024071103']);
+const COOKIE_RESERVED_ATTRS = new Set([
+  'path',
+  'domain',
+  'expires',
+  'max-age',
+  'secure',
+  'httponly',
+  'samesite',
+  'priority',
+  'partitioned',
+]);
+
+function getSanitizedDarazCookie(): string {
+  const raw = process.env.DARAZ_COOKIE || '';
+  return raw.replace(/[\r\n]+/g, '').trim();
+}
+
+function isTrustedDarazUrl(rawUrl: string): boolean {
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.protocol !== 'https:') return false;
+    const host = parsed.hostname.toLowerCase();
+    return host === 'daraz.pk' || host.endsWith('.daraz.pk');
+  } catch {
+    return false;
+  }
+}
+
+function parseDarazCookiesForPlaywright(
+  rawCookie: string
+): Array<{ name: string; value: string; domain: string; path: string; secure: boolean }> {
+  if (!rawCookie) return [];
+  const cookies: Array<{ name: string; value: string; domain: string; path: string; secure: boolean }> = [];
+  const seen = new Set<string>();
+
+  for (const part of rawCookie.split(';')) {
+    const eqIdx = part.indexOf('=');
+    if (eqIdx <= 0) continue;
+    const name = part.slice(0, eqIdx).trim();
+    const value = part.slice(eqIdx + 1).trim();
+    if (!name || !value) continue;
+    if (COOKIE_RESERVED_ATTRS.has(name.toLowerCase())) continue;
+    if (seen.has(name)) continue;
+    seen.add(name);
+    cookies.push({
+      name,
+      value,
+      domain: '.daraz.pk',
+      path: '/',
+      secure: true,
+    });
+  }
+
+  return cookies;
+}
+
+function detectDarazAuthenticatedSession(html: string): boolean {
+  return /"(?:userId|user_id)"\s*:\s*"?[1-9]\d*"?/.test(html);
+}
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0');
@@ -195,6 +266,58 @@ function extractJsonArraysAfter(text: string, marker: string): unknown[][] {
   }
 
   return arrays;
+}
+
+function extractJsonObjectsAfter(text: string, marker: string): Record<string, unknown>[] {
+  const objects: Record<string, unknown>[] = [];
+  let searchPos = 0;
+
+  while (true) {
+    const idx = text.indexOf(marker, searchPos);
+    if (idx === -1) break;
+    const objStart = text.indexOf('{', idx + marker.length);
+    if (objStart === -1) break;
+
+    let depth = 0;
+    let inStr = false;
+    let escaped = false;
+    let endIdx = -1;
+
+    for (let pos = objStart; pos < text.length; pos++) {
+      const ch = text[pos];
+      if (inStr) {
+        if (escaped) escaped = false;
+        else if (ch === '\\') escaped = true;
+        else if (ch === '"') inStr = false;
+      } else {
+        if (ch === '"') inStr = true;
+        else if (ch === '{') depth++;
+        else if (ch === '}') {
+          depth--;
+          if (depth === 0) {
+            endIdx = pos + 1;
+            break;
+          }
+        }
+      }
+    }
+
+    if (endIdx !== -1) {
+      try {
+        const parsed = JSON.parse(text.slice(objStart, endIdx));
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          objects.push(parsed as Record<string, unknown>);
+        }
+      } catch {
+        // ignore malformed block
+      }
+      searchPos = endIdx;
+    } else {
+      searchPos = idx + marker.length;
+    }
+  }
+
+  return objects;
 }
 
 function isExpiredTimestampPayload(rawText: string, todayPkt: string): boolean {
@@ -378,12 +501,24 @@ export function extractOffersFromUprHtml(
             : 'Collectible Now';
 
         const vTitle = String(v.subTitle || v.title || title).trim();
-        const bankMatch = matchBankName(`${vTitle} ${title}`);
+        const bankSearchText = [
+          vTitle,
+          title,
+          String(v.description || ''),
+          String(legacy.markIconText || ''),
+          String(legacy.termsAndConditions || ''),
+          String(legacy.partnerBannerIconUrl || ''),
+          String(legacy.logoUrl || ''),
+        ].join(' ');
+        const bankMatch = matchBankName(bankSearchText);
         let category = 'Platform Vouchers';
         let bankName = vTitle;
         if (bankMatch) {
           category = DIGITAL_WALLETS.has(bankMatch) ? 'Wallet Vouchers' : 'Bank Vouchers';
           bankName = bankMatch;
+        } else if (String(legacy.voucherType || v.voucherType || '').toLowerCase() === 'payment') {
+          category = bankSearchText.toLowerCase().includes('wallet') ? 'Wallet Vouchers' : 'Bank Vouchers';
+          bankName = vTitle || 'Daraz Payment Voucher';
         } else if (`${vTitle} ${title}`.toLowerCase().includes('choice')) {
           category = 'Choice Voucher';
           bankName = vTitle;
@@ -448,6 +583,290 @@ export function extractOffersFromUprHtml(
     }
   }
 
+  // 3) Logged-in Daraz Vulcan Voucher Center modules (VC_PDV / VC_CAMPAIGN_PDV / VC_FLASHVOUCHER)
+  offers.push(...extractVulcanModuleOffers(html, sourceUrl, todayPkt, nowMs, scrapedAt));
+
+  return offers;
+}
+
+function collectVulcanBenefitItems(modulePayload: Record<string, unknown>): Record<string, unknown>[] {
+  const items: Record<string, unknown>[] = [];
+  const pushList = (arr: unknown) => {
+    if (!Array.isArray(arr)) return;
+    for (const item of arr) {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        items.push(item as Record<string, unknown>);
+      }
+    }
+  };
+
+  if (Array.isArray(modulePayload.benefitRowVos)) {
+    for (const row of modulePayload.benefitRowVos) {
+      if (row && typeof row === 'object') {
+        const r = row as Record<string, unknown>;
+        pushList(r.showBenefitList);
+        pushList(r.benefitList);
+      }
+    }
+  }
+  pushList(modulePayload.extBenefitVOList);
+  pushList(modulePayload.benefitList);
+  pushList(modulePayload.showBenefitList);
+  if (Array.isArray(modulePayload.bizBenefitList)) {
+    for (const biz of modulePayload.bizBenefitList) {
+      if (biz && typeof biz === 'object') {
+        pushList((biz as Record<string, unknown>).benefitList);
+      }
+    }
+  }
+  return items;
+}
+
+function parseSingleVulcanBenefit(
+  rawBenefit: Record<string, unknown>,
+  moduleId: string,
+  moduleTitle: string,
+  sourceUrl: string,
+  todayPkt: string,
+  nowMs: number,
+  scrapedAt: string
+): CardOffer | null {
+  const legacy = (
+    rawBenefit.voucherLegacyInfo && typeof rawBenefit.voucherLegacyInfo === 'object'
+      ? rawBenefit.voucherLegacyInfo
+      : rawBenefit.originalData && typeof rawBenefit.originalData === 'object'
+        ? rawBenefit.originalData
+        : {}
+  ) as Record<string, unknown>;
+  const display = (
+    rawBenefit.displayVO && typeof rawBenefit.displayVO === 'object' ? rawBenefit.displayVO : {}
+  ) as Record<string, unknown>;
+
+  const statusRaw = String(
+    rawBenefit.recommendBenefitStatus || legacy.bizStatusText || legacy.voucherBizStatus || rawBenefit.voucherBizStatus || ''
+  ).toUpperCase();
+  if (statusRaw.includes('EXPIRED') || statusRaw === 'USED') return null;
+
+  const timelineNewObj =
+    legacy.timelineNew && typeof legacy.timelineNew === 'object' ? (legacy.timelineNew as Record<string, unknown>) : null;
+  const timelineInfoObj =
+    legacy.timelineInfo && typeof legacy.timelineInfo === 'object'
+      ? (legacy.timelineInfo as Record<string, unknown>)
+      : null;
+
+  const endMs =
+    parseTimestampMs(rawBenefit.endTimestamp) ||
+    parseTimestampMs(rawBenefit.endTime) ||
+    parseTimestampMs(legacy.endTimestamp) ||
+    parseTimestampMs(timelineNewObj?.endTimestamp) ||
+    parseTimestampMs(timelineInfoObj?.endTime);
+  if (endMs && endMs < nowMs) return null;
+
+  const timelineStr = [
+    typeof rawBenefit.timeline === 'string' ? rawBenefit.timeline : '',
+    typeof legacy.timelineNew === 'string' ? legacy.timelineNew : '',
+    typeof legacy.timelineInfo === 'string' ? legacy.timelineInfo : '',
+    typeof rawBenefit.validTimeData === 'string' ? rawBenefit.validTimeData : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+  const tlEndIso = parseTimelineEndIso(timelineStr);
+  if (tlEndIso && tlEndIso < todayPkt) return null;
+
+  const discountCandidates = [
+    rawBenefit.discountTextLeft,
+    legacy.discountTextLeft,
+    legacy.leftDiscountText,
+    rawBenefit.discountTextRight,
+    legacy.discountTextRight,
+    legacy.rightDiscountText,
+    legacy.topDiscountText,
+    legacy.discountTextRightShort,
+    rawBenefit.value,
+    rawBenefit.discountValue,
+    display.discountText,
+  ]
+    .filter((v) => v !== null && v !== undefined && String(v).trim() !== '')
+    .map((v) => String(v).trim());
+
+  const discountJoined = discountCandidates.join(' ');
+  const pctMatch = discountJoined.match(/(\d{1,2})\s*%/);
+  const rsMatch = discountJoined.match(/Rs\.?\s*([0-9,]+)/i);
+  const numericVal = typeof rawBenefit.discountValue === 'number' ? rawBenefit.discountValue : 0;
+  const discountPercent = pctMatch
+    ? parseInt(pctMatch[1], 10)
+    : numericVal > 0 && numericVal <= MAX_TRUSTED_PERCENT
+      ? numericVal
+      : 0;
+  const flatDiscountPkr = rsMatch ? parseInt(rsMatch[1].replace(/,/g, ''), 10) : 0;
+  if (discountPercent <= 0 && flatDiscountPkr <= 0) return null;
+
+  const thresholdText = [
+    legacy.thresholdText,
+    legacy.thresholdTextShort,
+    rawBenefit.valueDesc,
+    display.thresholdText,
+  ]
+    .filter(Boolean)
+    .map(String)
+    .join(' ');
+  const minSpendMatch = thresholdText.match(/Rs\.?\s*([0-9,]+)/i);
+  const minSpendPkr = minSpendMatch ? parseInt(minSpendMatch[1].replace(/,/g, ''), 10) : 0;
+
+  const capText = [
+    legacy.capCopyText,
+    legacy.capText,
+    legacy.thresholdCapText,
+    legacy.leftCapText,
+    legacy.rightCapText,
+    rawBenefit.capCopyText,
+  ]
+    .filter(Boolean)
+    .map(String)
+    .join(' ');
+  const capMatch = capText.match(/Rs\.?\s*([0-9,]+)/i) || capText.match(/([0-9,]+)/);
+  const maxCapPkr = capMatch ? parseInt(capMatch[1].replace(/,/g, ''), 10) : flatDiscountPkr;
+
+  const voucherType = String(legacy.voucherType || rawBenefit.voucherType || '').toLowerCase();
+  const titleText = String(
+    rawBenefit.title || rawBenefit.subTitle || display.title || legacy.markIconText || moduleTitle || ''
+  ).trim();
+  const searchCorpus = [
+    titleText,
+    String(rawBenefit.subTitle || ''),
+    String(rawBenefit.description || ''),
+    String(rawBenefit.voucherTagDesc || ''),
+    String(legacy.markIconText || ''),
+    String(legacy.termsAndConditions || ''),
+    String(legacy.termInfoKey || ''),
+    String(legacy.partnerBannerIconUrl || ''),
+    String(legacy.logoUrl || ''),
+    String(rawBenefit.logoUrl || ''),
+    String(display.subTitle || ''),
+    moduleTitle,
+  ].join(' ');
+
+  const matchedBank = matchBankName(searchCorpus);
+  const isShippingOnly =
+    (VULCAN_SHIPPING_MODULE_IDS.has(moduleId) || voucherType === 'shippingfee') && !matchedBank;
+  if (isShippingOnly) return null;
+
+  const isPaymentModule = VULCAN_PAYMENT_MODULE_IDS.has(moduleId) || voucherType === 'payment';
+  let category = 'Platform Vouchers';
+  let bankName = titleText || 'Daraz Voucher';
+  if (matchedBank) {
+    category = DIGITAL_WALLETS.has(matchedBank) ? 'Wallet Vouchers' : 'Bank Vouchers';
+    bankName = matchedBank;
+  } else if (isPaymentModule) {
+    category = searchCorpus.toLowerCase().includes('wallet') ? 'Wallet Vouchers' : 'Bank Vouchers';
+    bankName = titleText || 'Daraz Payment Voucher';
+  } else if (searchCorpus.toLowerCase().includes('choice')) {
+    category = 'Choice Voucher';
+  } else if (searchCorpus.toLowerCase().includes('voucher max')) {
+    category = 'Voucher Max';
+    bankName = 'Daraz Voucher Max';
+  }
+
+  let status = 'Collectible Now';
+  if (statusRaw.includes('RAN_OUT') || statusRaw.includes('FULLY_REDEEMED') || statusRaw.includes('OUT')) {
+    status = 'Ran Out (Restocks 00:00 PKT)';
+  } else if (statusRaw === 'USE_NOW') {
+    status = 'Collected (Use Now)';
+  } else if (statusRaw === 'USE_LATER') {
+    status = 'Upcoming Today';
+  }
+
+  const endIso = endMs ? formatEpochMsToPktIso(endMs) : '';
+  const validityDates = timelineStr
+    ? timelineStr.replace(/\s*-\s*/g, ' - ')
+    : endIso
+      ? `Valid until ${isoToDmy(endIso)}`
+      : `Active (${isoToDmy(todayPkt)})`;
+
+  const discountDisplay =
+    flatDiscountPkr > 0 && !pctMatch
+      ? `Flat Rs. ${flatDiscountPkr.toLocaleString()} OFF`
+      : `${discountPercent}% OFF${maxCapPkr > 0 ? ` (Cap Rs. ${maxCapPkr.toLocaleString()})` : ''}`;
+
+  return {
+    id: `vulcan-${bankName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent || flatDiscountPkr}-min${minSpendPkr}`,
+    category,
+    title: `${bankName} ${discountDisplay}`,
+    bankName,
+    discountDisplay,
+    discountPercent,
+    ...(flatDiscountPkr > 0 ? { flatDiscountPkr } : {}),
+    minSpendPkr,
+    maxCapPkr,
+    validDays: ['Everyday'],
+    validityDates,
+    status,
+    sourceUrl,
+    scrapedAt,
+  };
+}
+
+export function extractVulcanModuleOffers(
+  text: string,
+  sourceUrl: string,
+  todayPkt: string,
+  nowMs: number,
+  scrapedAt: string
+): CardOffer[] {
+  const offers: CardOffer[] = [];
+  const moduleContainers: Record<string, unknown>[] = [];
+
+  // Embedded SSR moduleData objects inside multimod-lzd-vc__voucher-center
+  moduleContainers.push(...extractJsonObjectsAfter(text, '"moduleData":'));
+
+  // Raw MTOP JSON / JSONP response from mtop.lazada.ug.stars.vulcan.benefit.module
+  if (text.includes('benefitRowVos') || text.includes('showBenefitList') || text.includes('10502407110')) {
+    const trimmed = text.trim();
+    const jsonCandidate = trimmed.startsWith('{')
+      ? trimmed
+      : (() => {
+          const firstBrace = trimmed.indexOf('{');
+          const lastBrace = trimmed.lastIndexOf('}');
+          return firstBrace !== -1 && lastBrace > firstBrace ? trimmed.slice(firstBrace, lastBrace + 1) : '';
+        })();
+    if (jsonCandidate) {
+      try {
+        const parsed = JSON.parse(jsonCandidate) as Record<string, unknown>;
+        if (parsed.data && typeof parsed.data === 'object' && !Array.isArray(parsed.data)) {
+          moduleContainers.push(parsed.data as Record<string, unknown>);
+        }
+      } catch {
+        // not a standalone JSON/JSONP response
+      }
+    }
+  }
+
+  for (const container of moduleContainers) {
+    for (const [moduleId, rawEntry] of Object.entries(container)) {
+      if (!rawEntry || typeof rawEntry !== 'object' || Array.isArray(rawEntry)) continue;
+      const entry = rawEntry as Record<string, unknown>;
+      const payload = (
+        entry.data && typeof entry.data === 'object' && !Array.isArray(entry.data) ? entry.data : entry
+      ) as Record<string, unknown>;
+      const moduleTitle = String(payload.title || entry.title || '').trim();
+      const benefits = collectVulcanBenefitItems(payload);
+
+      for (const benefit of benefits) {
+        const parsed = parseSingleVulcanBenefit(
+          benefit,
+          moduleId,
+          moduleTitle,
+          sourceUrl,
+          todayPkt,
+          nowMs,
+          scrapedAt
+        );
+        if (parsed) offers.push(parsed);
+      }
+    }
+  }
+
   return offers;
 }
 
@@ -477,14 +896,16 @@ function deduplicateOffers(offers: CardOffer[]): CardOffer[] {
   });
 }
 
-async function fetchLiveHtml(url: string): Promise<{ status: number; html: string }> {
-  const res = await fetch(url, {
-    headers: {
-      'User-Agent': MOBILE_UA,
-      Accept: 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8',
-      'Accept-Language': 'en-PK,en;q=0.9',
-    },
-  });
+async function fetchLiveHtml(url: string, darazCookie = ''): Promise<{ status: number; html: string }> {
+  const headers: Record<string, string> = {
+    'User-Agent': MOBILE_UA,
+    Accept: 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-PK,en;q=0.9',
+  };
+  if (darazCookie && isTrustedDarazUrl(url)) {
+    headers.Cookie = darazCookie;
+  }
+  const res = await fetch(url, { headers });
   const html = await res.text();
   return { status: res.status, html };
 }
@@ -509,9 +930,13 @@ export async function runTracker(): Promise<void> {
     }
   }
 
+  const darazCookie = getSanitizedDarazCookie();
+  const hasDarazCookie = darazCookie.length > 0;
+  let authenticatedSessionVerified = false;
+
   const isGithubActions = process.env.GITHUB_ACTIONS === 'true';
   const artifactsDir = path.join(process.cwd(), 'artifacts');
-  if (isGithubActions) {
+  if (isGithubActions && !hasDarazCookie) {
     fs.mkdirSync(artifactsDir, { recursive: true });
   }
 
@@ -530,7 +955,7 @@ export async function runTracker(): Promise<void> {
   const vcUrl = seeds.find((u) => u.includes('voucher/center')) || DEFAULT_VOUCHER_CENTER_URL;
 
   try {
-    const { status, html } = await fetchLiveHtml(homepageUrl);
+    const { status, html } = await fetchLiveHtml(homepageUrl, darazCookie);
     if (status >= 200 && status < 400 && html.length > 10000) {
       httpSourcesOk++;
       const { offers, discoveredHubs } = extractHomepageLivePromos(html, dmyStr, scrapedAt);
@@ -552,13 +977,19 @@ export async function runTracker(): Promise<void> {
   }
 
   try {
-    const { status, html } = await fetchLiveHtml(vcUrl);
+    const { status, html } = await fetchLiveHtml(vcUrl, darazCookie);
     if (status >= 200 && status < 400 && html.length > 10000) {
       httpSourcesOk++;
+      authenticatedSessionVerified = detectDarazAuthenticatedSession(html);
       const vcOffers = extractOffersFromUprHtml(html, vcUrl, pktDateStr, nowMs, scrapedAt);
       allExtractedOffers.push(...vcOffers);
-      sourceHealth.push({ url: vcUrl, status, offers: vcOffers.length, note: 'Live Voucher Center SSR' });
-      console.log(`[LIVE VOUCHER CENTER] ${vcOffers.length} live offer(s)`);
+      const authNote = hasDarazCookie
+        ? authenticatedSessionVerified
+          ? 'Authenticated Mobile Session'
+          : 'Cookie Expired (Anonymous Fallback)'
+        : 'Public Mobile Session';
+      sourceHealth.push({ url: vcUrl, status, offers: vcOffers.length, note: `Live Voucher Center SSR (${authNote})` });
+      console.log(`[LIVE VOUCHER CENTER] ${vcOffers.length} live offer(s) [${authNote}]`);
     } else {
       sourceHealth.push({ url: vcUrl, status, offers: 0, note: 'Unexpected response' });
     }
@@ -574,7 +1005,7 @@ export async function runTracker(): Promise<void> {
     crawledHubs.add(hubUrl);
 
     try {
-      const { status, html } = await fetchLiveHtml(hubUrl);
+      const { status, html } = await fetchLiveHtml(hubUrl, darazCookie);
       if (status >= 200 && status < 400 && html.length > 10000) {
         httpSourcesOk++;
         const hubOffers = extractOffersFromUprHtml(html, hubUrl, pktDateStr, nowMs, scrapedAt);
@@ -626,6 +1057,14 @@ export async function runTracker(): Promise<void> {
       timezoneId: 'Asia/Karachi',
     });
 
+    if (hasDarazCookie) {
+      const pwCookies = parseDarazCookiesForPlaywright(darazCookie);
+      if (pwCookies.length > 0) {
+        await context.addCookies(pwCookies);
+        console.log(`[AUTH] Loaded ${pwCookies.length} Daraz session cookie(s) into mobile browser context.`);
+      }
+    }
+
     const browserUrls = Array.from(new Set([homepageUrl, vcUrl, ...Array.from(crawledHubs)])).slice(0, 10);
     let pageIndex = 0;
 
@@ -638,10 +1077,16 @@ export async function runTracker(): Promise<void> {
         'response',
         async (response: { headers: () => Record<string, string>; url: () => string; text: () => Promise<string> }) => {
           try {
+            const respUrl = response.url();
             const ct = response.headers()['content-type'] || '';
-            if (!ct.includes('json') && !ct.includes('javascript')) return;
+            const isVulcanOrMtop =
+              respUrl.includes('vulcan.benefit.module') || respUrl.includes('lzdAldLampService');
+            if (!isVulcanOrMtop && !ct.includes('json') && !ct.includes('javascript')) return;
             const body = await response.text();
-            if (!body.includes('"voucherTabs":')) return;
+            const hasVoucherTabs = body.includes('"voucherTabs":');
+            const hasVulcanBenefits =
+              body.includes('benefitRowVos') || body.includes('showBenefitList') || body.includes('"moduleData":');
+            if (!hasVoucherTabs && !hasVulcanBenefits) return;
             if (isExpiredTimestampPayload(body, pktDateStr)) return;
             const liveNetOffers = extractOffersFromUprHtml(body, currentUrl, pktDateStr, nowMs, scrapedAt);
             allExtractedOffers.push(...liveNetOffers);
@@ -668,7 +1113,8 @@ export async function runTracker(): Promise<void> {
         }
         await page.waitForTimeout(2000);
 
-        if (isGithubActions) {
+        // Skip screenshots when authenticated so personal account details are never uploaded to artifacts
+        if (isGithubActions && !hasDarazCookie) {
           const screenshotPath = path.join(artifactsDir, `page-${pageIndex}.png`);
           await page.screenshot({ path: screenshotPath, fullPage: true });
         }
@@ -678,7 +1124,7 @@ export async function runTracker(): Promise<void> {
         if (currentUrl === homepageUrl) {
           pageOffers.push(...extractHomepageLivePromos(rawHtml, dmyStr, scrapedAt).offers);
         }
-        if (rawHtml.includes('"voucherTabs":')) {
+        if (rawHtml.includes('"voucherTabs":') || rawHtml.includes('"moduleData":')) {
           pageOffers.push(...extractOffersFromUprHtml(rawHtml, currentUrl, pktDateStr, nowMs, scrapedAt));
         }
         allExtractedOffers.push(...pageOffers);
@@ -723,7 +1169,9 @@ export async function runTracker(): Promise<void> {
 
   const newState: StateData = {
     lastDigestDatePKT: pktDateStr,
-    source: 'Daraz Live Homepage & Voucher Center (100% Live Verified)',
+    source: authenticatedSessionVerified
+      ? 'Daraz Live Authenticated Mobile Voucher Center & Homepage (100% Live Verified)'
+      : 'Daraz Live Homepage & Voucher Center (100% Live Verified)',
     categories: ['Bank Vouchers', 'Wallet Vouchers', 'Choice Voucher', 'Voucher Max', 'Platform Vouchers'],
     offers: finalLiveOffers,
     scrapedAt: new Date().toISOString(),

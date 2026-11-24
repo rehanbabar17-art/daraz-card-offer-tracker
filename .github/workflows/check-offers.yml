@@ -36,6 +36,7 @@ jobs:
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
+          DARAZ_COOKIE: ${{ secrets.DARAZ_COOKIE }}
 
       - name: Upload Page Screenshots Artifacts
         if: always()
@@ -44,6 +45,7 @@ jobs:
           name: daraz-page-screenshots
           path: artifacts/
           retention-days: 7
+          if-no-files-found: ignore
 
       - name: Commit and Push state.json
         if: success()
