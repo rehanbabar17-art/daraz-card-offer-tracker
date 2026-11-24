@@ -2,7 +2,7 @@
   "mode": "live-only",
   "authenticated_mobile_session": false,
   "last_notified_pkt_date": "2026-11-25",
-  "last_checked_pkt": "2026-11-25T01:06:56.864630+05:00",
+  "last_checked_pkt": "2026-11-25T04:50:10.519521+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
