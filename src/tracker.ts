@@ -26,135 +26,52 @@ export interface StateData {
   scrapedAt: string;
 }
 
-const KNOWN_BANKS = [
-  'MCB Islamic',
-  'MCB Platinum',
-  'MCB Visa',
-  'MCB Bank',
-  'MCB',
-  'HBL Islamic',
-  'HBL Bank',
-  'Habib Bank',
-  'HBL',
-  'AL Habib',
-  'Al Habib',
-  'Bank AL Habib',
-  'BAHL',
-  'Al Baraka',
-  'AlBaraka',
-  'Askari Bank',
-  'Askari',
-  'Standard Chartered',
-  'SCB EMI',
-  'SCB',
-  'Meezan Bank',
-  'Meezan',
-  'Faysal Bank',
-  'FBL',
-  'Bank Alfalah',
-  'Alfalah',
-  'BAFL',
-  'UBL',
-  'United Bank',
-  'Allied Bank',
-  'ABL',
-  'Bank of Punjab',
-  'BOP',
-  'Habib Metropolitan',
-  'HabibMetro',
-  'BankIslami',
-  'JS Bank',
-  'Dubai Islamic',
-  'DIB',
-  'Samba Bank',
-  'Silkbank',
-  'Soneri Bank',
-  'EasyPaisa',
-  'Easypaisa',
-  'JazzCash',
-  'Jazzcash',
-  'Jazz cash',
-  'Upaisa',
-  'UPaisa',
-  'NayaPay',
-  'SadaPay',
-  'Zindigi',
-  'Visa',
-  'Mastercard',
-  'UnionPay',
-  'Union Pay',
-  'Unionpay',
-  'UPI',
-  'PayPak',
-];
+const MOBILE_UA =
+  'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36';
 
-const BANK_NORMALIZATION_MAP: Record<string, string> = {
-  meezan: 'Meezan Bank',
-  'meezan bank': 'Meezan Bank',
-  askari: 'Askari Bank',
-  'askari bank': 'Askari Bank',
-  scb: 'Standard Chartered',
-  'scb emi': 'Standard Chartered',
-  'standard chartered': 'Standard Chartered',
-  hbl: 'HBL Bank',
-  'hbl bank': 'HBL Bank',
-  'habib bank': 'HBL Bank',
-  'hbl islamic': 'HBL Islamic',
-  'al habib': 'Bank AL Habib',
-  'bank al habib': 'Bank AL Habib',
-  bahl: 'Bank AL Habib',
-  mcb: 'MCB Bank',
-  'mcb bank': 'MCB Bank',
-  'mcb platinum': 'MCB Bank',
-  'mcb visa': 'MCB Bank',
-  'mcb islamic': 'MCB Islamic',
-  alfalah: 'Bank Alfalah',
-  bafl: 'Bank Alfalah',
-  'bank alfalah': 'Bank Alfalah',
-  fbl: 'Faysal Bank',
-  faysal: 'Faysal Bank',
-  'faysal bank': 'Faysal Bank',
-  'faysal bank emi': 'Faysal Bank',
-  ubl: 'UBL',
-  'united bank': 'UBL',
-  abl: 'Allied Bank',
-  'allied bank': 'Allied Bank',
-  bop: 'Bank of Punjab',
-  'bank of punjab': 'Bank of Punjab',
-  habibmetro: 'Habib Metropolitan',
-  'habib metropolitan': 'Habib Metropolitan',
-  albaraka: 'Al Baraka',
-  'al baraka': 'Al Baraka',
-  easypaisa: 'Easypaisa',
-  jazzcash: 'JazzCash',
-  'jazz cash': 'JazzCash',
-  upaisa: 'UPaisa',
-  nayapay: 'NayaPay',
-  sadapay: 'SadaPay',
-  zindigi: 'Zindigi',
-  unionpay: 'UnionPay',
-  'union pay': 'UnionPay',
-  upi: 'UnionPay',
-};
+const DEFAULT_HOMEPAGE_URL = 'https://www.daraz.pk/';
+const DEFAULT_VOUCHER_CENTER_URL =
+  'https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center';
 
-const DIGITAL_WALLETS = new Set(['Easypaisa', 'JazzCash', 'UPaisa', 'NayaPay', 'SadaPay', 'Zindigi']);
-
-// Anything above this is almost certainly not a real card discount (e.g. a "100%"
-// price-slash or layout width percentage).
 const MAX_TRUSTED_PERCENT = 90;
 
-const RETIRED_LEGACY_URLS = [
-  'payment-promotions/termsandconditions',
-  'payment-promotions/digital-payments',
-  '/wow/i/pk/payment-partners',
-  'ald-lamp.alicdn.com/bottom/3334967',
+const KNOWN_BANK_ALIASES: Array<[string, string[]]> = [
+  ['Standard Chartered', ['standard chartered', 'scb']],
+  ['Bank AL Habib', ['bank al habib', 'al habib', 'alhabib', 'bahl']],
+  ['Bank of Punjab', ['bank of punjab', 'bop']],
+  ['Bank Alfalah', ['bank alfalah', 'alfalah', 'bafl']],
+  ['Allied Bank', ['allied bank', 'abl']],
+  ['Meezan Bank', ['meezan bank', 'meezan']],
+  ['Askari Bank', ['askari bank', 'askari']],
+  ['HBL Bank', ['habib bank', 'hbl bank', 'hbl']],
+  ['MCB Bank', ['mcb bank', 'mcb islamic', 'mcb']],
+  ['Faysal Bank', ['faysal bank', 'faysal', 'fbl']],
+  ['Habib Metropolitan', ['habib metropolitan', 'habibmetro', 'habib metro']],
+  ['Dubai Islamic', ['dubai islamic', 'dib']],
+  ['Al Baraka', ['al baraka', 'albaraka']],
+  ['BankIslami', ['bankislami', 'bank islami']],
+  ['Soneri Bank', ['soneri bank', 'soneri']],
+  ['JS Bank', ['js bank']],
+  ['UBL', ['united bank', 'ubl']],
+  ['UnionPay', ['unionpay', 'union pay', 'union-pay']],
+  ['Mastercard', ['mastercard', 'master card']],
+  ['PayPak', ['paypak', 'pay pak']],
+  ['Visa', ['visa card', 'visa debit', 'visa credit', 'visa']],
+  ['Easypaisa', ['easypaisa', 'easy paisa']],
+  ['JazzCash', ['jazzcash', 'jazz cash', 'jazz-cash']],
+  ['UPaisa', ['upaisa', 'u paisa', 'u-paisa']],
+  ['NayaPay', ['nayapay', 'naya pay']],
+  ['SadaPay', ['sadapay', 'sada pay']],
+  ['Zindigi', ['zindigi']],
 ];
+
+const DIGITAL_WALLETS = new Set(['Easypaisa', 'JazzCash', 'UPaisa', 'NayaPay', 'SadaPay', 'Zindigi']);
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0');
 }
 
-function getCurrentPktDate(): { pktDateStr: string; year: number; month: number; day: number } {
+function getCurrentPktDate(): { pktDateStr: string; dmyStr: string; nowMs: number } {
   const now = new Date();
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Karachi',
@@ -163,15 +80,18 @@ function getCurrentPktDate(): { pktDateStr: string; year: number; month: number;
     day: '2-digit',
   }).formatToParts(now);
 
-  const year = parseInt(parts.find((p) => p.type === 'year')?.value || '2026', 10);
-  const month = parseInt(parts.find((p) => p.type === 'month')?.value || '11', 10);
-  const day = parseInt(parts.find((p) => p.type === 'day')?.value || '01', 10);
+  const year = parts.find((p) => p.type === 'year')?.value || '2026';
+  const month = parts.find((p) => p.type === 'month')?.value || '11';
+  const day = parts.find((p) => p.type === 'day')?.value || '01';
 
-  const pktDateStr = `${year}-${pad2(month)}-${pad2(day)}`;
-  return { pktDateStr, year, month, day };
+  return {
+    pktDateStr: `${year}-${month}-${day}`,
+    dmyStr: `${day}/${month}/${year}`,
+    nowMs: now.getTime(),
+  };
 }
 
-function formatEpochMsToPktDate(ms: number): string {
+function formatEpochMsToPktIso(ms: number): string {
   if (!Number.isFinite(ms) || ms <= 0) return '';
   return new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Karachi',
@@ -201,218 +121,30 @@ function parseTimestampMs(val: unknown): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function parseMonthName(mStr: string): number {
-  const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-  const idx = months.findIndex((m) => mStr.toLowerCase().startsWith(m));
-  return idx !== -1 ? idx + 1 : 12;
-}
-
-function checkIsExpired(expiryDateStr: string | null): boolean {
-  if (!expiryDateStr) return false;
-  const { pktDateStr } = getCurrentPktDate();
-
-  const isoMatch = expiryDateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
-  if (isoMatch) {
-    const expStr = `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
-    return expStr < pktDateStr;
-  }
-
-  const dmyMatch = expiryDateStr.match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/);
-  if (dmyMatch) {
-    const expStr = `${dmyMatch[3]}-${pad2(parseInt(dmyMatch[2], 10))}-${pad2(parseInt(dmyMatch[1], 10))}`;
-    return expStr < pktDateStr;
-  }
-
-  return false;
-}
-
-function inferWeekdayFromUrl(sourceUrl: string): string | null {
-  const lower = sourceUrl.toLowerCase();
-  if (lower.includes('hblwednesday') || lower.includes('wednesday')) return 'Wednesday';
-  if (lower.includes('askarisaturday') || lower.includes('saturday')) return 'Saturday';
-  if (lower.includes('scb-sunday') || lower.includes('sunday')) return 'Sunday';
-  if (lower.includes('meezan') && (lower.includes('friday') || lower.includes('meezan-bank-all-deals-page'))) {
-    return 'Friday';
-  }
-  return null;
-}
-
-function extractDatesAndDays(
-  text: string,
-  sourceUrl: string = ''
-): { validityDates: string; validDays: string[]; isExpired: boolean; hasDateOrDay: boolean } {
-  let validityDates = 'dates not shown';
-  let validDays: string[] = [];
-  let isExpired = false;
-
-  const rangeMatch = text.match(/(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})\s*-\s*(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})/);
-  if (rangeMatch) {
-    validityDates = `${rangeMatch[1]} - ${rangeMatch[2]}`;
-    if (checkIsExpired(rangeMatch[2])) {
-      isExpired = true;
-    }
-  } else {
-    const shortRangeMatch = text.match(/(\d{1,2}[\/.-]\d{1,2})\s*-\s*(\d{1,2}[\/.-]\d{1,2})/);
-    if (shortRangeMatch) {
-      const { year: currentYear } = getCurrentPktDate();
-      const endParts = shortRangeMatch[2].split(/[\/.-]/);
-      const endIso = `${currentYear}-${pad2(parseInt(endParts[1], 10))}-${pad2(parseInt(endParts[0], 10))}`;
-      validityDates = `${shortRangeMatch[1]}/${currentYear} - ${shortRangeMatch[2]}/${currentYear}`;
-      if (/^\d{4}-\d{2}-\d{2}$/.test(endIso) && checkIsExpired(endIso)) {
-        isExpired = true;
-      }
-    } else {
-      const tillMatch = text.match(/valid\s+(?:till|until|through)\s+(\d{1,2})[\/\s]+([A-Za-z0-9]+)(?:[\/\s]+(\d{4}))?/i);
-      if (tillMatch) {
-        const day = tillMatch[1];
-        const monthStr = tillMatch[2];
-        const { year: currentYear } = getCurrentPktDate();
-        const year = tillMatch[3] ? parseInt(tillMatch[3], 10) : currentYear;
-        const month = parseMonthName(monthStr);
-        validityDates = `Valid till ${day} ${monthStr} ${year}`;
-
-        const expIso = `${year}-${pad2(month)}-${pad2(parseInt(day, 10))}`;
-        if (checkIsExpired(expIso)) {
-          isExpired = true;
-        }
-      }
-    }
-  }
-
-  const urlWeekday = inferWeekdayFromUrl(sourceUrl);
-  if (urlWeekday) {
-    validDays = [urlWeekday];
-  } else {
-    const daysFound: string[] = [];
-    const daysRegex = /\b(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)\b/gi;
-    let dMatch: RegExpExecArray | null;
-    while ((dMatch = daysRegex.exec(text)) !== null) {
-      const norm = dMatch[1].charAt(0).toUpperCase() + dMatch[1].slice(1).toLowerCase();
-      if (!daysFound.includes(norm)) daysFound.push(norm);
-    }
-    validDays = daysFound.length > 0 ? daysFound : ['Everyday'];
-  }
-
-  if (validityDates === 'dates not shown' && urlWeekday) {
-    validityDates = `Weekly recurring (${urlWeekday})`;
-  } else if (validityDates === 'dates not shown' && sourceUrl.includes('payment-promotions')) {
-    validityDates = 'Active Campaign (See App)';
-  }
-
-  const hasDateOrDay = validityDates !== 'dates not shown' || validDays.length > 0;
-  return { validityDates, validDays, isExpired, hasDateOrDay };
-}
-
-function normalizeBankName(raw: string): string {
-  const key = raw.toLowerCase().trim();
-  return BANK_NORMALIZATION_MAP[key] || raw;
-}
-
-function offerEndDate(validityDates: string | undefined): string | null {
-  const text = validityDates || '';
-
-  const iso = [...text.matchAll(/(\d{4})-(\d{2})-(\d{2})/g)];
+function parseTimelineEndIso(timeline: string | undefined): string | null {
+  if (!timeline) return null;
+  const iso = [...timeline.matchAll(/(\d{4})-(\d{2})-(\d{2})/g)];
   if (iso.length > 0) return iso[iso.length - 1][0];
-
-  const dmy = [...text.matchAll(/(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})/g)];
+  const dmy = [...timeline.matchAll(/(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})/g)];
   if (dmy.length > 0) {
     const last = dmy[dmy.length - 1];
     return `${last[3]}-${pad2(parseInt(last[2], 10))}-${pad2(parseInt(last[1], 10))}`;
   }
-
-  if (/till|until|through|upto/i.test(text)) {
-    const till = text.match(/(\d{1,2})\s+([A-Za-z]{3,})/);
-    if (till) {
-      const { year } = getCurrentPktDate();
-      const explicitYear = text.match(/(\d{1,2})\s+([A-Za-z]{3,})\s*,?\s*(\d{4})/);
-      const month = parseMonthName(till[2]);
-      const y = explicitYear ? parseInt(explicitYear[3], 10) : year;
-      return `${y}-${pad2(month)}-${pad2(parseInt(till[1], 10))}`;
-    }
-  }
-
   return null;
 }
 
-function offerKey(offer: {
-  bankName: string;
-  discountPercent: number;
-  minSpendPkr: number;
-  maxCapPkr: number;
-  validDays?: string[];
-}): string {
-  const bank = offer.bankName.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const days = Array.isArray(offer.validDays) && offer.validDays.length > 0
-    ? [...offer.validDays].map((d) => d.toLowerCase()).sort().join(',')
-    : 'everyday';
-  return `${bank}_${offer.discountPercent}_${offer.minSpendPkr}_${offer.maxCapPkr}_${days}`;
-}
-
-function isRetiredSourceUrl(sourceUrl: string | undefined, activeSeeds: string[]): boolean {
-  if (!sourceUrl) return false;
-  if (RETIRED_LEGACY_URLS.some((bad) => sourceUrl.includes(bad))) return true;
-  if (activeSeeds.length > 0 && sourceUrl.includes('payment-promotions/') && !activeSeeds.some((s) => s.includes(sourceUrl) || sourceUrl.includes(s))) {
-    return true;
+function matchBankName(text: string): string | null {
+  if (!text) return null;
+  const low = text.toLowerCase();
+  for (const [canonical, aliases] of KNOWN_BANK_ALIASES) {
+    const sorted = [...aliases].sort((a, b) => b.length - a.length);
+    for (const alias of sorted) {
+      const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(?<![a-z0-9])${escaped}(?![a-z0-9])`, 'i');
+      if (regex.test(low)) return canonical;
+    }
   }
-  return false;
-}
-
-function retirementReason(offer: CardOffer, freshKeys: Set<string>, todayPkt: string, activeSeeds: string[]): string | null {
-  if (!Number.isFinite(offer.discountPercent) || offer.discountPercent <= 0) return 'no usable discount';
-  if (offer.discountPercent > MAX_TRUSTED_PERCENT) return `implausible discount (${offer.discountPercent}%)`;
-  if (isRetiredSourceUrl(offer.sourceUrl, activeSeeds)) return 'from retired 2023/2024 source';
-
-  const end = offerEndDate(offer.validityDates);
-  if (end && end < todayPkt) return `expired ${end}`;
-
-  if (!freshKeys.has(offerKey(offer))) {
-    return 'no longer verified in live Daraz 2026 sources';
-  }
-
   return null;
-}
-
-function extractMaxCap(text: string): number {
-  const match = text.match(/(?:cap(?:ped)?|max(?:imum)?(?:\s+discount)?)\b[^0-9]*?([0-9]{1,3}(?:,[0-9]{3})+|[0-9]{2,6})/i);
-  if (match) {
-    const val = parseInt(match[1].replace(/,/g, ''), 10);
-    if (val >= 50 && val <= 100000) return val;
-  }
-  return 0;
-}
-
-function extractMinSpend(text: string): { minSpendPkr: number; foundExplicit: boolean } {
-  const match = text.match(/(?:min(?:imum)?\s*(?:spend|order|purchase)?|orders?\s*(?:above|over|of)?)\b[^0-9]*?([0-9]{1,3}(?:,[0-9]{3})+|[0-9]{3,6})/i);
-  if (match) {
-    const val = parseInt(match[1].replace(/,/g, ''), 10);
-    if (val >= 0 && val <= 500000) {
-      return { minSpendPkr: val, foundExplicit: true };
-    }
-  }
-  return { minSpendPkr: 0, foundExplicit: false };
-}
-
-function isExpiredTimestampPayload(rawText: string, todayPkt: string): boolean {
-  const tsMatches = [
-    ...rawText.matchAll(/"(?:ald_sys_schedule_end_time|voucherCollectEndDate|endTime)"\s*:\s*"?([0-9]{10,13}|\d{4}-\d{2}-\d{2}[^"]*)"?/gi),
-  ];
-  if (tsMatches.length === 0) return false;
-
-  let foundAnyValidEnd = false;
-  let allExpired = true;
-
-  for (const m of tsMatches) {
-    const ms = parseTimestampMs(m[1]);
-    if (!ms) continue;
-    foundAnyValidEnd = true;
-    const endPkt = formatEpochMsToPktDate(ms);
-    if (endPkt >= todayPkt) {
-      allExpired = false;
-      break;
-    }
-  }
-
-  return foundAnyValidEnd && allExpired;
 }
 
 function extractJsonArraysAfter(text: string, marker: string): unknown[][] {
@@ -465,10 +197,128 @@ function extractJsonArraysAfter(text: string, marker: string): unknown[][] {
   return arrays;
 }
 
-export function extractOffersFromUprHtml(html: string, sourceUrl: string, todayPkt: string, scrapedAt: string): CardOffer[] {
+function isExpiredTimestampPayload(rawText: string, todayPkt: string): boolean {
+  const tsMatches = [
+    ...rawText.matchAll(
+      /"(?:ald_sys_schedule_end_time|voucherCollectEndDate|endTime)"\s*:\s*"?([0-9]{10,13}|\d{4}-\d{2}-\d{2}[^"]*)"?/gi
+    ),
+  ];
+  if (tsMatches.length === 0) return false;
+
+  let foundAnyValidEnd = false;
+  let allExpired = true;
+
+  for (const m of tsMatches) {
+    const ms = parseTimestampMs(m[1]);
+    if (!ms) continue;
+    foundAnyValidEnd = true;
+    const endPkt = formatEpochMsToPktIso(ms);
+    if (endPkt >= todayPkt) {
+      allExpired = false;
+      break;
+    }
+  }
+
+  return foundAnyValidEnd && allExpired;
+}
+
+export function extractHomepageLivePromos(
+  html: string,
+  dmyStr: string,
+  scrapedAt: string
+): { offers: CardOffer[]; discoveredHubs: string[] } {
+  const offers: CardOffer[] = [];
+  const discoveredHubs: string[] = [];
+  const seenPids = new Set<string>();
+
+  const registerPid = (rawUrl: string): string => {
+    const clean = rawUrl.replace(/\\u0026/g, '&').replace(/\\\//g, '/').replace(/&amp;/g, '&');
+    const pidMatch = clean.match(/wh_pid=([^&"'<> ]+)/);
+    if (pidMatch) {
+      let pid = pidMatch[1];
+      try {
+        pid = decodeURIComponent(pid);
+      } catch {
+        // keep raw
+      }
+      const low = pid.toLowerCase();
+      if (
+        (low.includes('/megascenario/') ||
+          low.includes('/payment-promotions/') ||
+          low.includes('/voucher/') ||
+          low.includes('paymentpartner') ||
+          low.includes('bank-discount')) &&
+        pid !== '/lazada/channel/pk/voucher/center' &&
+        !seenPids.has(pid)
+      ) {
+        seenPids.add(pid);
+        discoveredHubs.push(
+          `https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=${pid}`
+        );
+      }
+    }
+    return clean;
+  };
+
+  for (const m of html.matchAll(/"bannerTitle":"([^"]+)"/g)) {
+    const title = m[1].trim();
+    const startIdx = m.index ?? 0;
+    const chunk = html.slice(Math.max(0, startIdx - 100), Math.min(html.length, startIdx + 650));
+    const urlMatch = chunk.match(/"bannerUrl":"([^"]+)"/);
+    const cleanUrl = registerPid(urlMatch ? urlMatch[1] : DEFAULT_HOMEPAGE_URL);
+
+    let decodedUrl = cleanUrl;
+    try {
+      decodedUrl = decodeURIComponent(cleanUrl);
+    } catch {
+      // ignore
+    }
+
+    const isPaymentPromoUrl = decodedUrl.toLowerCase().includes('payment-promotions');
+    const bankName = matchBankName(title) || (isPaymentPromoUrl ? matchBankName(decodedUrl.replace(/-/g, ' ')) : null);
+    if (!bankName && !isPaymentPromoUrl) continue;
+
+    const pctMatch = title.match(/(\d{1,2})\s*%/);
+    let discountPercent = pctMatch ? parseInt(pctMatch[1], 10) : 0;
+    if (discountPercent > MAX_TRUSTED_PERCENT) discountPercent = 0;
+
+    const canonicalBank = bankName || title;
+    const isWallet = DIGITAL_WALLETS.has(canonicalBank);
+
+    offers.push({
+      id: `hp-${canonicalBank.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent}pct`,
+      category: isWallet ? 'Wallet Vouchers' : 'Bank Vouchers',
+      title,
+      bankName: canonicalBank,
+      discountDisplay: discountPercent > 0 ? `${discountPercent}% OFF` : title,
+      discountPercent,
+      minSpendPkr: 0,
+      maxCapPkr: 0,
+      validDays: ['Everyday'],
+      validityDates: `Active Today (${dmyStr})`,
+      status: 'Live on Daraz Homepage',
+      sourceUrl: cleanUrl,
+      scrapedAt,
+    });
+  }
+
+  const unescaped = html.replace(/\\u0026/g, '&').replace(/\\\//g, '/').replace(/&amp;/g, '&');
+  for (const m of unescaped.matchAll(/wh_pid=([^&"'<> ]+)/g)) {
+    registerPid(`wh_pid=${m[1]}`);
+  }
+
+  return { offers, discoveredHubs: discoveredHubs.slice(0, 8) };
+}
+
+export function extractOffersFromUprHtml(
+  html: string,
+  sourceUrl: string,
+  todayPkt: string,
+  nowMs: number,
+  scrapedAt: string
+): CardOffer[] {
   const offers: CardOffer[] = [];
   const tabArrays = extractJsonArraysAfter(html, '"voucherTabs":');
-  const sortedBanks = [...KNOWN_BANKS].sort((a, b) => b.length - a.length);
 
   for (const arr of tabArrays) {
     for (const rawTab of arr) {
@@ -480,68 +330,94 @@ export function extractOffersFromUprHtml(html: string, sourceUrl: string, todayP
 
       const startMs = parseTimestampMs(tab.startTime);
       const endMs = parseTimestampMs(tab.endTime);
-      const startPkt = startMs ? formatEpochMsToPktDate(startMs) : '';
-      const endPkt = endMs ? formatEpochMsToPktDate(endMs) : '';
+      if (endMs && endMs < nowMs) continue;
+      if (startMs && startMs > nowMs) continue;
 
-      if (endPkt && endPkt < todayPkt) {
-        console.log(`[UPR EXPIRED TAB DISCARDED] ${title} (ended ${endPkt})`);
-        continue;
-      }
-
+      const startIso = startMs ? formatEpochMsToPktIso(startMs) : '';
+      const endIso = endMs ? formatEpochMsToPktIso(endMs) : '';
       const validityWindow =
-        startPkt && endPkt ? `${isoToDmy(startPkt)} - ${isoToDmy(endPkt)}` : 'Active Campaign (See App)';
+        startIso && endIso ? `${isoToDmy(startIso)} - ${isoToDmy(endIso)}` : `Active (${isoToDmy(todayPkt)})`;
 
-      // 1) Parse structured collectible vouchers inside the tab (e.g. Choice Upsized 7%/10%)
+      // 1) Structured collectible vouchers inside the tab (e.g. Choice Voucher 4% OFF, Voucher Max, etc.)
       const voucherList = Array.isArray(tab.voucher) ? tab.voucher : [];
       for (const rawV of voucherList) {
         if (!rawV || typeof rawV !== 'object') continue;
         const v = rawV as Record<string, unknown>;
-        const legacy = (v.voucherLegacyInfo && typeof v.voucherLegacyInfo === 'object'
-          ? v.voucherLegacyInfo
-          : {}) as Record<string, unknown>;
-
-        const pctRaw = v.discountValue ?? v.value ?? '';
-        const pctMatch = String(pctRaw).match(/(\d{1,2})/);
-        const discountPercent = pctMatch ? parseInt(pctMatch[1], 10) : 0;
-        if (discountPercent <= 0 || discountPercent > MAX_TRUSTED_PERCENT) continue;
+        const legacy = (
+          v.voucherLegacyInfo && typeof v.voucherLegacyInfo === 'object' ? v.voucherLegacyInfo : {}
+        ) as Record<string, unknown>;
 
         const vEndMs = parseTimestampMs(v.endTime);
-        const vEndPkt = vEndMs ? formatEpochMsToPktDate(vEndMs) : '';
-        if (vEndPkt && vEndPkt < todayPkt) continue;
+        if (vEndMs && vEndMs < nowMs) continue;
+
+        const timeline = String(v.timeline || legacy.timelineNew || '').trim();
+        const tlEndIso = parseTimelineEndIso(timeline);
+        if (tlEndIso && tlEndIso < todayPkt) continue;
+
+        const valStr = String(v.value ?? v.discountValue ?? '').trim();
+        const pctMatch = valStr.match(/(\d{1,2})\s*%/);
+        const rsMatch = valStr.match(/Rs\.?\s*([0-9,]+)/i);
+        const numericVal = typeof v.discountValue === 'number' ? v.discountValue : 0;
+        const discountPercent = pctMatch
+          ? parseInt(pctMatch[1], 10)
+          : numericVal > 0 && numericVal <= MAX_TRUSTED_PERCENT
+            ? numericVal
+            : 0;
+        const flatDiscountPkr = rsMatch ? parseInt(rsMatch[1].replace(/,/g, ''), 10) : 0;
+        if (discountPercent <= 0 && flatDiscountPkr <= 0) continue;
 
         const minSpendMatch = String(v.valueDesc || legacy.thresholdText || '').match(/Rs\.?\s*([0-9,]+)/i);
         const minSpendPkr = minSpendMatch ? parseInt(minSpendMatch[1].replace(/,/g, ''), 10) : 0;
         const capRaw = String(legacy.capText || legacy.capCopyText || '').replace(/[^0-9]/g, '');
-        const maxCapPkr = capRaw ? parseInt(capRaw, 10) : 0;
+        const maxCapPkr = capRaw ? parseInt(capRaw, 10) : flatDiscountPkr;
 
-        const timeline = String(v.timeline || legacy.timelineNew || '').trim();
-        const vValidity = timeline ? timeline.replace(/-/g, ' - ') : validityWindow;
         const vStatusRaw = String(v.recommendBenefitStatus || legacy.bizStatusText || '').toUpperCase();
-        const vStatus = vStatusRaw.includes('RAN_OUT')
-          ? 'Ran Out (Restocks 00:00 PKT)'
-          : 'Active / Collectible';
+        const vStatus =
+          vStatusRaw.includes('RAN_OUT') || vStatusRaw.includes('OUT')
+            ? 'Ran Out (Restocks 00:00 PKT)'
+            : 'Collectible Now';
 
-        const vTitle = String(v.subTitle || title).trim();
+        const vTitle = String(v.subTitle || v.title || title).trim();
+        const bankMatch = matchBankName(`${vTitle} ${title}`);
+        let category = 'Platform Vouchers';
+        let bankName = vTitle;
+        if (bankMatch) {
+          category = DIGITAL_WALLETS.has(bankMatch) ? 'Wallet Vouchers' : 'Bank Vouchers';
+          bankName = bankMatch;
+        } else if (`${vTitle} ${title}`.toLowerCase().includes('choice')) {
+          category = 'Choice Voucher';
+          bankName = vTitle;
+        } else if (`${vTitle} ${title}`.toLowerCase().includes('voucher max')) {
+          category = 'Voucher Max';
+          bankName = 'Daraz Voucher Max';
+        }
+
+        const discountDisplay =
+          flatDiscountPkr > 0 && !pctMatch
+            ? `Flat Rs. ${flatDiscountPkr.toLocaleString()} OFF`
+            : `${discountPercent}% OFF${maxCapPkr > 0 ? ` (Cap Rs. ${maxCapPkr.toLocaleString()})` : ''}`;
+
         offers.push({
-          id: `upr-voucher-${vTitle.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent}pct-min${minSpendPkr}`,
-          category: title.toLowerCase().includes('choice') ? 'Choice Voucher' : 'Voucher Max',
-          title: `${vTitle} ${discountPercent}% OFF`,
-          bankName: vTitle.toLowerCase().includes('choice') ? 'Daraz Choice Upsized' : vTitle,
-          discountDisplay: `${discountPercent}% OFF${maxCapPkr > 0 ? ` (Cap Rs. ${maxCapPkr.toLocaleString()})` : ''}`,
+          id: `vc-${bankName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent || flatDiscountPkr}-min${minSpendPkr}`,
+          category,
+          title: `${vTitle} ${discountDisplay}`,
+          bankName,
+          discountDisplay,
           discountPercent,
+          ...(flatDiscountPkr > 0 ? { flatDiscountPkr } : {}),
           minSpendPkr,
           maxCapPkr,
           validDays: ['Everyday'],
-          validityDates: vValidity,
+          validityDates: timeline ? timeline.replace(/-/g, ' - ') : validityWindow,
           status: vStatus,
           sourceUrl,
           scrapedAt,
         });
       }
 
-      // 2) Parse Bank / Wallet tab headers (e.g. "MCB 15%", "Allied Bank" + "40%", "Easypaisa" + "Flat 10%")
+      // 2) Live Bank/Wallet voucher tab headers (active campaign tabs in Voucher Center / live sale hub)
       const combined = `${title} ${subTitle}`.trim();
-      const matchedBank = sortedBanks.find((b) => combined.toLowerCase().includes(b.toLowerCase()));
+      const matchedBank = matchBankName(combined);
       if (!matchedBank) continue;
 
       const pctMatch = combined.match(/(\d{1,2})\s*%/);
@@ -549,17 +425,17 @@ export function extractOffersFromUprHtml(html: string, sourceUrl: string, todayP
       const discountPercent = parseInt(pctMatch[1], 10);
       if (discountPercent <= 0 || discountPercent > MAX_TRUSTED_PERCENT) continue;
 
-      const cleanBankName = normalizeBankName(matchedBank);
-      const isWallet = DIGITAL_WALLETS.has(cleanBankName);
-      const isFlat = /flat/i.test(combined);
+      const isWallet = DIGITAL_WALLETS.has(matchedBank);
+      const isFlat = /\bflat\b/i.test(combined);
       const isUpto = /up\s*to/i.test(combined);
+      const prefix = isFlat ? 'Flat ' : isUpto ? 'Up to ' : '';
 
       offers.push({
-        id: `${cleanBankName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent}pct-1111`,
+        id: `tab-${matchedBank.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent}pct`,
         category: isWallet ? 'Wallet Vouchers' : 'Bank Vouchers',
-        title: `${cleanBankName} ${isFlat ? 'Flat ' : isUpto ? 'Up to ' : ''}${discountPercent}% OFF`,
-        bankName: cleanBankName,
-        discountDisplay: `${isFlat ? 'Flat ' : isUpto ? 'Up to ' : ''}${discountPercent}% OFF`,
+        title: `${matchedBank} ${prefix}${discountPercent}% OFF`,
+        bankName: matchedBank,
+        discountDisplay: `${prefix}${discountPercent}% OFF`,
         discountPercent,
         minSpendPkr: 0,
         maxCapPkr: 0,
@@ -575,121 +451,53 @@ export function extractOffersFromUprHtml(html: string, sourceUrl: string, todayP
   return offers;
 }
 
-export function parseOffersFromText(content: string, sourceUrl: string): CardOffer[] {
-  const offers: CardOffer[] = [];
-  const scrapedAt = new Date().toISOString();
-  const { pktDateStr } = getCurrentPktDate();
+function offerKey(offer: CardOffer): string {
+  const bank = offer.bankName.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return `${bank}_${offer.discountPercent}_${offer.minSpendPkr}_${offer.maxCapPkr}`;
+}
 
-  if (isExpiredTimestampPayload(content, pktDateStr)) {
-    console.log(`[EXPIRED WIDGET DISCARDED] ${sourceUrl}`);
-    return offers;
-  }
+function deduplicateOffers(offers: CardOffer[]): CardOffer[] {
+  const map = new Map<string, CardOffer>();
+  const score = (o: CardOffer): number =>
+    (o.maxCapPkr > 0 ? 2 : 0) +
+    (o.minSpendPkr > 0 ? 2 : 0) +
+    (o.status?.includes('Collectible') ? 1 : 0);
 
-  // Extract structured UPR tabs if present in HTML/JSON
-  if (content.includes('"voucherTabs":')) {
-    offers.push(...extractOffersFromUprHtml(content, sourceUrl, pktDateStr, scrapedAt));
-  }
-
-  const sortedBanks = [...KNOWN_BANKS].sort((a, b) => b.length - a.length);
-  const urlWeekday = inferWeekdayFromUrl(sourceUrl);
-
-  for (const bank of sortedBanks) {
-    const bankRegex = new RegExp(`\\b${bank.replace(/\s+/g, '\\s+')}\\b`, 'gi');
-    let bankMatch: RegExpExecArray | null;
-
-    while ((bankMatch = bankRegex.exec(content)) !== null) {
-      const startPos = Math.max(0, bankMatch.index - 80);
-      const endPos = Math.min(content.length, bankMatch.index + 320);
-      const snippet = content.slice(startPos, endPos);
-
-      const pctMatch = snippet.match(/(?:up\s*to|flat|save|get|extra|enjoy|instant)?\s*(\d{1,2})\s*%\s*(?:off|discount|cashback|instant)?/i);
-      if (!pctMatch) continue;
-      const discountPercent = parseInt(pctMatch[1], 10);
-      if (discountPercent <= 0 || discountPercent > MAX_TRUSTED_PERCENT) continue;
-
-      const maxCapPkr = extractMaxCap(snippet);
-      const { minSpendPkr, foundExplicit } = extractMinSpend(snippet);
-
-      // Require either cap/min-spend OR an explicit weekly bank day URL with off/discount wording
-      const hasDiscountContext = /%\s*off|discount|cashback|max(?:imum)?\s*cap|cap\s*rs/i.test(snippet);
-      if (maxCapPkr <= 0 && !foundExplicit && minSpendPkr <= 0 && !(urlWeekday && hasDiscountContext)) continue;
-
-      const { validityDates, validDays, isExpired, hasDateOrDay } = extractDatesAndDays(snippet, sourceUrl);
-      if (!hasDateOrDay) continue;
-      if (isExpired) {
-        console.log(`[EXPIRED OFFER DISCARDED] ${bank} ${discountPercent}% (Expired ${validityDates})`);
-        continue;
-      }
-
-      const cleanBankName = normalizeBankName(bank);
-      const id = `${cleanBankName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${discountPercent}pct-cap${maxCapPkr || minSpendPkr}`;
-
-      offers.push({
-        id,
-        category: DIGITAL_WALLETS.has(cleanBankName) ? 'Wallet Vouchers' : 'Bank Vouchers',
-        title: `${cleanBankName} ${discountPercent}% OFF`,
-        bankName: cleanBankName,
-        discountDisplay: `${discountPercent}% OFF`,
-        discountPercent,
-        minSpendPkr,
-        maxCapPkr,
-        validDays,
-        validityDates,
-        status: urlWeekday ? `Weekly (${urlWeekday})` : 'Active Campaign',
-        sourceUrl,
-        scrapedAt,
-      });
+  for (const offer of offers) {
+    const key = offerKey(offer);
+    const existing = map.get(key);
+    if (!existing || score(offer) > score(existing)) {
+      map.set(key, offer);
     }
   }
 
-  return offers;
+  return Array.from(map.values()).sort((a, b) => {
+    const diff = b.discountPercent - a.discountPercent;
+    return diff !== 0 ? diff : a.bankName.localeCompare(b.bankName);
+  });
 }
 
-async function sendNtfyNotification(
-  topic: string,
-  title: string,
-  message: string,
-  server: string = 'https://ntfy.sh'
-): Promise<boolean> {
-  try {
-    const base = (server || 'https://ntfy.sh').replace(/\/+$/, '');
-    const res = await fetch(`${base}/${topic.trim()}`, {
-      method: 'POST',
-      headers: {
-        Title: title,
-        Priority: 'high',
-        Tags: 'credit_card,shopping',
-        Markdown: 'yes',
-      },
-      body: message,
-    });
-    return res.ok;
-  } catch (err) {
-    console.error('Failed to send ntfy notification:', err);
-    return false;
-  }
+async function fetchLiveHtml(url: string): Promise<{ status: number; html: string }> {
+  const res = await fetch(url, {
+    headers: {
+      'User-Agent': MOBILE_UA,
+      Accept: 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-PK,en;q=0.9',
+    },
+  });
+  const html = await res.text();
+  return { status: res.status, html };
 }
 
 export async function runTracker(): Promise<void> {
-  console.log('=== DARAZ CARD OFFER TRACKER STARTED ===');
-
-  const ntfyTopic = process.env.NTFY_TOPIC ? process.env.NTFY_TOPIC.trim() : '';
-  const ntfyServer = (process.env.NTFY_SERVER || 'https://ntfy.sh').trim();
-  if (!ntfyTopic) {
-    console.warn('WARNING: NTFY_TOPIC environment variable is missing. Skipping notifications.');
-  }
+  console.log('=== DARAZ 100% LIVE OFFER TRACKER STARTED ===');
 
   const requireBrowser = process.env.ALLOW_DEGRADED !== '1';
-  const { pktDateStr } = getCurrentPktDate();
+  const { pktDateStr, dmyStr, nowMs } = getCurrentPktDate();
   const scrapedAt = new Date().toISOString();
 
   const sourcesPath = path.join(process.cwd(), 'sources.json');
-  let seeds: string[] = [
-    'https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center',
-    'https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/11-11-sale-2026/paymentpartners',
-    'https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/11-11-sale-2026/biggest-sale-of-the-year',
-  ];
-
+  let seeds: string[] = [DEFAULT_HOMEPAGE_URL, DEFAULT_VOUCHER_CENTER_URL];
   if (fs.existsSync(sourcesPath)) {
     try {
       const parsed = JSON.parse(fs.readFileSync(sourcesPath, 'utf8'));
@@ -697,7 +505,7 @@ export async function runTracker(): Promise<void> {
         seeds = parsed;
       }
     } catch {
-      // ignore
+      // keep defaults
     }
   }
 
@@ -711,210 +519,154 @@ export async function runTracker(): Promise<void> {
   fs.mkdirSync(stateDir, { recursive: true });
   const stateFilePath = path.join(stateDir, 'state.json');
 
+  let httpSourcesOk = 0;
   let browserPagesLoaded = 0;
-  let apiPagesLoaded = 0;
   const allExtractedOffers: CardOffer[] = [];
+  const discoveredHubQueue: string[] = [];
   const sourceHealth: { url: string; status: number; offers: number; note?: string }[] = [];
 
-  // Direct fetch of live 2026 Daraz UPR SSR pages (fast & authoritative, no 2024 ALD-Lamp cache)
-  const uprSeeds = seeds.filter((u) => u.includes('/upr/router'));
-  for (const uprUrl of uprSeeds) {
-    try {
-      const res = await fetch(uprUrl, {
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
-          Accept: 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8',
-          'Accept-Language': 'en-PK,en;q=0.9',
-        },
+  // 1) Direct HTTP live discovery: Homepage + Voucher Center + 2-hop discovered campaign/payment hubs
+  const homepageUrl = seeds.find((u) => /https?:\/\/(?:www\.)?daraz\.pk\/?$/i.test(u)) || DEFAULT_HOMEPAGE_URL;
+  const vcUrl = seeds.find((u) => u.includes('voucher/center')) || DEFAULT_VOUCHER_CENTER_URL;
+
+  try {
+    const { status, html } = await fetchLiveHtml(homepageUrl);
+    if (status >= 200 && status < 400 && html.length > 10000) {
+      httpSourcesOk++;
+      const { offers, discoveredHubs } = extractHomepageLivePromos(html, dmyStr, scrapedAt);
+      allExtractedOffers.push(...offers);
+      discoveredHubQueue.push(...discoveredHubs);
+      sourceHealth.push({
+        url: homepageUrl,
+        status,
+        offers: offers.length,
+        note: `Live Homepage (${discoveredHubs.length} hub(s))`,
       });
-      if (res.ok) {
-        const html = await res.text();
-        const uprOffers = extractOffersFromUprHtml(html, uprUrl, pktDateStr, scrapedAt);
-        allExtractedOffers.push(...uprOffers);
-        apiPagesLoaded += 1;
-        sourceHealth.push({
-          url: uprUrl,
-          status: res.status,
-          offers: uprOffers.length,
-          note: 'Live 2026 UPR SSR',
-        });
-        console.log(`[LIVE UPR API] Extracted ${uprOffers.length} offer(s) from ${uprUrl.split('wh_pid=').pop()}`);
-      } else {
-        sourceHealth.push({ url: uprUrl, status: res.status, offers: 0, note: 'HTTP non-OK' });
+      console.log(`[LIVE HOMEPAGE] ${offers.length} bank/wallet banner(s), ${discoveredHubs.length} hub(s)`);
+    } else {
+      sourceHealth.push({ url: homepageUrl, status, offers: 0, note: 'Unexpected response' });
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    sourceHealth.push({ url: homepageUrl, status: 0, offers: 0, note: msg.slice(0, 80) });
+  }
+
+  try {
+    const { status, html } = await fetchLiveHtml(vcUrl);
+    if (status >= 200 && status < 400 && html.length > 10000) {
+      httpSourcesOk++;
+      const vcOffers = extractOffersFromUprHtml(html, vcUrl, pktDateStr, nowMs, scrapedAt);
+      allExtractedOffers.push(...vcOffers);
+      sourceHealth.push({ url: vcUrl, status, offers: vcOffers.length, note: 'Live Voucher Center SSR' });
+      console.log(`[LIVE VOUCHER CENTER] ${vcOffers.length} live offer(s)`);
+    } else {
+      sourceHealth.push({ url: vcUrl, status, offers: 0, note: 'Unexpected response' });
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    sourceHealth.push({ url: vcUrl, status: 0, offers: 0, note: msg.slice(0, 80) });
+  }
+
+  const crawledHubs = new Set<string>();
+  while (discoveredHubQueue.length > 0 && crawledHubs.size < 12) {
+    const hubUrl = discoveredHubQueue.shift()!;
+    if (crawledHubs.has(hubUrl) || hubUrl === vcUrl) continue;
+    crawledHubs.add(hubUrl);
+
+    try {
+      const { status, html } = await fetchLiveHtml(hubUrl);
+      if (status >= 200 && status < 400 && html.length > 10000) {
+        httpSourcesOk++;
+        const hubOffers = extractOffersFromUprHtml(html, hubUrl, pktDateStr, nowMs, scrapedAt);
+        allExtractedOffers.push(...hubOffers);
+        sourceHealth.push({ url: hubUrl, status, offers: hubOffers.length, note: 'Live Discovered Hub' });
+
+        if (hubUrl.toLowerCase().includes('/megascenario/')) {
+          const unesc = html.replace(/\\u0026/g, '&').replace(/\\\//g, '/').replace(/&amp;/g, '&');
+          for (const m of unesc.matchAll(/wh_pid=([^&"'<> ]+)/g)) {
+            let subPid = m[1];
+            try {
+              subPid = decodeURIComponent(subPid);
+            } catch {
+              // ignore
+            }
+            const low = subPid.toLowerCase();
+            if (
+              low.includes('paymentpartner') ||
+              low.includes('payment-promotions') ||
+              low.includes('bank-discount') ||
+              low.includes('voucher')
+            ) {
+              const subUrl = `https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=${subPid}`;
+              if (!crawledHubs.has(subUrl) && subUrl !== vcUrl) {
+                discoveredHubQueue.push(subUrl);
+              }
+            }
+          }
+        }
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.warn(`Live UPR fetch warning for ${uprUrl}:`, msg);
-      sourceHealth.push({ url: uprUrl, status: 0, offers: 0, note: msg.slice(0, 80) });
+      sourceHealth.push({ url: hubUrl, status: 0, offers: 0, note: msg.slice(0, 80) });
     }
   }
 
-  // Merge non-expired recurring weekly partner days & Voucher Max tiers from cards_config.json (if present)
-  const cardsConfigPath = path.join(process.cwd(), 'cards_config.json');
-  if (fs.existsSync(cardsConfigPath)) {
-    try {
-      const cfgRaw = JSON.parse(fs.readFileSync(cardsConfigPath, 'utf8'));
-      const dayNamesSun0 = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const weeklyUrlMap: Record<string, string> = {
-        Wednesday: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday',
-        Friday: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/meezan-bank-all-deals-page',
-        Saturday: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday',
-        Sunday: 'https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals',
-      };
-      for (const item of cfgRaw.activeOffers || []) {
-        if (!item.recurringWeekly && item.section !== 'Voucher Max') continue;
-        const win = String(item.validityWindow || '');
-        const end = offerEndDate(win);
-        if (end && end < pktDateStr) continue;
-
-        const activeDays: number[] = Array.isArray(item.activeDays) ? item.activeDays : [];
-        const validDays =
-          activeDays.length > 0 && activeDays.length < 7
-            ? activeDays.map((d) => dayNamesSun0[d]).filter(Boolean)
-            : ['Everyday'];
-        const primaryDay = validDays[0] || 'Everyday';
-        const capMatch = String(item.maxCapText || '').match(/Rs\.?\s*([0-9,]+)/i);
-        const maxCapPkr = capMatch ? parseInt(capMatch[1].replace(/,/g, ''), 10) : 0;
-
-        let bankName = String(item.issuer || '');
-        if (item.section === 'Voucher Max') {
-          bankName = 'Daraz Voucher Max';
-        } else {
-          const cleanMatch = KNOWN_BANKS.find((b) => bankName.toLowerCase().includes(b.toLowerCase()));
-          if (cleanMatch) bankName = normalizeBankName(cleanMatch);
-        }
-
-        allExtractedOffers.push({
-          id: String(item.id),
-          category: item.section === 'Voucher Max' ? 'Voucher Max' : 'Bank Vouchers',
-          title: String(item.issuer),
-          bankName,
-          discountDisplay:
-            item.section === 'Voucher Max' && String(item.issuer).includes('Flat')
-              ? String(item.maxCapText || '').replace(/\s*\([^)]*\)/, '')
-              : `${item.discountPercent}% OFF`,
-          discountPercent: Number(item.discountPercent) || 0,
-          minSpendPkr: Number(item.minSpendPkr) || 0,
-          maxCapPkr,
-          validDays,
-          validityDates: win || String(item.schedule || 'Active Campaign'),
-          status: item.recurringWeekly ? `Weekly (${primaryDay})` : 'Active / Collectible',
-          sourceUrl:
-            item.section === 'Voucher Max'
-              ? 'https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center'
-              : weeklyUrlMap[primaryDay] || uprSeeds[0] || '',
-          scrapedAt,
-        });
-      }
-    } catch (err) {
-      console.warn('Warning reading cards_config.json:', err);
-    }
-  }
-
+  // 2) Headless Playwright mobile verification + screenshots (Homepage + Voucher Center + discovered hubs)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let browser: any;
-  let browserLaunchError: string | null = null;
-  let mobileDeviceConfig: Record<string, unknown> = {};
   try {
     const pwModuleName = 'playwright';
     const pw = await import(pwModuleName);
-    mobileDeviceConfig = pw.devices['Pixel 7'] || {};
+    const mobileDeviceConfig = pw.devices['Pixel 7'] || {};
     browser = await pw.chromium.launch({ headless: true });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    browserLaunchError = msg;
-    console.error(`Playwright Chromium could not be launched: ${msg.slice(0, 200)}`);
-  }
 
-  if (!browser && requireBrowser) {
-    console.error(
-      'CRITICAL: the browser never started, so the voucher-center pages were not scanned. ' +
-        'Refusing to rewrite state without browser verification (set ALLOW_DEGRADED=1 to override).'
-    );
-    if (ntfyTopic) {
-      await sendNtfyNotification(
-        ntfyTopic,
-        'Daraz Offer Tracker Alert',
-        `Scanner could not start its browser (${browserLaunchError?.slice(0, 120) || 'unknown error'}). Offers were NOT refreshed — check the app manually.`,
-        ntfyServer
-      );
-    }
-    process.exitCode = 1;
-    return;
-  }
-
-  if (browser) {
     const context = await browser.newContext({
       ...mobileDeviceConfig,
       locale: 'en-PK',
       timezoneId: 'Asia/Karachi',
     });
 
-    const urlQueue: string[] = [...seeds];
-    const visitedUrls = new Set<string>();
+    const browserUrls = Array.from(new Set([homepageUrl, vcUrl, ...Array.from(crawledHubs)])).slice(0, 10);
+    let pageIndex = 0;
 
-    while (urlQueue.length > 0 && visitedUrls.size < 20) {
-      const currentUrl = urlQueue.shift()!;
-      if (visitedUrls.has(currentUrl)) continue;
-      visitedUrls.add(currentUrl);
-
-      const pageIndex = visitedUrls.size;
-      console.log(`\n[PAGE ${pageIndex}] Visiting: ${currentUrl}`);
-
+    for (const currentUrl of browserUrls) {
+      pageIndex++;
+      console.log(`\n[PLAYWRIGHT ${pageIndex}/${browserUrls.length}] Visiting: ${currentUrl}`);
       const page = await context.newPage();
-      const jsonInterceptedTexts: string[] = [];
 
-      page.on('response', async (response: { headers: () => Record<string, string>; url: () => string; text: () => Promise<string> }) => {
-        try {
-          const contentType = response.headers()['content-type'] || '';
-          const url = response.url();
-          if (
-            contentType.includes('json') ||
-            contentType.includes('javascript') ||
-            url.includes('lamp') ||
-            url.includes('callback') ||
-            url.includes('kangaroo') ||
-            url.includes('voucher')
-          ) {
-            const bodyText = await response.text();
-            if (isExpiredTimestampPayload(bodyText, pktDateStr)) {
-              return;
-            }
-            if (/voucher|coupon|discount|% off|capped|min spend|bank|pkr|rs\./i.test(bodyText)) {
-              const cleanedText = bodyText
-                .replace(/<[^>]+>/g, ' ')
-                .replace(/\\n/g, ' ')
-                .replace(/\\t/g, ' ')
-                .replace(/&nbsp;/g, ' ')
-                .replace(/&amp;/g, '&')
-                .replace(/\\"/g, '"');
-              jsonInterceptedTexts.push(cleanedText);
-            }
+      page.on(
+        'response',
+        async (response: { headers: () => Record<string, string>; url: () => string; text: () => Promise<string> }) => {
+          try {
+            const ct = response.headers()['content-type'] || '';
+            if (!ct.includes('json') && !ct.includes('javascript')) return;
+            const body = await response.text();
+            if (!body.includes('"voucherTabs":')) return;
+            if (isExpiredTimestampPayload(body, pktDateStr)) return;
+            const liveNetOffers = extractOffersFromUprHtml(body, currentUrl, pktDateStr, nowMs, scrapedAt);
+            allExtractedOffers.push(...liveNetOffers);
+          } catch {
+            // ignore closed response
           }
-        } catch {
-          // ignore closed response errors
         }
-      });
+      );
 
       let status = 0;
       try {
         let res;
         try {
-          res = await page.goto(currentUrl, { waitUntil: 'networkidle', timeout: 14000 });
+          res = await page.goto(currentUrl, { waitUntil: 'networkidle', timeout: 15000 });
         } catch {
           res = await page.goto(currentUrl, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(() => null);
         }
         status = res ? res.status() : 0;
         if (status >= 200 && status < 400) browserPagesLoaded++;
-        else console.warn(`[PAGE NON-2XX] ${currentUrl} returned ${status}`);
 
-        for (let s = 0; s < 4; s++) {
-          await page.evaluate(() => window.scrollBy(0, 500));
-          await page.waitForTimeout(350);
+        for (let s = 0; s < 3; s++) {
+          await page.evaluate(() => window.scrollBy(0, 450));
+          await page.waitForTimeout(300);
         }
-
-        await page.waitForTimeout(2500);
+        await page.waitForTimeout(2000);
 
         if (isGithubActions) {
           const screenshotPath = path.join(artifactsDir, `page-${pageIndex}.png`);
@@ -922,198 +674,63 @@ export async function runTracker(): Promise<void> {
         }
 
         const rawHtml = await page.content();
-        const pageDomText = await page.evaluate(() => document.body.innerText || '');
-
         const pageOffers: CardOffer[] = [];
-        if (rawHtml.includes('"voucherTabs":')) {
-          pageOffers.push(...extractOffersFromUprHtml(rawHtml, currentUrl, pktDateStr, scrapedAt));
+        if (currentUrl === homepageUrl) {
+          pageOffers.push(...extractHomepageLivePromos(rawHtml, dmyStr, scrapedAt).offers);
         }
-
-        const fullCombinedText = `${pageDomText}\n${jsonInterceptedTexts.join('\n')}`;
-        pageOffers.push(...parseOffersFromText(fullCombinedText, currentUrl));
-
-        console.log(`[PAGE LOG] URL: ${currentUrl} | Status: ${status} | Offers found: ${pageOffers.length}`);
+        if (rawHtml.includes('"voucherTabs":')) {
+          pageOffers.push(...extractOffersFromUprHtml(rawHtml, currentUrl, pktDateStr, nowMs, scrapedAt));
+        }
         allExtractedOffers.push(...pageOffers);
         sourceHealth.push({ url: currentUrl, status, offers: pageOffers.length, note: 'Playwright' });
       } catch (err: unknown) {
-        const errorMsg = err instanceof Error ? err.message : String(err);
-        console.error(`[PAGE FAILED] URL: ${currentUrl} | Error: ${errorMsg}`);
-        sourceHealth.push({ url: currentUrl, status, offers: 0, note: errorMsg.slice(0, 80) });
+        const msg = err instanceof Error ? err.message : String(err);
+        sourceHealth.push({ url: currentUrl, status, offers: 0, note: `Playwright err: ${msg.slice(0, 60)}` });
       } finally {
         await page.close();
       }
     }
 
     await browser.close();
-  }
-
-  // Deduplicate offers using canonical key; keep higher richness / later source details
-  const offerMap = new Map<string, CardOffer>();
-  const completeness = (o: CardOffer): number => {
-    let score = 0;
-    if (offerEndDate(o.validityDates)) score += 3;
-    if (o.minSpendPkr > 0) score += 2;
-    if (o.maxCapPkr > 0) score += 2;
-    if (o.validDays.length === 1 && o.validDays[0] !== 'Everyday') score += 1;
-    if (o.sourceUrl.includes('/upr/router')) score += 2;
-    return score;
-  };
-  for (const offer of allExtractedOffers) {
-    const key = offerKey(offer);
-    const existing = offerMap.get(key);
-    if (!existing || completeness(offer) > completeness(existing)) {
-      offerMap.set(key, offer);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn(`Playwright unavailable: ${msg.slice(0, 160)}`);
+    if (requireBrowser) {
+      console.error('CRITICAL: Playwright required but failed to start. State will NOT be overwritten.');
+      process.exitCode = 1;
+      return;
     }
   }
-  const deduplicatedOffers = Array.from(offerMap.values()).sort((a, b) => {
-    const pctDiff = b.discountPercent - a.discountPercent;
-    if (pctDiff !== 0) return pctDiff;
-    return a.bankName.localeCompare(b.bankName);
-  });
 
-  const pagesLoaded = browserPagesLoaded + apiPagesLoaded;
-  console.log(`\n=== SOURCE HEALTH ===`);
-  for (const source of sourceHealth) {
-    const flag = source.offers === 0 ? 'EMPTY' : 'ok';
-    const status = source.status ? String(source.status) : '-';
-    console.log(
-      `[${flag.padEnd(5)}] ${status} | ${String(source.offers).padStart(2)} offer(s) | ${source.url}${source.note ? ` (${source.note})` : ''}`
+  console.log('\n=== SOURCE HEALTH ===');
+  for (const s of sourceHealth) {
+    console.log(`[${s.status || '-'}] ${String(s.offers).padStart(2)} offer(s) | ${s.url} (${s.note || ''})`);
+  }
+
+  // Validate reachability (NOT offer count — 0 offers on a quiet day is a valid truthful snapshot!)
+  const reachabilityOk = requireBrowser ? browserPagesLoaded >= 2 : httpSourcesOk >= 2;
+  if (!reachabilityOk) {
+    console.error(
+      `CRITICAL: Daraz live entry points were unreachable (httpOk=${httpSourcesOk}, browserOk=${browserPagesLoaded}). Preserving prior state.`
     );
-  }
-
-  console.log(`\n=== SCRAPE COMPLETE ===`);
-  console.log(`Browser pages loaded: ${browserPagesLoaded} | Live UPR sources: ${apiPagesLoaded}`);
-  console.log(`Total verified unique offers extracted: ${deduplicatedOffers.length}`);
-
-  if (browserPagesLoaded === 0 && requireBrowser) {
-    console.error('CRITICAL: no browser page loaded, so the voucher center was not scanned. State will NOT be overwritten.');
-    if (ntfyTopic) {
-      await sendNtfyNotification(
-        ntfyTopic,
-        'Daraz Offer Tracker Alert',
-        'Could not verify Daraz offers today — check the app manually',
-        ntfyServer
-      );
-    }
     process.exitCode = 1;
     return;
   }
 
-  const minimumSources = requireBrowser ? 2 : 1;
-  if (pagesLoaded < minimumSources || deduplicatedOffers.length === 0) {
-    console.warn('CRITICAL: Scrape failed validation (too few sources or 0 offers). State will NOT be overwritten.');
-    if (ntfyTopic) {
-      await sendNtfyNotification(
-        ntfyTopic,
-        'Daraz Offer Tracker Alert',
-        'Could not verify Daraz offers today — check the app manually',
-        ntfyServer
-      );
-    }
-    return;
-  }
-
-  let previousState: StateData = {
-    lastDigestDatePKT: '',
-    offers: [],
-    scrapedAt: '',
-  };
-
-  if (fs.existsSync(stateFilePath)) {
-    try {
-      const parsed = JSON.parse(fs.readFileSync(stateFilePath, 'utf8'));
-      previousState = {
-        lastDigestDatePKT: parsed.lastDigestDatePKT || '',
-        offers: Array.isArray(parsed.offers) ? parsed.offers : [],
-        scrapedAt: parsed.scrapedAt || parsed.updatedAt || '',
-      };
-    } catch {
-      // ignore read error
-    }
-  }
-
-  const isFirstRunToday = previousState.lastDigestDatePKT !== pktDateStr;
-  const freshKeys = new Set(deduplicatedOffers.map(offerKey));
-  const mergedOfferMap = new Map<string, CardOffer>();
-  const retired: string[] = [];
-
-  for (const prevOffer of previousState.offers || []) {
-    const reason = retirementReason(prevOffer, freshKeys, pktDateStr, seeds);
-    if (reason) {
-      retired.push(`${prevOffer.bankName} ${prevOffer.discountPercent}% — ${reason}`);
-      continue;
-    }
-    mergedOfferMap.set(offerKey(prevOffer), prevOffer);
-  }
-  for (const newOffer of deduplicatedOffers) {
-    mergedOfferMap.set(offerKey(newOffer), newOffer);
-  }
-
-  const finalMergedOffers = Array.from(mergedOfferMap.values()).sort((a, b) => {
-    const pctDiff = b.discountPercent - a.discountPercent;
-    if (pctDiff !== 0) return pctDiff;
-    return a.bankName.localeCompare(b.bankName);
-  });
-
-  if (retired.length > 0) {
-    console.log(`Retired ${retired.length} stale offer(s):`);
-    for (const line of retired) console.log(`  - ${line}`);
-  }
-
-  const previousOfferKeys = new Set((previousState.offers || []).map(offerKey));
-  const newOffers = finalMergedOffers.filter((o) => !previousOfferKeys.has(offerKey(o)));
-
-  if (ntfyTopic) {
-    if (isFirstRunToday) {
-      console.log(`Sending Daily Digest for ${pktDateStr}...`);
-      const lines = finalMergedOffers.map((o) => {
-        const cat = o.category ? `[${o.category}] ` : '';
-        const disp = o.discountDisplay || `${o.discountPercent}% OFF`;
-        const stat = o.status ? ` (${o.status})` : '';
-        const spendTxt = o.minSpendPkr > 0 ? `Min Spend: Rs. ${o.minSpendPkr.toLocaleString()} | ` : '';
-        return `• ${cat}**${o.bankName}**: ${disp} | ${spendTxt}Validity: ${o.validityDates}${stat}`;
-      });
-      const digestMessage = [
-        `### 🟢 Daraz Pakistan Vouchers Daily Digest (${pktDateStr})`,
-        `Total Verified Active & Scheduled Offers: ${finalMergedOffers.length}`,
-        '',
-        ...lines,
-        '',
-        '👉 Open Daraz Voucher Center to collect active vouchers',
-      ].join('\n');
-
-      await sendNtfyNotification(
-        ntfyTopic,
-        `Daraz Vouchers Daily Digest (${finalMergedOffers.length} Offers) - ${pktDateStr}`,
-        digestMessage,
-        ntfyServer
-      );
-    } else if (newOffers.length > 0) {
-      console.log(`Sending Intraday Alert for ${newOffers.length} new offer(s)...`);
-      const lines = newOffers.map((o) => {
-        const cat = o.category ? `[${o.category}] ` : '';
-        const disp = o.discountDisplay || `${o.discountPercent}% OFF`;
-        const stat = o.status ? ` (${o.status})` : '';
-        return `• ${cat}**${o.bankName}**: ${disp} | Validity: ${o.validityDates}${stat}`;
-      });
-      const alertMessage = [`### ⚡ New Daraz Voucher(s) Discovered!`, '', ...lines].join('\n');
-
-      await sendNtfyNotification(ntfyTopic, `⚡ New Daraz Voucher Alert (${pktDateStr})`, alertMessage, ntfyServer);
-    } else {
-      console.log('No new offers and daily digest already sent today. No ntfy message required.');
-    }
-  }
+  // 100% live-only snapshot: NEVER carry forward unverified or expired offers from prior runs
+  const finalLiveOffers = deduplicateOffers(allExtractedOffers);
+  console.log(`\n=== SCRAPE COMPLETE: ${finalLiveOffers.length} 100% LIVE VERIFIED OFFER(S) ===`);
 
   const newState: StateData = {
-    lastDigestDatePKT: isFirstRunToday ? pktDateStr : previousState.lastDigestDatePKT || pktDateStr,
-    source: 'Daraz Live UPR Voucher Center & Payment Partner Hubs',
-    categories: ['Bank Vouchers', 'Wallet Vouchers', 'Choice Voucher', 'Voucher Max'],
-    offers: finalMergedOffers,
+    lastDigestDatePKT: pktDateStr,
+    source: 'Daraz Live Homepage & Voucher Center (100% Live Verified)',
+    categories: ['Bank Vouchers', 'Wallet Vouchers', 'Choice Voucher', 'Voucher Max', 'Platform Vouchers'],
+    offers: finalLiveOffers,
     scrapedAt: new Date().toISOString(),
   };
 
-  fs.writeFileSync(stateFilePath, JSON.stringify(newState, null, 2));
-  console.log(`Saved updated state to data/state.json (${finalMergedOffers.length} total vouchers)`);
+  fs.writeFileSync(stateFilePath, JSON.stringify(newState, null, 2) + '\n');
+  console.log(`Saved fresh live state to data/state.json (${finalLiveOffers.length} live offer(s))`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('tracker.ts')) {

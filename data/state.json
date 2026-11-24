@@ -1,137 +1,36 @@
 {
   "lastDigestDatePKT": "2026-11-24",
-  "source": "Daraz Live UPR Voucher Center & Payment Partner Hubs",
+  "source": "Daraz Live Homepage & Voucher Center (100% Live Verified)",
   "categories": [
     "Bank Vouchers",
     "Wallet Vouchers",
     "Choice Voucher",
-    "Voucher Max"
+    "Voucher Max",
+    "Platform Vouchers"
   ],
   "offers": [
     {
-      "id": "askari-sat-weekly",
+      "id": "hp-unionpay-12pct",
       "category": "Bank Vouchers",
-      "title": "Askari Bank (Askari Saturday)",
-      "bankName": "Askari Bank",
-      "discountDisplay": "10% OFF",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapPkr": 1000,
-      "validDays": [
-        "Saturday"
-      ],
-      "validityDates": "01/11/2026 - 31/12/2026",
-      "status": "Weekly (Saturday)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/askarisaturday",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
-    },
-    {
-      "id": "hbl-wed-weekly",
-      "category": "Bank Vouchers",
-      "title": "HBL Debit/Credit Card (Wednesday)",
-      "bankName": "HBL Bank",
-      "discountDisplay": "10% OFF",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapPkr": 900,
-      "validDays": [
-        "Wednesday"
-      ],
-      "validityDates": "01/11/2026 - 31/12/2026",
-      "status": "Weekly (Wednesday)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/hblwednesday",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
-    },
-    {
-      "id": "meezan-fri-weekly",
-      "category": "Bank Vouchers",
-      "title": "Meezan Bank (Meezan Fridays)",
-      "bankName": "Meezan Bank",
-      "discountDisplay": "10% OFF",
-      "discountPercent": 10,
+      "title": "Unionpay 12%",
+      "bankName": "UnionPay",
+      "discountDisplay": "12% OFF",
+      "discountPercent": 12,
       "minSpendPkr": 0,
       "maxCapPkr": 0,
       "validDays": [
-        "Friday"
-      ],
-      "validityDates": "01/11/2026 - 31/12/2026",
-      "status": "Weekly (Friday)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/meezan-bank-all-deals-page",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
-    },
-    {
-      "id": "scb-sun-weekly",
-      "category": "Bank Vouchers",
-      "title": "Standard Chartered (SCB Sunday)",
-      "bankName": "Standard Chartered",
-      "discountDisplay": "10% OFF",
-      "discountPercent": 10,
-      "minSpendPkr": 0,
-      "maxCapPkr": 0,
-      "validDays": [
-        "Sunday"
-      ],
-      "validityDates": "01/11/2026 - 31/12/2026",
-      "status": "Weekly (Sunday)",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/daraz/channel/pk/payment-promotions/scb-sunday-all-deals",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
-    },
-    {
-      "id": "vmax-1100",
-      "category": "Voucher Max",
-      "title": "Daraz Voucher Max (Flat Rs. 1,100 OFF)",
-      "bankName": "Daraz Voucher Max",
-      "discountDisplay": "Flat Rs. 1,100 Off",
-      "discountPercent": 6,
-      "minSpendPkr": 19999,
-      "maxCapPkr": 1100,
-      "validDays": [
         "Everyday"
       ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Active / Collectible",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
+      "validityDates": "Active Today (24/11/2026)",
+      "status": "Live on Daraz Homepage",
+      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/payment-promotions/union-pay",
+      "scrapedAt": "2026-11-24T17:46:10.049Z"
     },
     {
-      "id": "vmax-850",
-      "category": "Voucher Max",
-      "title": "Daraz Voucher Max (Flat Rs. 850 OFF)",
-      "bankName": "Daraz Voucher Max",
-      "discountDisplay": "Flat Rs. 850 Off",
-      "discountPercent": 6,
-      "minSpendPkr": 14999,
-      "maxCapPkr": 850,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Active / Collectible",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
-    },
-    {
-      "id": "vmax-5pct-600",
-      "category": "Voucher Max",
-      "title": "Daraz Voucher Max (5% OFF)",
-      "bankName": "Daraz Voucher Max",
-      "discountDisplay": "5% OFF",
-      "discountPercent": 5,
-      "minSpendPkr": 9999,
-      "maxCapPkr": 600,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Active / Collectible",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
-    },
-    {
-      "id": "upr-voucher-choicevoucher-4pct-min999",
+      "id": "vc-choicevoucher-4-min999",
       "category": "Choice Voucher",
-      "title": "CHOICE Voucher 4% OFF",
-      "bankName": "Daraz Choice Upsized",
+      "title": "CHOICE Voucher 4% OFF (Cap Rs. 80)",
+      "bankName": "CHOICE Voucher",
       "discountDisplay": "4% OFF (Cap Rs. 80)",
       "discountPercent": 4,
       "minSpendPkr": 999,
@@ -140,44 +39,10 @@
         "Everyday"
       ],
       "validityDates": "22/11/2026 - 26/11/2026",
-      "status": "Active / Collectible",
+      "status": "Collectible Now",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
-    },
-    {
-      "id": "vmax-4pct-400",
-      "category": "Voucher Max",
-      "title": "Daraz Voucher Max (4% OFF)",
-      "bankName": "Daraz Voucher Max",
-      "discountDisplay": "4% OFF",
-      "discountPercent": 4,
-      "minSpendPkr": 4000,
-      "maxCapPkr": 400,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Active / Collectible",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
-    },
-    {
-      "id": "vmax-4pct-180",
-      "category": "Voucher Max",
-      "title": "Daraz Voucher Max (4% OFF)",
-      "bankName": "Daraz Voucher Max",
-      "discountDisplay": "4% OFF",
-      "discountPercent": 4,
-      "minSpendPkr": 499,
-      "maxCapPkr": 180,
-      "validDays": [
-        "Everyday"
-      ],
-      "validityDates": "01/11/2026 - 30/11/2026",
-      "status": "Active / Collectible",
-      "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-24T17:00:53.522Z"
+      "scrapedAt": "2026-11-24T17:46:10.049Z"
     }
   ],
-  "scrapedAt": "2026-11-24T17:02:20.655Z"
+  "scrapedAt": "2026-11-24T17:46:12.852Z"
 }

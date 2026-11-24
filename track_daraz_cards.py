@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 """
-Daraz Pakistan Live Mobile App Card & Platform Voucher Tracker.
-Tracks active Bank/Wallet discounts, Choice Upsized Vouchers, and Voucher Max tiers
-from Daraz's live UPR Voucher Center / 11.11 Partner hubs and scheduled weekly bank days
-using dynamic Pakistan Standard Time (PKT, UTC+5) calendar calculations.
+Daraz Pakistan 100% Live Card, Wallet & Voucher Tracker.
+
+Architecture (Zero Hardcoded Offers):
+1. Fetches live Daraz.pk mobile homepage (https://www.daraz.pk/) to extract:
+   - Today's live bank/card/wallet hero banners (e.g. UnionPay 12%, HBL, MCB, etc.)
+   - Any currently promoted campaign hubs (/megascenario/pk/..., /payment-promotions/...)
+2. Fetches live Daraz Mobile Voucher Center (wh_pid=/lazada/channel/pk/voucher/center)
+   plus any live campaign/payment hubs linked from today's homepage.
+3. Strictly validates startTime/endTime and timeline dates against current PKT (UTC+5).
+4. NEVER falls back to hardcoded offers or expired legacy pages.
+5. Sends ONE accurate daily digest per PKT day, plus an intraday alert ONLY when a
+   genuinely new live offer appears later the same day.
 """
 
 import argparse
@@ -13,6 +21,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.error import HTTPError
+from urllib.parse import unquote
 from urllib.request import Request, urlopen
 
 PKT = timezone(timedelta(hours=5))
@@ -21,30 +30,52 @@ DEFAULT_CONFIG = BASE_DIR / "cards_config.json"
 DEFAULT_STATE = BASE_DIR / "state" / "daraz_card_state.json"
 DEFAULT_NTFY_TOPIC = "darazcardsalesRB17247365Dtqtqtqty"
 
-DARAZ_UPR_SOURCES = [
-    (
-        "Voucher Center",
-        "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-    ),
-    (
-        "11.11 Payment Partners",
-        "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/11-11-sale-2026/paymentpartners",
-    ),
-    (
-        "11.11 Biggest Sale Hub",
-        "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/11-11-sale-2026/biggest-sale-of-the-year",
-    ),
+MOBILE_UA = (
+    "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36"
+)
+
+HOMEPAGE_URL = "https://www.daraz.pk/"
+VOUCHER_CENTER_URL = (
+    "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router"
+    "?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1"
+    "&wh_pid=/lazada/channel/pk/voucher/center"
+)
+
+MAX_TRUSTED_PERCENT = 90
+
+# Ordered longest-first at match time to avoid partial collisions
+KNOWN_BANK_ALIASES = [
+    ("Standard Chartered", ["standard chartered", "scb"]),
+    ("Bank AL Habib", ["bank al habib", "al habib", "alhabib", "bahl"]),
+    ("Bank of Punjab", ["bank of punjab", "bop"]),
+    ("Bank Alfalah", ["bank alfalah", "alfalah", "bafl"]),
+    ("Allied Bank", ["allied bank", "abl"]),
+    ("Meezan Bank", ["meezan bank", "meezan"]),
+    ("Askari Bank", ["askari bank", "askari"]),
+    ("HBL Bank", ["habib bank", "hbl bank", "hbl"]),
+    ("MCB Bank", ["mcb bank", "mcb islamic", "mcb"]),
+    ("Faysal Bank", ["faysal bank", "faysal", "fbl"]),
+    ("Habib Metropolitan", ["habib metropolitan", "habibmetro", "habib metro"]),
+    ("Dubai Islamic", ["dubai islamic", "dib"]),
+    ("Al Baraka", ["al baraka", "albaraka"]),
+    ("BankIslami", ["bankislami", "bank islami"]),
+    ("Soneri Bank", ["soneri bank", "soneri"]),
+    ("JS Bank", ["js bank"]),
+    ("UBL", ["united bank", "ubl"]),
+    ("UnionPay", ["unionpay", "union pay", "union-pay"]),
+    ("Mastercard", ["mastercard", "master card"]),
+    ("PayPak", ["paypak", "pay pak"]),
+    ("Visa", ["visa card", "visa debit", "visa credit", "visa"]),
+    ("Easypaisa", ["easypaisa", "easy paisa"]),
+    ("JazzCash", ["jazzcash", "jazz cash", "jazz-cash"]),
+    ("UPaisa", ["upaisa", "u paisa", "u-paisa"]),
+    ("NayaPay", ["nayapay", "naya pay"]),
+    ("SadaPay", ["sadapay", "sada pay"]),
+    ("Zindigi", ["zindigi"]),
 ]
 
-DAY_NAMES_SUN0 = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-]
+DIGITAL_WALLETS = {"Easypaisa", "JazzCash", "UPaisa", "NayaPay", "SadaPay", "Zindigi"}
 
 
 def load_json(path):
@@ -63,9 +94,21 @@ def save_json(data, path):
     tmp.replace(p)
 
 
-def parse_upr_timestamp(val):
-    """Parse either epoch ms/sec or ISO-8601 string into epoch milliseconds."""
-    if not val:
+def fetch_html(url, timeout=20):
+    req = Request(
+        url,
+        headers={
+            "User-Agent": MOBILE_UA,
+            "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-PK,en;q=0.9",
+        },
+    )
+    with urlopen(req, timeout=timeout) as resp:
+        return resp.status, resp.read().decode("utf-8", "ignore")
+
+
+def parse_timestamp_ms(val):
+    if val is None or val == "":
         return 0
     if isinstance(val, (int, float)):
         v = int(val)
@@ -85,11 +128,10 @@ def parse_upr_timestamp(val):
         return 0
 
 
-def parse_validity_window(window_str):
-    """Parse 'DD/MM/YYYY - DD/MM/YYYY' or 'YYYY-MM-DD - YYYY-MM-DD' into (start_date, end_date)."""
-    if not window_str:
-        return None, None
-    matches = re.findall(r"(\d{1,2}/\d{1,2}/\d{4}|\d{4}-\d{2}-\d{2})", str(window_str))
+def parse_timeline_end_date(timeline_str):
+    if not timeline_str:
+        return None
+    matches = re.findall(r"(\d{1,2}/\d{1,2}/\d{4}|\d{4}-\d{2}-\d{2})", str(timeline_str))
     parsed = []
     for m in matches:
         for fmt in ("%d/%m/%Y", "%Y-%m-%d"):
@@ -98,15 +140,21 @@ def parse_validity_window(window_str):
                 break
             except ValueError:
                 continue
-    if len(parsed) >= 2:
-        return parsed[0], parsed[-1]
-    if len(parsed) == 1:
-        return None, parsed[0]
-    return None, None
+    return parsed[-1] if parsed else None
+
+
+def match_bank_name(text):
+    if not text:
+        return None
+    low = text.lower()
+    for canonical, aliases in KNOWN_BANK_ALIASES:
+        for alias in sorted(aliases, key=len, reverse=True):
+            if re.search(rf"(?<![a-z0-9]){re.escape(alias)}(?![a-z0-9])", low):
+                return canonical
+    return None
 
 
 def extract_json_array_after(text, marker):
-    """Extract balanced JSON array immediately following marker (e.g. '\"voucherTabs\":')."""
     results = []
     start_search = 0
     while True:
@@ -140,9 +188,8 @@ def extract_json_array_after(text, marker):
                         end_idx = pos + 1
                         break
         if end_idx != -1:
-            snippet = text[arr_start:end_idx]
             try:
-                parsed = json.loads(snippet)
+                parsed = json.loads(text[arr_start:end_idx])
                 if isinstance(parsed, list):
                     results.append(parsed)
             except Exception:
@@ -153,143 +200,246 @@ def extract_json_array_after(text, marker):
     return results
 
 
-def fetch_live_daraz_upr_tabs(now_pkt):
-    """Fetch Daraz's live UPR pages and return active voucherTabs verified for now_pkt."""
+def parse_homepage_live_promos(html, now_pkt):
+    """Extract live bank/card banners & active campaign/payment UPR URLs from Daraz.pk homepage."""
+    today_dmy = now_pkt.strftime("%d/%m/%Y")
+    banner_offers = []
+    discovered_upr_urls = []
+    seen_pids = set()
+
+    def register_pid(raw_url):
+        clean = raw_url.replace("\\u0026", "&").replace("\\/", "/").replace("&amp;", "&")
+        m = re.search(r"wh_pid=([^&\"'<> ]+)", clean)
+        if not m:
+            return clean
+        pid = unquote(m.group(1))
+        low_pid = pid.lower()
+        if any(k in low_pid for k in ("/megascenario/", "/payment-promotions/", "/voucher/", "paymentpartner", "bank-discount")):
+            if pid not in seen_pids and pid != "/lazada/channel/pk/voucher/center":
+                seen_pids.add(pid)
+                discovered_upr_urls.append(
+                    "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router"
+                    f"?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid={pid}"
+                )
+        return clean
+
+    # Scan homepage hero banners
+    for m in re.finditer(r'"bannerTitle":"([^"]+)"', html):
+        title = m.group(1).strip()
+        chunk = html[max(0, m.start() - 100) : min(len(html), m.end() + 650)]
+        url_m = re.search(r'"bannerUrl":"([^"]+)"', chunk)
+        raw_url = url_m.group(1) if url_m else HOMEPAGE_URL
+        clean_url = register_pid(raw_url)
+
+        low_url = clean_url.lower()
+        bank_name = match_bank_name(title) or (
+            match_bank_name(unquote(clean_url).replace("-", " "))
+            if "payment-promotions" in low_url
+            else None
+        )
+        if not bank_name and "payment-promotions" not in low_url:
+            continue
+
+        pct_m = re.search(r"(\d{1,2})\s*%", title)
+        discount_pct = int(pct_m.group(1)) if pct_m else 0
+        if discount_pct > MAX_TRUSTED_PERCENT:
+            discount_pct = 0
+
+        issuer = bank_name or title
+        is_wallet = issuer in DIGITAL_WALLETS
+        discount_display = f"{discount_pct}% OFF" if discount_pct > 0 else title
+
+        banner_offers.append({
+            "id": f"hp-{re.sub(r'[^a-z0-9]', '', issuer.lower())}-{discount_pct}pct",
+            "section": "Wallet Vouchers" if is_wallet else "Bank Vouchers",
+            "issuer": issuer,
+            "title": title,
+            "discountPercent": discount_pct,
+            "discountDisplay": discount_display,
+            "minSpendPkr": 0,
+            "maxCapPkr": 0,
+            "maxCapText": f"Live Today on Daraz Homepage ({title})",
+            "validityWindow": f"Active Today ({today_dmy})",
+            "status": "Live on Daraz Homepage",
+            "sourceUrl": clean_url,
+        })
+
+    # Also scan full homepage for any active megascenario / paymentpartners wh_pid
+    unesc = html.replace("\\u0026", "&").replace("\\/", "/").replace("&amp;", "&")
+    for m in re.finditer(r"wh_pid=([^&\"'<> ]+)", unesc):
+        register_pid(f"wh_pid={m.group(1)}")
+
+    return banner_offers, discovered_upr_urls[:8]
+
+
+def parse_upr_live_offers(html, source_url, now_pkt):
+    """Extract strictly active, non-expired bank/wallet tabs & collectible platform vouchers from a live UPR page."""
     now_ms = int(now_pkt.timestamp() * 1000)
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36"
-        ),
-        "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-PK,en;q=0.9",
-    }
-
-    verified_tabs = {}
-    sources_ok = 0
-    errors = []
-
-    for label, url in DARAZ_UPR_SOURCES:
-        req = Request(url, headers=headers)
-        try:
-            with urlopen(req, timeout=18) as resp:
-                html = resp.read().decode("utf-8", "ignore")
-                sources_ok += 1
-                tab_arrays = extract_json_array_after(html, '"voucherTabs":')
-                for arr in tab_arrays:
-                    for tab in arr:
-                        if not isinstance(tab, dict):
-                            continue
-                        title = str(tab.get("title") or "").strip()
-                        if not title:
-                            continue
-                        sub_title = str(tab.get("subTitle") or "").strip()
-                        start_ms = parse_upr_timestamp(tab.get("startTime"))
-                        end_ms = parse_upr_timestamp(tab.get("endTime"))
-                        if end_ms and end_ms < now_ms:
-                            continue
-                        if start_ms and start_ms > now_ms:
-                            continue
-                        key = title.lower()
-                        if key not in verified_tabs:
-                            verified_tabs[key] = {
-                                "title": title,
-                                "subTitle": sub_title,
-                                "source": label,
-                                "startPkt": (
-                                    datetime.fromtimestamp(start_ms / 1000, PKT).strftime("%Y-%m-%d")
-                                    if start_ms
-                                    else ""
-                                ),
-                                "endPkt": (
-                                    datetime.fromtimestamp(end_ms / 1000, PKT).strftime("%Y-%m-%d")
-                                    if end_ms
-                                    else ""
-                                ),
-                            }
-        except HTTPError as exc:
-            errors.append(f"{label}: HTTP {exc.code}")
-        except Exception as exc:
-            errors.append(f"{label}: {exc}")
-
-    return {
-        "reachable": sources_ok > 0,
-        "sources_ok": sources_ok,
-        "tab_count": len(verified_tabs),
-        "tabs": list(verified_tabs.values()),
-        "errors": errors,
-    }
-
-
-def matches_live_tab(offer, live_tabs):
-    """If live tabs are available and offer defines liveTabMatch, check at least one tab matches."""
-    patterns = offer.get("liveTabMatch")
-    if not patterns or not live_tabs:
-        return True
-    tab_titles = [t["title"].lower() for t in live_tabs]
-    for pat in patterns:
-        p = str(pat).lower().strip()
-        if any(p in title for title in tab_titles):
-            return True
-    return False
-
-
-def evaluate_active_vouchers(config, now_pkt, live_tabs):
-    """Filter non-expired vouchers active today vs dynamically scheduled upcoming dates in PKT."""
     today_date = now_pkt.date()
-    today_py = now_pkt.weekday()
-    today_sun0 = (today_py + 1) % 7
-    live_verification_active = len(live_tabs) >= 3
+    offers = []
+    live_tab_titles = []
 
-    active_today = []
-    upcoming = []
-    skipped = []
-
-    for offer in config.get("activeOffers", []):
-        start_date, end_date = parse_validity_window(offer.get("validityWindow", ""))
-        if end_date and end_date < today_date:
-            skipped.append(f"{offer['id']} (expired {end_date.isoformat()})")
-            continue
-        if start_date and start_date > today_date and not offer.get("recurringWeekly", False):
-            skipped.append(f"{offer['id']} (starts {start_date.isoformat()})")
-            continue
-
-        if live_verification_active and not matches_live_tab(offer, live_tabs):
-            skipped.append(f"{offer['id']} (not listed in live Daraz 2026 tabs)")
-            continue
-
-        days = offer.get("activeDays", [])
-        is_all_days = not days or len(days) >= 7 or today_sun0 in days
-
-        if is_all_days:
-            item = dict(offer)
-            if offer.get("recurringWeekly") and days and len(days) < 7:
-                item["schedule"] = f"Active Today ({DAY_NAMES_SUN0[today_sun0]} {today_date.strftime('%d/%m/%Y')})"
-            active_today.append(item)
-        else:
-            # Compute exact next calendar date in PKT
-            deltas = []
-            for d in days:
-                delta = (int(d) - today_sun0) % 7
-                if delta == 0:
-                    delta = 7
-                deltas.append((delta, int(d)))
-            next_delta, next_day_idx = min(deltas, key=lambda x: x[0])
-            next_date = today_date + timedelta(days=next_delta)
-            if end_date and next_date > end_date:
-                skipped.append(f"{offer['id']} (next occurrence {next_date.isoformat()} past {end_date.isoformat()})")
+    for arr in extract_json_array_after(html, '"voucherTabs":'):
+        for tab in arr:
+            if not isinstance(tab, dict):
+                continue
+            title = str(tab.get("title") or "").strip()
+            sub_title = str(tab.get("subTitle") or "").strip()
+            if not title:
                 continue
 
-            day_name = DAY_NAMES_SUN0[next_day_idx]
-            dynamic_schedule = f"{day_name} ({next_date.strftime('%d/%m/%Y')})"
-            item = dict(offer)
-            item["schedule"] = dynamic_schedule
-            item["nextDatePkt"] = next_date.isoformat()
-            item["daysUntil"] = next_delta
-            upcoming.append(item)
+            start_ms = parse_timestamp_ms(tab.get("startTime"))
+            end_ms = parse_timestamp_ms(tab.get("endTime"))
+            if end_ms and end_ms < now_ms:
+                continue
+            if start_ms and start_ms > now_ms:
+                continue
 
-    upcoming.sort(key=lambda x: (x.get("daysUntil", 99), -int(x.get("discountPercent", 0))))
-    return active_today, upcoming, skipped
+            live_tab_titles.append(title)
+            start_str = datetime.fromtimestamp(start_ms / 1000, PKT).strftime("%d/%m/%Y") if start_ms else ""
+            end_str = datetime.fromtimestamp(end_ms / 1000, PKT).strftime("%d/%m/%Y") if end_ms else ""
+            tab_window = f"{start_str} - {end_str}" if (start_str and end_str) else f"Active ({now_pkt.strftime('%d/%m/%Y')})"
+
+            # 1) Real collectible voucher cards inside this tab (e.g. Choice Voucher 4% OFF, Voucher Max, etc.)
+            for v in tab.get("voucher") or []:
+                if not isinstance(v, dict):
+                    continue
+                v_end_ms = parse_timestamp_ms(v.get("endTime"))
+                if v_end_ms and v_end_ms < now_ms:
+                    continue
+                timeline = str(v.get("timeline") or (v.get("voucherLegacyInfo") or {}).get("timelineNew") or "").strip()
+                tl_end = parse_timeline_end_date(timeline)
+                if tl_end and tl_end < today_date:
+                    continue
+
+                legacy = v.get("voucherLegacyInfo") if isinstance(v.get("voucherLegacyInfo"), dict) else {}
+                val_str = str(v.get("value") or v.get("discountValue") or "").strip()
+                pct_m = re.search(r"(\d{1,2})\s*%", val_str)
+                rs_m = re.search(r"Rs\.?\s*([0-9,]+)", val_str, re.I)
+                discount_pct = int(pct_m.group(1)) if pct_m else (
+                    int(v.get("discountValue")) if isinstance(v.get("discountValue"), (int, float)) and int(v.get("discountValue")) <= MAX_TRUSTED_PERCENT else 0
+                )
+                flat_rs = int(rs_m.group(1).replace(",", "")) if rs_m else 0
+                if discount_pct <= 0 and flat_rs <= 0:
+                    continue
+
+                min_desc = str(v.get("valueDesc") or legacy.get("thresholdText") or "")
+                min_m = re.search(r"Rs\.?\s*([0-9,]+)", min_desc, re.I)
+                min_spend = int(min_m.group(1).replace(",", "")) if min_m else 0
+
+                cap_raw = str(legacy.get("capText") or legacy.get("capCopyText") or "")
+                cap_nums = re.sub(r"[^0-9]", "", cap_raw)
+                max_cap = int(cap_nums) if cap_nums else flat_rs
+
+                v_status_raw = str(v.get("recommendBenefitStatus") or legacy.get("bizStatusText") or "").upper()
+                if "RAN_OUT" in v_status_raw or "OUT" in v_status_raw:
+                    status = "Ran Out (Restocks 00:00 PKT)"
+                else:
+                    status = "Collectible Now"
+
+                v_title = str(v.get("subTitle") or v.get("title") or title).strip()
+                bank_match = match_bank_name(f"{v_title} {title}")
+                if bank_match:
+                    section = "Wallet Vouchers" if bank_match in DIGITAL_WALLETS else "Bank Vouchers"
+                    issuer = bank_match
+                elif "choice" in f"{v_title} {title}".lower():
+                    section = "Choice Voucher"
+                    issuer = v_title
+                elif "voucher max" in f"{v_title} {title}".lower():
+                    section = "Voucher Max"
+                    issuer = "Daraz Voucher Max"
+                else:
+                    section = "Platform Vouchers"
+                    issuer = v_title
+
+                if flat_rs > 0 and not pct_m:
+                    disp = f"Flat Rs. {flat_rs:,} OFF"
+                else:
+                    disp = f"{discount_pct}% OFF" + (f" (Cap Rs. {max_cap:,})" if max_cap > 0 else "")
+
+                cap_text = f"Cap Rs. {max_cap:,}" if max_cap > 0 else "See App T&C"
+                offers.append({
+                    "id": f"vc-{re.sub(r'[^a-z0-9]', '', issuer.lower())}-{discount_pct or flat_rs}-min{min_spend}",
+                    "section": section,
+                    "issuer": issuer,
+                    "title": f"{v_title} {disp}",
+                    "discountPercent": discount_pct,
+                    "discountDisplay": disp,
+                    "minSpendPkr": min_spend,
+                    "maxCapPkr": max_cap,
+                    "maxCapText": f"{cap_text} · {status}",
+                    "validityWindow": timeline.replace("-", " - ") if timeline else tab_window,
+                    "status": status,
+                    "sourceUrl": source_url,
+                })
+
+            # 2) Live Bank/Wallet voucher tab headers (active campaign tabs in Voucher Center / live sale hub)
+            combined = f"{title} {sub_title}".strip()
+            bank_name = match_bank_name(combined)
+            if not bank_name:
+                continue
+            pct_m = re.search(r"(\d{1,2})\s*%", combined)
+            if not pct_m:
+                continue
+            discount_pct = int(pct_m.group(1))
+            if discount_pct <= 0 or discount_pct > MAX_TRUSTED_PERCENT:
+                continue
+
+            is_wallet = bank_name in DIGITAL_WALLETS
+            prefix = "Flat " if re.search(r"\bflat\b", combined, re.I) else ("Up to " if re.search(r"up\s*to", combined, re.I) else "")
+            disp = f"{prefix}{discount_pct}% OFF"
+
+            offers.append({
+                "id": f"tab-{re.sub(r'[^a-z0-9]', '', bank_name.lower())}-{discount_pct}pct",
+                "section": "Wallet Vouchers" if is_wallet else "Bank Vouchers",
+                "issuer": bank_name,
+                "title": f"{bank_name} {disp}",
+                "discountPercent": discount_pct,
+                "discountDisplay": disp,
+                "minSpendPkr": 0,
+                "maxCapPkr": 0,
+                "maxCapText": f"Live in Daraz Voucher Center ({tab_window})",
+                "validityWindow": tab_window,
+                "status": "Active in Voucher Center",
+                "sourceUrl": source_url,
+            })
+
+    return offers, live_tab_titles
+
+
+def deduplicate_offers(offers):
+    best = {}
+    for o in offers:
+        key = (
+            re.sub(r"[^a-z0-9]", "", o["issuer"].lower()),
+            int(o.get("discountPercent") or 0),
+            int(o.get("minSpendPkr") or 0),
+            int(o.get("maxCapPkr") or 0),
+        )
+        score = (
+            (2 if o.get("maxCapPkr", 0) > 0 else 0)
+            + (2 if o.get("minSpendPkr", 0) > 0 else 0)
+            + (1 if "Collectible" in str(o.get("status", "")) else 0)
+        )
+        if key not in best or score > best[key][0]:
+            best[key] = (score, o)
+    items = [v[1] for v in best.values()]
+    items.sort(key=lambda x: (-int(x.get("discountPercent") or 0), x["issuer"].lower()))
+    return items
+
+
+def offer_fingerprint(o):
+    return f"{o['section']}|{o['issuer']}|{o['discountDisplay']}|{o.get('minSpendPkr', 0)}|{o.get('maxCapPkr', 0)}"
+
+
+def format_offer_line(o):
+    parts = [o.get("maxCapText") or ""]
+    if o.get("minSpendPkr", 0) > 0:
+        parts.append(f"Min Spend Rs. {o['minSpendPkr']:,}")
+    if o.get("validityWindow"):
+        parts.append(o["validityWindow"])
+    detail = " · ".join(p for p in parts if p)
+    return f"• **{o['issuer']}**: **{o['discountDisplay']}**\n  ↳ {detail}"
 
 
 def send_ntfy(alerts, default_topic=DEFAULT_NTFY_TOPIC):
@@ -301,24 +451,19 @@ def send_ntfy(alerts, default_topic=DEFAULT_NTFY_TOPIC):
     delivered = 0
 
     for item in alerts:
-        if isinstance(item, dict):
-            raw_title = item.get("title", "Daraz Mobile App Vouchers Alert")
-            body = item.get("body", "")
-            tags = item.get("tags", "credit_card,shopping")
-        else:
-            lines = item.strip().splitlines()
-            raw_title = lines[0] if lines else "Daraz Mobile App Vouchers Alert"
-            body = "\n".join(lines[1:]) if len(lines) > 1 else item
-            tags = "credit_card,shopping"
-
+        raw_title = item.get("title", "Daraz Live Discounts Update")
+        body = item.get("body", "")
+        tags = item.get("tags", "credit_card,shopping")
+        click_url = item.get("click", "https://www.daraz.pk/voucher-center/")
         clean_title = raw_title.encode("ascii", "ignore").decode("ascii").strip()
+
         headers = {
             "Title": clean_title[:120],
             "Priority": "high",
             "Tags": tags,
             "Markdown": "yes",
-            "Click": "https://www.daraz.pk/voucher-center/",
-            "User-Agent": "daraz-card-offer-tracker/com.daraz.android",
+            "Click": click_url,
+            "User-Agent": "daraz-card-offer-tracker/live-only",
         }
         if token:
             headers["Authorization"] = f"Bearer {token}"
@@ -340,7 +485,7 @@ def send_ntfy(alerts, default_topic=DEFAULT_NTFY_TOPIC):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Track Daraz Mobile App vouchers (Bank, Voucher Max, Choice).")
+    parser = argparse.ArgumentParser(description="100% Live Daraz.pk Card, Wallet & Voucher Tracker.")
     parser.add_argument("--config", default=str(DEFAULT_CONFIG))
     parser.add_argument("--state", default=str(DEFAULT_STATE))
     parser.add_argument("--force-notify", action="store_true")
@@ -350,125 +495,165 @@ def main():
     now_pkt = datetime.now(PKT)
     pkt_date_str = now_pkt.strftime("%Y-%m-%d")
     weekday_str = now_pkt.strftime("%A")
+    time_pkt_str = now_pkt.strftime("%H:%M PKT")
 
     config = load_json(args.config)
     old_state = load_json(args.state)
 
-    upr_probe = fetch_live_daraz_upr_tabs(now_pkt)
-    live_tabs = upr_probe.get("tabs", [])
-    print(
-        f"[{now_pkt.isoformat()}] Live Daraz UPR Probe: "
-        f"reachable={upr_probe['reachable']} sources_ok={upr_probe['sources_ok']} tabs={upr_probe['tab_count']}"
-    )
-    if upr_probe.get("errors"):
-        print(f"Live probe warnings: {upr_probe['errors']}")
+    homepage_url = config.get("entryPoints", {}).get("homepage", HOMEPAGE_URL)
+    vc_url = config.get("entryPoints", {}).get("voucherCenter", VOUCHER_CENTER_URL)
 
-    active_today, upcoming, skipped = evaluate_active_vouchers(config, now_pkt, live_tabs)
-    if skipped:
-        print(f"Filtered out {len(skipped)} inactive/expired offer(s): {skipped}")
+    sources_ok = 0
+    errors = []
+    raw_offers = []
+    live_tabs = []
+    discovered_urls = []
 
+    # 1. Live Mobile Homepage (discovers live bank hero banners + active seasonal campaign hubs)
+    try:
+        st, hp_html = fetch_html(homepage_url)
+        if 200 <= st < 400 and len(hp_html) > 10000:
+            sources_ok += 1
+            hp_offers, discovered_urls = parse_homepage_live_promos(hp_html, now_pkt)
+            raw_offers.extend(hp_offers)
+            print(f"[{now_pkt.isoformat()}] Live Homepage OK: {len(hp_offers)} bank/wallet banner(s), {len(discovered_urls)} discovered promo hub(s)")
+        else:
+            errors.append(f"Homepage HTTP {st}")
+    except Exception as exc:
+        errors.append(f"Homepage: {exc}")
+
+    # 2. Live Mobile Voucher Center
+    try:
+        st, vc_html = fetch_html(vc_url)
+        if 200 <= st < 400 and len(vc_html) > 10000:
+            sources_ok += 1
+            vc_offers, vc_tabs = parse_upr_live_offers(vc_html, vc_url, now_pkt)
+            raw_offers.extend(vc_offers)
+            live_tabs.extend(vc_tabs)
+            print(f"[{now_pkt.isoformat()}] Live Voucher Center OK: {len(vc_offers)} live offer(s), tabs={vc_tabs}")
+        else:
+            errors.append(f"Voucher Center HTTP {st}")
+    except Exception as exc:
+        errors.append(f"Voucher Center: {exc}")
+
+    # 3. Crawl live campaign / payment hubs discovered from today's Homepage (+ 1 hop into paymentpartners)
+    crawled_hubs = set()
+    hub_queue = list(discovered_urls)
+    while hub_queue and len(crawled_hubs) < 12:
+        hub_url = hub_queue.pop(0)
+        if hub_url in crawled_hubs:
+            continue
+        crawled_hubs.add(hub_url)
+        try:
+            st, hub_html = fetch_html(hub_url)
+            if 200 <= st < 400 and len(hub_html) > 10000:
+                sources_ok += 1
+                hub_offers, hub_tabs = parse_upr_live_offers(hub_html, hub_url, now_pkt)
+                raw_offers.extend(hub_offers)
+                live_tabs.extend(hub_tabs)
+                if hub_offers:
+                    print(f"  [Discovered Hub] {hub_url.split('wh_pid=')[-1]}: {len(hub_offers)} live offer(s)")
+                # Follow paymentpartners / payment-promotions links inside an active megascenario hub
+                if "/megascenario/" in hub_url.lower():
+                    unesc_hub = hub_html.replace("\\u0026", "&").replace("\\/", "/").replace("&amp;", "&")
+                    for m in re.finditer(r"wh_pid=([^&\"'<> ]+)", unesc_hub):
+                        sub_pid = unquote(m.group(1))
+                        low_sub = sub_pid.lower()
+                        if any(k in low_sub for k in ("paymentpartner", "payment-promotions", "bank-discount", "voucher")):
+                            sub_url = (
+                                "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router"
+                                f"?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid={sub_pid}"
+                            )
+                            if sub_url not in crawled_hubs and sub_url not in hub_queue and sub_url != vc_url:
+                                hub_queue.append(sub_url)
+        except HTTPError as exc:
+            errors.append(f"Hub {hub_url.split('wh_pid=')[-1]}: HTTP {exc.code}")
+        except Exception as exc:
+            errors.append(f"Hub: {exc}")
+
+    if sources_ok == 0:
+        print(f"[CRITICAL] Could not reach Daraz.pk live sources ({errors}). Keeping prior state untouched.")
+        return
+
+    live_offers = deduplicate_offers(raw_offers)
+    bank_wallet_offers = [o for o in live_offers if o["section"] in ("Bank Vouchers", "Wallet Vouchers")]
+    platform_offers = [o for o in live_offers if o["section"] not in ("Bank Vouchers", "Wallet Vouchers")]
+
+    current_fps = sorted(offer_fingerprint(o) for o in live_offers)
     last_notified_date = old_state.get("last_notified_pkt_date", "")
+    prev_fps = set(old_state.get("notified_fingerprints", []))
     is_new_pkt_day = last_notified_date != pkt_date_str
+    newly_added = [o for o in live_offers if offer_fingerprint(o) not in prev_fps]
+
     alerts = []
-
     if is_new_pkt_day or args.force_notify or args.dry_run:
-        bank_lines = [
-            f"• **{o['issuer']}**: **{o['discountPercent']}% OFF**\n"
-            f"  ↳ {o.get('maxCapText', 'No Cap')} · Min Spend Rs. {o.get('minSpendPkr', 0):,} ({o.get('schedule', '')})"
-            for o in active_today
-            if o.get("section") == "Bank Vouchers"
-        ]
-        max_lines = [
-            f"• **{o['issuer']}**: **{o['discountPercent']}% OFF**\n"
-            f"  ↳ {o.get('maxCapText', '')} · Min Spend Rs. {o.get('minSpendPkr', 0):,}"
-            for o in active_today
-            if o.get("section") == "Voucher Max"
-        ]
-        choice_lines = [
-            f"• **{o['issuer']}**: **{o['discountPercent']}% OFF**\n"
-            f"  ↳ {o.get('maxCapText', '')} · Min Spend Rs. {o.get('minSpendPkr', 0):,}"
-            for o in active_today
-            if o.get("section") == "Choice Voucher"
-        ]
-
-        today_msg = [
-            "### 🟢 TODAY'S ACTIVE DISCOUNTS IN DARAZ APP",
-            f"**{weekday_str.upper()} · {pkt_date_str} PKT**",
+        bank_lines = [format_offer_line(o) for o in bank_wallet_offers]
+        plat_lines = [format_offer_line(o) for o in platform_offers]
+        msg = [
+            f"### 🟢 LIVE DARAZ DISCOUNTS TODAY",
+            f"**{weekday_str.upper()} · {pkt_date_str} ({time_pkt_str})**",
             "",
-            "🏦 **Active Bank & Wallet Offers:**",
-            *(bank_lines if bank_lines else ["• None today"]),
+            "🏦 **Live Bank & Card Discounts:**",
+            *(bank_lines if bank_lines else ["• None currently active on Daraz Homepage or Voucher Center"]),
             "",
-            "🏷️ **Platform Vouchers (Under Products):**",
-            *(max_lines if max_lines else []),
-            *(choice_lines if choice_lines else []),
+            "🏷️ **Live Platform Vouchers (Voucher Center):**",
+            *(plat_lines if plat_lines else ["• None currently listed in Voucher Center"]),
             "",
-            "📲 *Collect under products or in Daraz Voucher Center*",
+            f"✅ *100% live-verified directly from Daraz.pk ({sources_ok} live sources, zero hardcoded offers)*",
             "👉 https://www.daraz.pk/voucher-center/",
         ]
         alerts.append({
-            "title": f"🟢 Daraz Active Discounts - {weekday_str} ({pkt_date_str})",
-            "body": "\n".join(today_msg),
+            "title": f"Daraz Live Discounts ({len(bank_wallet_offers)} Bank, {len(platform_offers)} Voucher) - {weekday_str} {pkt_date_str}",
+            "body": "\n".join(msg),
             "tags": "white_check_mark,credit_card,shopping",
+            "click": bank_wallet_offers[0]["sourceUrl"] if bank_wallet_offers else "https://www.daraz.pk/voucher-center/",
         })
-
-        upcoming_grouped = {}
-        for o in upcoming:
-            sched = o.get("schedule", "Other Days")
-            upcoming_grouped.setdefault(sched, []).append(o)
-
-        upcoming_lines = []
-        for sched, offers in upcoming_grouped.items():
-            upcoming_lines.append(f"📅 **{sched}:**")
-            for o in offers:
-                upcoming_lines.append(
-                    f"• **{o['issuer']}**: **{o['discountPercent']}% OFF**\n"
-                    f"  ↳ {o.get('maxCapText', '')} · Min Spend Rs. {o.get('minSpendPkr', 0):,}"
-                )
-            upcoming_lines.append("")
-
-        if not upcoming_lines:
-            upcoming_lines = ["• No separate upcoming day-only offers — all current offers are active daily."]
-
-        upcoming_msg = [
-            "### ⏳ UPCOMING DARAZ DISCOUNTS SCHEDULE",
-            f"*Verified Partner Card Issuance Calendar (PKT · as of {pkt_date_str})*",
+    elif newly_added:
+        new_lines = [format_offer_line(o) for o in newly_added]
+        msg = [
+            f"### ⚡ NEW LIVE DARAZ DISCOUNT DETECTED",
+            f"**{weekday_str} · {pkt_date_str} ({time_pkt_str})**",
             "",
-            *upcoming_lines,
-            "ℹ️ *Vouchers replenish at 00:00 PKT on designated days.*",
+            *new_lines,
+            "",
             "👉 https://www.daraz.pk/voucher-center/",
         ]
         alerts.append({
-            "title": f"⏳ Daraz Upcoming Schedule - Next Card Days ({pkt_date_str})",
-            "body": "\n".join(upcoming_msg).strip(),
-            "tags": "calendar,hourglass_flowing_sand",
+            "title": f"New Live Daraz Discount ({len(newly_added)} Added) - {pkt_date_str}",
+            "body": "\n".join(msg),
+            "tags": "zap,credit_card,shopping",
+            "click": newly_added[0]["sourceUrl"],
         })
 
     if args.dry_run:
-        print(f"\n=== DRY RUN SUMMARY: {len(active_today)} active today, {len(upcoming)} upcoming ===")
-        for idx, alert in enumerate(alerts, 1):
-            print(f"\n--- ALERT {idx}: {alert['title']} ---")
-            print(alert["body"])
+        print(f"\n=== DRY RUN: {len(bank_wallet_offers)} bank/wallet, {len(platform_offers)} platform (100% live) ===")
+        for idx, a in enumerate(alerts, 1):
+            print(f"\n--- ALERT {idx}: {a['title']} ---")
+            print(a["body"])
         return
 
     new_state = {
+        "mode": "live-only",
         "last_notified_pkt_date": pkt_date_str if alerts else last_notified_date,
         "last_checked_pkt": now_pkt.isoformat(),
         "daraz_gateway": {
-            "status": 200 if upr_probe["reachable"] else 0,
-            "reachable": upr_probe["reachable"],
-            "sources_ok": upr_probe["sources_ok"],
-            "live_tabs_verified": upr_probe["tab_count"],
+            "status": 200,
+            "reachable": True,
+            "sources_ok": sources_ok,
+            "live_tabs_verified": len(set(live_tabs)),
+            "discovered_hubs": discovered_urls,
         },
-        "live_upr_tabs": [t["title"] for t in live_tabs],
-        "active_vouchers_count": len(active_today),
-        "vouchers": active_today,
+        "live_upr_tabs": sorted(set(live_tabs)),
+        "notified_fingerprints": sorted(set(current_fps) | (set() if is_new_pkt_day else prev_fps)) if alerts else sorted(prev_fps),
+        "active_vouchers_count": len(live_offers),
+        "vouchers": live_offers,
     }
     save_json(new_state, args.state)
 
     if alerts:
         print(send_ntfy(alerts, config.get("ntfyTopic", DEFAULT_NTFY_TOPIC)))
     else:
-        print(f"[{now_pkt.isoformat()}] Already notified for today ({pkt_date_str} PKT). No duplicate alert sent.")
+        print(f"[{now_pkt.isoformat()}] Already notified for {pkt_date_str} PKT and no new live offers appeared. Skipping duplicate alert.")
 
 
 if __name__ == "__main__":

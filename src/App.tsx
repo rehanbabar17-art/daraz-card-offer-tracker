@@ -434,6 +434,15 @@ export function App() {
 
         {/* List of Verified Scraped Offers */}
         <div className="space-y-3">
+          {filteredOffers.length === 0 && (
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 text-center space-y-1.5 shadow-2xs">
+              <ShieldCheck className="h-6 w-6 text-slate-400 mx-auto" />
+              <p className="text-sm font-bold text-slate-700">No live offers active for this filter right now</p>
+              <p className="text-xs text-slate-500">
+                Only 100% live offers currently shown on Daraz.pk Homepage &amp; Voucher Center are displayed — expired or hardcoded promos are excluded.
+              </p>
+            </div>
+          )}
           {filteredOffers.map((offer) => {
             const validDays = Array.isArray(offer.validDays) ? offer.validDays : [];
             const nextInfo = getNextOccurrenceInfo(validDays, pktInfo.pktDateStr, pktInfo.dayIndex);
@@ -456,7 +465,7 @@ export function App() {
                       {offer.status && (
                         <span
                           className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                            offer.status.includes('Active')
+                            offer.status.includes('Active') || offer.status.includes('Live') || offer.status.includes('Collectible')
                               ? 'bg-emerald-500 text-white'
                               : offer.status.includes('Ran Out')
                               ? 'bg-rose-500 text-white'
