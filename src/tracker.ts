@@ -1080,9 +1080,21 @@ export async function runTracker(): Promise<void> {
             const respUrl = response.url();
             const ct = response.headers()['content-type'] || '';
             const isVulcanOrMtop =
-              respUrl.includes('vulcan.benefit.module') || respUrl.includes('lzdAldLampService');
+              respUrl.includes('vulcan.benefit.module') ||
+              respUrl.includes('lzdAldLampService') ||
+              respUrl.includes('mtop.lazada.');
             if (!isVulcanOrMtop && !ct.includes('json') && !ct.includes('javascript')) return;
             const body = await response.text();
+            if (respUrl.includes('mtop.lazada.') || respUrl.includes('vulcan')) {
+              const apiMatch = respUrl.match(/mtop\.[a-zA-Z0-9_.-]+/);
+              const apiName = apiMatch ? apiMatch[0] : 'mtop';
+              const hasEp = /easypaisa/i.test(body);
+              const hasRows = body.includes('benefitRowVos') || body.includes('showBenefitList');
+              const hasTabs = body.includes('"voucherTabs":');
+              if (hasEp || hasRows || hasTabs || apiName.includes('vulcan') || apiName.includes('voucher') || apiName.includes('benefit')) {
+                console.log(`[MTOP] ${apiName} len=${body.length} ep=${hasEp} rows=${hasRows} tabs=${hasTabs}`);
+              }
+            }
             const hasVoucherTabs = body.includes('"voucherTabs":');
             const hasVulcanBenefits =
               body.includes('benefitRowVos') || body.includes('showBenefitList') || body.includes('"moduleData":');

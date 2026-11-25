@@ -571,6 +571,38 @@ def parse_vulcan_module_offers(html, source_url, now_pkt):
     return offers
 
 
+
+def log_vc_non_pii_summary(vc_html):
+    """Log strictly non-PII structural diagnostics for Voucher Center modules (no cookies/userId/account info)."""
+    kw_counts = {
+        k: len(re.findall(k, vc_html, re.I))
+        for k in ("easypaisa", "jazzcash", "sadapay", "nayapay", "zindigi", "hbl", "meezan", "mcb", "alfalah", "unionpay", "visa", "mastercard")
+    }
+    nonzero_kw = {k: v for k, v in kw_counts.items() if v > 0}
+    tab_summary = []
+    for arr in extract_json_array_after(vc_html, '"voucherTabs":'):
+        for tab in arr:
+            if isinstance(tab, dict):
+                vlist = tab.get("voucher") or []
+                tab_summary.append(f"{tab.get('title')!r}:{len(vlist)}")
+    mod_summary = []
+    for container in extract_json_object_after(vc_html, '"moduleData":'):
+        for mid, entry in container.items():
+            if isinstance(entry, dict):
+                succ = entry.get("success")
+                err = entry.get("errorCode")
+                payload = entry.get("data") if isinstance(entry.get("data"), dict) else {}
+                items = _collect_vulcan_benefit_items(payload)
+                mod_summary.append(f"{mid}(ok={succ},err={err},items={len(items)})")
+                if items:
+                    sample_keys = sorted(items[0].keys())[:15]
+                    sample_titles = [
+                        str(it.get("title") or it.get("subTitle") or (it.get("voucherLegacyInfo") or {}).get("markIconText") or "")[:50]
+                        for it in items[:5]
+                    ]
+                    print(f"  [VC-MOD {mid}] keys={sample_keys} titles={sample_titles}")
+    print(f"  [VC-DIAG] html_len={len(vc_html)} kw={nonzero_kw} tabs={tab_summary} mods={mod_summary}")
+
 def parse_upr_live_offers(html, source_url, now_pkt):
     """Extract strictly active, non-expired bank/wallet tabs & collectible platform vouchers from a live UPR page."""
     now_ms = int(now_pkt.timestamp() * 1000)
@@ -860,6 +892,7 @@ def main():
                 else ("cookie expired - anonymous fallback" if has_daraz_cookie else "public mobile session")
             )
             print(f"[{now_pkt.isoformat()}] Live Voucher Center OK ({auth_label}): {len(vc_offers)} live offer(s), tabs={vc_tabs}")
+            log_vc_non_pii_summary(vc_html)
         else:
             errors.append(f"Voucher Center HTTP {st}")
     except Exception as exc:
