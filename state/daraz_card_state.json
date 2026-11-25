@@ -1,13 +1,13 @@
 {
   "mode": "live-only",
-  "authenticated_mobile_session": false,
+  "authenticated_mobile_session": true,
   "last_notified_pkt_date": "2026-11-25",
-  "last_checked_pkt": "2026-11-25T17:35:22.910089+05:00",
+  "last_checked_pkt": "2026-11-25T22:42:57.849556+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
     "sources_ok": 3,
-    "authenticated": false,
+    "authenticated": true,
     "live_tabs_verified": 4,
     "discovered_hubs": [
       "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/blessed-friday-pk-2026/blessedfriday2026"
@@ -33,9 +33,9 @@
       "discountDisplay": "4% OFF (Cap Rs. 80)",
       "minSpendPkr": 999,
       "maxCapPkr": 80,
-      "maxCapText": "Cap Rs. 80 · Collectible Now",
+      "maxCapText": "Cap Rs. 80 · Ran Out (Restocks 00:00 PKT)",
       "validityWindow": "22/11/2026 - 26/11/2026",
-      "status": "Collectible Now",
+      "status": "Ran Out (Restocks 00:00 PKT)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center"
     }
   ]
