@@ -2,18 +2,22 @@
   "mode": "live-only",
   "authenticated_mobile_session": false,
   "last_notified_pkt_date": "2026-11-25",
-  "last_checked_pkt": "2026-11-25T14:38:51.045777+05:00",
+  "last_checked_pkt": "2026-11-25T17:35:22.910089+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
-    "sources_ok": 2,
+    "sources_ok": 3,
     "authenticated": false,
-    "live_tabs_verified": 2,
-    "discovered_hubs": []
+    "live_tabs_verified": 4,
+    "discovered_hubs": [
+      "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/blessed-friday-pk-2026/blessedfriday2026"
+    ]
   },
   "live_upr_tabs": [
     "Choice Upsized Voucher",
-    "Daily Drop"
+    "Daily Drop",
+    "Free",
+    "KHI & LHR"
   ],
   "notified_fingerprints": [
     "Choice Voucher|CHOICE Voucher|4% OFF (Cap Rs. 80)|999|80"
