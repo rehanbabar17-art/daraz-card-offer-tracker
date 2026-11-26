@@ -10,22 +10,22 @@
   ],
   "offers": [
     {
-      "id": "vc-choicevoucher-4-min999",
+      "id": "vc-choicevoucher-6-min699",
       "category": "Choice Voucher",
-      "title": "CHOICE Voucher 4% OFF (Cap Rs. 80)",
+      "title": "CHOICE Voucher 6% OFF (Cap Rs. 80)",
       "bankName": "CHOICE Voucher",
-      "discountDisplay": "4% OFF (Cap Rs. 80)",
-      "discountPercent": 4,
-      "minSpendPkr": 999,
+      "discountDisplay": "6% OFF (Cap Rs. 80)",
+      "discountPercent": 6,
+      "minSpendPkr": 699,
       "maxCapPkr": 80,
       "validDays": [
         "Everyday"
       ],
-      "validityDates": "22/11/2026 - 26/11/2026",
-      "status": "Ran Out (Restocks 00:00 PKT)",
+      "validityDates": "26/11/2026 - 03/12/2026",
+      "status": "Collectible Now",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-26T13:00:52.373Z"
+      "scrapedAt": "2026-11-26T15:00:54.624Z"
     }
   ],
-  "scrapedAt": "2026-11-26T13:01:55.115Z"
+  "scrapedAt": "2026-11-26T15:02:27.345Z"
 }
