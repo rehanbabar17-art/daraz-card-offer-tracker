@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-11-26T05:34:29.534187+00:00",
+  "voucherCenter": {
+    "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
+    "openedVia": "deeplink",
+    "checkedAt": "2026-11-26T05:33:49.166167+00:00",
+    "status": "unavailable",
+    "paymentKeywordsFound": [],
+    "voucherLines": [],
+    "visibleSample": [
+      "WVUCWebView",
+      "Access denied",
+      "Apps list",
+      "Thursday, Nov 26",
+      "43°F",
+      "Cloudy, 43°F",
+      "Messages",
+      "Chrome",
+      "Search",
+      "Voice search",
+      "Appium Settings",
+      "Calendar",
+      "Clock",
+      "Contacts",
+      "Daraz",
+      "Drive",
+      "Files",
+      "Gmail",
+      "Google",
+      "Maps",
+      "Phone",
+      "Photos",
+      "Play Movies & TV",
+      "Settings",
+      "YouTube",
+      "YT Music"
+    ]
+  },
+  "products": [
+    {
+      "sourceUrl": "https://s.daraz.pk/s.22e8o",
+      "itemId": null,
+      "skuId": null,
+      "checkedAt": "2026-11-26T05:34:29.328210+00:00",
+      "status": "unavailable",
+      "voucherText": [],
+      "note": "The app did not expose a visible Vouchers section for this product.",
+      "name": "User-provided Daraz product example"
+    }
+  ]
+}
