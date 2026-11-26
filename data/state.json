@@ -1,6 +1,6 @@
 {
   "lastDigestDatePKT": "2026-11-26",
-  "source": "Daraz Live Authenticated Mobile Voucher Center & Homepage (100% Live Verified)",
+  "source": "Daraz Live Homepage & Voucher Center (100% Live Verified)",
   "categories": [
     "Bank Vouchers",
     "Wallet Vouchers",
@@ -24,8 +24,8 @@
       "validityDates": "22/11/2026 - 26/11/2026",
       "status": "Ran Out (Restocks 00:00 PKT)",
       "sourceUrl": "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/pk/voucher/center",
-      "scrapedAt": "2026-11-26T09:18:47.557Z"
+      "scrapedAt": "2026-11-26T11:00:49.161Z"
     }
   ],
-  "scrapedAt": "2026-11-26T09:19:59.115Z"
+  "scrapedAt": "2026-11-26T11:01:51.163Z"
 }
