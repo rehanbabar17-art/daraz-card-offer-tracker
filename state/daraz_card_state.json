@@ -2,11 +2,11 @@
   "mode": "live-only",
   "authenticated_mobile_session": false,
   "last_notified_pkt_date": "2026-11-28",
-  "last_checked_pkt": "2026-11-28T04:22:06.864149+05:00",
+  "last_checked_pkt": "2026-11-28T16:36:48.060522+05:00",
   "daraz_gateway": {
     "status": 200,
     "reachable": true,
-    "sources_ok": 9,
+    "sources_ok": 10,
     "authenticated": false,
     "live_tabs_verified": 5,
     "discovered_hubs": [
@@ -15,6 +15,7 @@
       "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/blessed-friday-pk-2026/fashion",
       "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/blessed-friday-pk-2026/bankpartners",
       "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/blessed-friday-pk-2026/electronics",
+      "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/blessed-friday-pk-2026/groceries",
       "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/blessed-friday-pk-2026/top-brands",
       "https://pages.daraz.pk/wow/gcp/route/daraz/pk/upr/router?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/megascenario/pk/blessed-friday-pk-2026/blessedfriday2026"
     ]
